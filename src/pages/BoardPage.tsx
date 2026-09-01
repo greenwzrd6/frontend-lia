@@ -7,7 +7,7 @@ import BoardHeader from "../components/Board/BoardHeader";
 import ColumnList from "../components/Column/ColumnList";
 import type { Column } from "../types/column";
 import { getColumnsByBoardId } from "../services/columnApi";
-import { getPlacement } from "../services/placementApi";
+import { getPlacement } from "../services/PlacementApi";
 import type { Entity } from "../types/entity";
 import { mockEntities } from "../services/mockEntities";
 import type { Placement } from "../types/placement";

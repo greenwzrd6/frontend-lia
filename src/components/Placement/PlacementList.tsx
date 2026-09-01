@@ -3,7 +3,7 @@ import type { Entity } from "../../types/entity";
 import type { Placement } from "../../types/placement";
 
 import PlacementCard from "./PlacementCard";
-import { createPlacement } from "../../services/placementApi";
+import { createPlacement } from "../../services/PlacementApi";
 
 type Props = {
   columnId: string;
@@ -22,15 +22,16 @@ export default function PlacementList({
     a.position.localeCompare(b.position),
   );
 
-  async function handleDropBefore(
+  async function handleCardDrop(
     draggedEntityId: string,
     targetEntityId: string,
+    dropBefore: boolean,
   ) {
     await createPlacement({
       entityId: draggedEntityId,
       columnId,
-      afterEntityId: null,
-      beforeEntityId: targetEntityId,
+      afterEntityId: dropBefore ? null : targetEntityId,
+      beforeEntityId: dropBefore ? targetEntityId : null,
     });
 
     await reloadPlacements();
@@ -86,7 +87,7 @@ export default function PlacementList({
             key={placement.entityId}
             entity={entity}
             placement={placement}
-            onDropBefore={handleDropBefore}
+            onDrop={handleCardDrop}
           />
         );
       })}

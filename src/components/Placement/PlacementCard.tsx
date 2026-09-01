@@ -6,9 +6,10 @@ import { handleDragStart } from "../../utils/DragAndDrop";
 type Props = {
   entity: Entity;
   placement: Placement;
-  onDropBefore: (
+  onDrop: (
     draggedEntityId: string,
     targetEntityId: string,
+    dropBefore: boolean
   ) => Promise<void>;
 };
 
@@ -19,26 +20,45 @@ function handleDragOver(event: DragEvent<HTMLElement>) {
 export default function PlacementCard({
   entity,
   placement,
-  onDropBefore,
+  onDrop,
 }: Readonly<Props>) {
   async function handleDrop(event: DragEvent<HTMLElement>) {
     event.preventDefault();
     event.stopPropagation();
 
-    const draggedEntityId = event.dataTransfer.getData("text/plain");
+    const draggedEntityId =
+      event.dataTransfer.getData("text/plain");
 
-    if (!draggedEntityId || draggedEntityId === entity.id) {
+    if (
+      !draggedEntityId ||
+      draggedEntityId === entity.id
+    ) {
       return;
     }
 
-    await onDropBefore(draggedEntityId, entity.id);
+    const rect =
+      event.currentTarget.getBoundingClientRect();
+
+    const middle =
+      rect.top + rect.height / 2;
+
+    const dropBefore =
+      event.clientY < middle;
+
+    await onDrop(
+      draggedEntityId,
+      entity.id,
+      dropBefore
+    );
   }
 
   return (
     <article
       className="outline my-5 py-1 flex flex-row justify-center"
       draggable
-      onDragStart={(event) => handleDragStart(event, entity.id)}
+      onDragStart={(event) =>
+        handleDragStart(event, entity.id)
+      }
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
