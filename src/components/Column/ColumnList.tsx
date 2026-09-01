@@ -8,12 +8,14 @@ type Props = {
   columns: ColumnType[];
   placements: PlacementType[];
   entities: EntityType[];
+  reloadPlacements: () => Promise<void>;
 };
 
 export default function ColumnList({
   columns,
   placements,
   entities,
+  reloadPlacements,
 }: Readonly<Props>) {
   return (
     <div className="flex justify-evenly">
@@ -28,7 +30,8 @@ export default function ColumnList({
             key={column.id}
             column={column}
             placements={columnPlacements}
-            entitites={entities}
+            entities={entities}
+            reloadPlacements={reloadPlacements}
           />
         );
       })}

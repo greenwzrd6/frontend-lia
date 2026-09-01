@@ -7,7 +7,7 @@ import BoardHeader from "../components/Board/BoardHeader";
 import ColumnList from "../components/Column/ColumnList";
 import type { Column } from "../types/column";
 import { getColumnsByBoardId } from "../services/columnApi";
-import { getPlacement } from "../services/placementApi";
+import { getPlacement } from "../services/PlacementApi";
 import type { Entity } from "../types/entity";
 import { mockEntities } from "../services/mockEntities";
 import type { Placement } from "../types/placement";
@@ -27,42 +27,56 @@ export default function BoardPage() {
 
   const [error, setError] = useState<string | null>(null);
 
+    async function reloadPlacements(
+    columnsToUse: Column[] = columns
+  ) {
+    const columnIds = columnsToUse.map(
+      (column) => column.id
+    );
+
+    const placementsData: Placement[] = [];
+
+    for (const entity of entities) {
+      const placement = await getPlacement(
+        entity.id,
+        columnIds
+      );
+
+      if (placement) {
+        placementsData.push(placement);
+      }
+    }
+
+    setPlacements(placementsData);
+  }
+
   useEffect(() => {
     if (!id) {
       return;
     }
 
-    const ID = id;
+      const boardId = id;
 
-    async function loadBoard() {
-      try {
-        setLoading(true);
-        setError(null);
+  async function loadBoard() {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const board = await getBoard(ID);
+      const boardData = await getBoard(boardId);
 
-        const columns = await getColumnsByBoardId(ID);
+      const columnsData =
+        await getColumnsByBoardId(boardId);
 
-        const columnIds = columns.map((column) => column.id);
+      await reloadPlacements(columnsData);
 
-        let placementsData: Placement[] = [];
-
-        for (let entity in entities) {
-          const placement = await getPlacement(entity, columnIds);
-          if (placement) {
-            placementsData.push(placement);
-          }
-        }
-
-        setPlacements(placementsData);
-        setBoard(board);
-        setColumns(columns);
-      } catch {
-        setError("Could not load board.");
-      } finally {
-        setLoading(false);
-      }
+      setBoard(boardData);
+      setColumns(columnsData);
+    } catch {
+      setError("Could not load board.");
+    } finally {
+      setLoading(false);
     }
+  }
 
     loadBoard();
   }, [id]);
@@ -86,12 +100,13 @@ export default function BoardPage() {
   return (
     <main className="mx-auto flex max-w-sm flex-col">
       <BoardHeader board={board} />
-      
+
       <ColumnList
         columns={columns}
         placements={placements}
         entities={entities}
-      ></ColumnList>
+        reloadPlacements={reloadPlacements}
+      />
     </main>
   );
 }

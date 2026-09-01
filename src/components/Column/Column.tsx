@@ -7,18 +7,25 @@ import ColumnHeader from "./ColumnHeader";
 type Props = {
   column: ColumnType;
   placements: PlacementType[];
-  entitites: EntityType[];
+  entities: EntityType[];
+  reloadPlacements: () => Promise<void>;
 };
 export default function Column({
   column,
   placements,
-  entitites,
+  entities,
+  reloadPlacements,
 }: Readonly<Props>) {
   return (
     <section className="outline">
       <ColumnHeader column={column} />
 
-      <PlacementList placements={placements} entities={entitites} />
+      <PlacementList 
+              columnId={column.id}
+        placements={placements}
+        entities={entities}
+        reloadPlacements={reloadPlacements}
+      />
     </section>
   );
 }
