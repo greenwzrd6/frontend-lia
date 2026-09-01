@@ -1,5 +1,21 @@
+
+
+export default function App() {
+  return 
+}
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import BoardPage from "./pages/BoardPage";
+import PlacementDemoPage from "./pages/PlacementDemoPage";
 import ColumnDemoPage from "./pages/ColumnDemoPage";
 
 export default function App() {
-  return <ColumnDemoPage />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/boards/:id" element={<BoardPage />} />
+      </Routes>
+    </BrowserRouter>
+    <PlacementDemoPage />;
+  );
 }
