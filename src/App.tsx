@@ -1,8 +1,3 @@
-
-
-export default function App() {
-  return 
-}
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import BoardPage from "./pages/BoardPage";
@@ -14,8 +9,9 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/boards/:id" element={<BoardPage />} />
+        <Route path="/placement-demo" element={<PlacementDemoPage />} />
+        <Route path="/column-demo" element={<ColumnDemoPage />} />
       </Routes>
     </BrowserRouter>
-    <PlacementDemoPage />;
   );
 }
