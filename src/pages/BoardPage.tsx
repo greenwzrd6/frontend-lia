@@ -7,7 +7,7 @@ import BoardHeader from "../components/Board/BoardHeader";
 import ColumnList from "../components/Column/ColumnList";
 import type { Column } from "../types/column";
 import { getColumnsByBoardId } from "../services/columnApi";
-import { getPlacement } from "../services/PlacementApi"
+import { getPlacement } from "../services/placementApi";
 import type { Entity } from "../types/entity";
 import { mockEntities } from "../services/mockEntities";
 import type { Placement } from "../types/placement";
@@ -15,7 +15,7 @@ import type { Placement } from "../types/placement";
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
 
-  const[board, setBoard] = useState<Board | null>(null);
+  const [board, setBoard] = useState<Board | null>(null);
 
   const [columns, setColumns] = useState<Column[]>([]);
 
@@ -43,7 +43,7 @@ export default function BoardPage() {
 
         const columns = await getColumnsByBoardId(ID);
 
-        const columnIds = columns.map(column => column.id);
+        const columnIds = columns.map((column) => column.id);
 
         let placementsData: Placement[] = [];
 
@@ -54,7 +54,7 @@ export default function BoardPage() {
           }
         }
 
-        setPlacements(placementsData)
+        setPlacements(placementsData);
         setBoard(board);
         setColumns(columns);
       } catch {
@@ -86,8 +86,12 @@ export default function BoardPage() {
   return (
     <main>
       <BoardHeader board={board} />
-
-      <ColumnList columns={columns} placements={placements} entities={entities}></ColumnList>
+      
+      <ColumnList
+        columns={columns}
+        placements={placements}
+        entities={entities}
+      ></ColumnList>
     </main>
   );
 }
