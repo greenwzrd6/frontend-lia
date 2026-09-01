@@ -1,16 +1,35 @@
 import type { Column as ColumnType } from "../../types/column";
+import type { Entity as EntityType } from "../../types/entity";
+import type { Placement as PlacementType } from "../../types/placement";
 import Column from "./Column";
 
 type Props = {
   columns: ColumnType[];
+  placements: PlacementType[];
+  entities: EntityType[];
 };
 
-export default function ColumnList({ columns }: Readonly<Props>) {
+export default function ColumnList({
+  columns,
+  placements,
+  entities,
+}: Readonly<Props>) {
   return (
-    <div>
-      {columns.map((column) => (
-        <Column key={column.id} column={column} />
-      ))}
+    <div className="column-list">
+      {columns.map((column) => {
+        const columnPlacements = placements.filter(
+          (placement) => placement.columnId === column.id,
+        );
+
+        return (
+          <Column
+            key={column.id}
+            column={column}
+            placements={columnPlacements}
+            entitites={entities}
+          />
+        );
+      })}
     </div>
   );
 }
