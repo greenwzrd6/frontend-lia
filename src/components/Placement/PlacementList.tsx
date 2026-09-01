@@ -3,7 +3,7 @@ import type { Entity } from "../../types/entity";
 import type { Placement } from "../../types/placement";
 
 import PlacementCard from "./PlacementCard";
-import { createPlacement } from "../../services/PlacementApi";
+import { createPlacement } from "../../services/placementApi";
 
 type Props = {
   columnId: string;
@@ -17,7 +17,7 @@ export default function PlacementList({
   placements,
   entities,
   reloadPlacements,
-}: Props) {
+}: Readonly<Props>) {
   const sortedPlacements = [...placements].sort((a, b) =>
     a.position.localeCompare(b.position),
   );
