@@ -84,7 +84,7 @@ export default function BoardPage() {
   }
 
   return (
-    <main>
+    <main className="mx-auto flex max-w-sm flex-col">
       <BoardHeader board={board} />
       
       <ColumnList

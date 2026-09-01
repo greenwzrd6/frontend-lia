@@ -6,10 +6,10 @@ type Props = {
 
 export default function EntityColumnMock({ entities }: Readonly<Props>) {
   return (
-    <section>
-        <h2>Jajjamän</h2>
+    <section className="outline flex flex-col">
+        <h2 className="text-xl flex flex-row justify-center">Jajjamän</h2>
       {entities.map((entity) => (
-        <span className="entity-mock-card" key={entity.id}>{entity.title}</span>
+        <span className="outline my-1.5 py-1 flex flex-row justify-center" key={entity.id}>{entity.title}</span>
       ))}
     </section>
   );

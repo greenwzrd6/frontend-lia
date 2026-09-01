@@ -16,7 +16,7 @@ export default function ColumnList({
   entities,
 }: Readonly<Props>) {
   return (
-    <div className="column-list">
+    <div className="flex justify-evenly">
       <EntityColumnMock entities={entities}/>
       {columns.map((column) => {
         const columnPlacements = placements.filter(
