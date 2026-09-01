@@ -42,11 +42,6 @@ export default function PlacementList({
 
     const draggedEntityId = event.dataTransfer.getData("text/plain");
 
-    console.log("DROP:", {
-      draggedEntityId,
-      columnId,
-    });
-
     if (!draggedEntityId) {
       return;
     }
