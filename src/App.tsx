@@ -1,7 +1,7 @@
+import PlacementDemoPage from "./pages/PlacementDemoPage";
 
-export default function App() {
-  return (
-    <div>
-    </div>
-  )
+function App() {
+    return <PlacementDemoPage />;
 }
+
+export default App;
