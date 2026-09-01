@@ -4,11 +4,16 @@ import { useParams } from "react-router-dom";
 import { getBoard } from "../services/boardApi";
 import type { Board } from "../types/board";
 import BoardHeader from "../components/Board/BoardHeader";
+import ColumnList from "../components/Column/ColumnList";
+import type { Column } from "../types/column";
+import { getColumnsByBoardId } from "../services/columnApi";
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
 
   const [board, setBoard] = useState<Board | null>(null);
+
+  const [columns, setColumns] = useState<Column[]>([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -19,16 +24,19 @@ export default function BoardPage() {
       return;
     }
 
-    const boardId = id;
+    const ID = id;
 
     async function loadBoard() {
       try {
         setLoading(true);
         setError(null);
 
-        const result = await getBoard(boardId);
+        const board = await getBoard(ID);
 
-        setBoard(result);
+        const columns = await getColumnsByBoardId(ID);
+
+        setBoard(board);
+        setColumns(columns);
       } catch {
         setError("Could not load board.");
       } finally {
@@ -59,7 +67,7 @@ export default function BoardPage() {
     <main>
       <BoardHeader board={board} />
 
-      <div>Column area will be integrated later.</div>
+      <ColumnList columns={columns}></ColumnList>
     </main>
   );
 }
