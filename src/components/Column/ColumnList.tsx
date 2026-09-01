@@ -18,8 +18,8 @@ export default function ColumnList({
   reloadPlacements,
 }: Readonly<Props>) {
   return (
-    <div className="column-list">
-      <EntityColumnMock entities={entities} />
+    <div className="flex justify-evenly">
+      <EntityColumnMock entities={entities}/>
       {columns.map((column) => {
         const columnPlacements = placements.filter(
           (placement) => placement.columnId === column.id,
