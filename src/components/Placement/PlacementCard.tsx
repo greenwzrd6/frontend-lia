@@ -49,7 +49,7 @@ export default function PlacementCard({
         <article
             draggable
             onDragStart={(event) =>
-        handleDragStart(event, entity.id)
+        handleDragStart(event, entity.id)}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
         >
