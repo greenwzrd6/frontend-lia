@@ -6,8 +6,8 @@ type Props = {
 
 export default function BoardHeader({ board }: Readonly<Props>) {
   return (
-    <header>
-      <h1>{board.title}</h1>
+    <header className="flex flex-row justify-center mb-2">
+      <h1 className="text-xl font-bold">{board.title}</h1>
     </header>
   );
 }

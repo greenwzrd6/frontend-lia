@@ -15,7 +15,7 @@ export default function Column({
   entitites,
 }: Readonly<Props>) {
   return (
-    <section>
+    <section className="outline">
       <ColumnHeader column={column} />
 
       <PlacementList placements={placements} entities={entitites} />
