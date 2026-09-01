@@ -7,7 +7,7 @@ type Props = {
 export default function ColumnHeader({ column }: Readonly<Props>) {
   return (
     <header>
-      <h2>{column.title}</h2>
+      <h2 className="text-xl flex flex-row justify-center">{column.title}</h2>
     </header>
   );
 }

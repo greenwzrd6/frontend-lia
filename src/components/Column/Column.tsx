@@ -17,7 +17,7 @@ export default function Column({
   reloadPlacements,
 }: Readonly<Props>) {
   return (
-    <section className="outline">
+    <section className="outline flex flex-col">
       <ColumnHeader column={column} />
 
       <PlacementList 
