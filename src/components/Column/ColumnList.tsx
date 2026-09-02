@@ -1,23 +1,28 @@
-import type { Entity as EntityType } from "../../types/entity";
+import { useColumns } from "../../hooks/useColumns";
+import { mockEntities } from "../../services/mockEntities";
 import Column from "./Column";
 import EntityColumnMock from "./EntityColumnMock";
 
-type Props = {
-  entities: EntityType[];
-  getPlacements: () => Promise<void>;
-};
+export default function ColumnList() {
+  const { data: columns = [], isLoading, isError } = useColumns();
 
-export default function ColumnList({
-  entities,
-  getPlacements,
-}: Readonly<Props>) {
+  if (isLoading) {
+    return <p>Loading columns...</p>;
+  }
+
+  if (isError) {
+    return <p>Could not load columns.</p>;
+  }
+
+  const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
+
   return (
     <div className="flex justify-evenly">
-      <EntityColumnMock entities={entities} />
-          <Column
-            entities={entities}
-            getPlacements={getPlacements}
-          />
+      <EntityColumnMock entities={mockEntities} />
+
+      {sortedColumns.map((column) => (
+        <Column key={column.id} column={column} />
+      ))}
     </div>
   );
 }

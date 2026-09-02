@@ -1,5 +1,5 @@
 import { apiRequest } from "./api";
-import type { Placement } from "../types/placement";
+import type { PlacementType } from "../types/placement";
 
 export type CreatePlacementRequest = {
     entityId: string;
@@ -11,7 +11,7 @@ export type CreatePlacementRequest = {
 export async function getPlacement(
     entityId: string,
     columnIds: string[]
-): Promise<Placement | null> {
+): Promise<PlacementType | null> {
     const params = new URLSearchParams();
 
     params.set("entityId", entityId);
@@ -24,7 +24,7 @@ export async function getPlacement(
     }
 
     try {
-        return await apiRequest<Placement>(
+        return await apiRequest<PlacementType>(
             `/api/placements/get?${params.toString()}`
         );
     }

@@ -1,4 +1,4 @@
-import type { Entity as EntityType } from "../../types/entity";
+import type { EntityType } from "../../types/entity";
 import { handleDragStart } from "../../utils/DragAndDrop";
 
 type Props = {

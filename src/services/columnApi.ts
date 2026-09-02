@@ -1,5 +1,5 @@
 import { apiRequest } from "./api";
-import type { Column } from "../types/column";
+import type { ColumnType } from "../types/column";
 
 export type CreateColumnRequest = {
     title: string;
@@ -9,16 +9,16 @@ export type CreateColumnRequest = {
 
 export async function getColumnsByBoardId(
     boardId: string
-): Promise<Column[]> {
-    return apiRequest<Column[]>(
+): Promise<ColumnType[]> {
+    return apiRequest<ColumnType[]>(
         `/api/columns/boardid/${boardId}`
     );
 }
 
 export async function getColumn(
     id: string
-): Promise<Column> {
-    return apiRequest<Column>(
+): Promise<ColumnType> {
+    return apiRequest<ColumnType>(
         `/api/columns/${id}`
     );
 }

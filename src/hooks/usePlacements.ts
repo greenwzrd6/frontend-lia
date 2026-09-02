@@ -1,28 +1,29 @@
-import { useQueries} from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { mockEntities } from "../services/mockEntities";
-import { useColumns } from "./useColumns";
-import { useMemo } from "react";
 import { getPlacement } from "../services/placementApi";
+import type { PlacementType } from "../types/placement";
 
-export function usePlacements() {
-    const columnsQuery = useColumns();
+export function usePlacements(columnId: string) {
+  const queries = useQueries({
+    queries: mockEntities.map((entity) => ({
+      queryKey: ["placement", columnId, entity.id],
+      queryFn: () => getPlacement(entity.id, [columnId]),
+      enabled: !!columnId,
+    })),
+  });
 
-    const columnIds = useMemo(
-      () => (columnsQuery.data ? columnsQuery.data.map((c) => c.id) : []),
-      [columnsQuery], 
+  const placements = queries
+    .map((query) => query.data)
+    .filter(
+      (placement): placement is PlacementType => placement != null,
     );
 
-    const placementsQueries = useQueries({
-    queries: mockEntities.map((entity) => {
-        return {
-          queryKey: ["placement", entity.id],
-          queryFn: () => getPlacement(entity.id, columnIds),
-        };
-      }),
-    });
+  const isLoading = queries.some((query) => query.isLoading);
+  const isError = queries.some((query) => query.isError);
 
-    return placementsQueries;
+  return {
+    placements,
+    isLoading,
+    isError,
+  };
 }
-  
-  
-  

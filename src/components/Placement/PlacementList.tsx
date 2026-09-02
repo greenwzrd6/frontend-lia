@@ -1,43 +1,43 @@
 import type { DragEvent } from "react";
-import type { Entity } from "../../types/entity";
+import type { EntityType } from "../../types/entity";
 
 import PlacementCard from "./PlacementCard";
-import { createPlacement } from "../../services/placementApi";
+import { useCreatePlacement } from "../../hooks/useCreatePlacements";
 import { usePlacements } from "../../hooks/usePlacements";
 
 type Props = {
   columnId: string;
-  entities: Entity[];
-  getPlacements: () => Promise<void>;
+  entities: EntityType[];
 };
 
-export default function PlacementList({
-  columnId,
-  entities,
-  getPlacements
-}: Readonly<Props>) {
+export default function PlacementList({ columnId, entities }: Readonly<Props>) {
+  const { placements, isLoading, isError } = usePlacements(columnId);
 
-  const placements = usePlacements();
+  const createPlacement = useCreatePlacement();
 
-  // const sortedPlacements = [...placements].sort((a, b) => {
-  //   if (a.position < b.position) return -1;
-  //   if (a.position > b.position) return 1;
-  //   return 0;
-  // });
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (isError) {
+    return <p>Could not load placements.</p>;
+  }
+
+  const sortedPlacements = [...placements].sort((a, b) =>
+    a.position.localeCompare(b.position),
+  );
 
   async function handleCardDrop(
     draggedEntityId: string,
     targetEntityId: string,
     dropBefore: boolean,
   ) {
-    await createPlacement({
+    await createPlacement.mutateAsync({
       entityId: draggedEntityId,
       columnId,
       afterEntityId: dropBefore ? null : targetEntityId,
       beforeEntityId: dropBefore ? targetEntityId : null,
     });
-
-    await getPlacements();
   }
 
   async function handleDropAtStart(event: DragEvent<HTMLDivElement>) {
@@ -53,16 +53,14 @@ export default function PlacementList({
       (placement) => placement.entityId !== draggedEntityId,
     );
 
-    const firstPlacement = remainingPlacements[0];
+    const firstPlacement = remainingPlacements.at(0);
 
-    await createPlacement({
+    await createPlacement.mutateAsync({
       entityId: draggedEntityId,
       columnId,
       afterEntityId: null,
       beforeEntityId: firstPlacement?.entityId ?? null,
     });
-
-    await getPlacements();
   }
 
   async function handleDropAtEnd(event: DragEvent<HTMLDivElement>) {
@@ -80,14 +78,12 @@ export default function PlacementList({
 
     const lastPlacement = remainingPlacements.at(-1);
 
-    await createPlacement({
+    await createPlacement.mutateAsync({
       entityId: draggedEntityId,
       columnId,
       afterEntityId: lastPlacement?.entityId ?? null,
       beforeEntityId: null,
     });
-
-    await getPlacements();
   }
 
   return (
