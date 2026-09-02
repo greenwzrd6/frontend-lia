@@ -22,15 +22,16 @@ export default function PlacementList({
     a.position.localeCompare(b.position),
   );
 
-  async function handleDropBefore(
+  async function handleCardDrop(
     draggedEntityId: string,
     targetEntityId: string,
+    dropBefore: boolean,
   ) {
     await createPlacement({
       entityId: draggedEntityId,
       columnId,
-      afterEntityId: null,
-      beforeEntityId: targetEntityId,
+      afterEntityId: dropBefore ? null : targetEntityId,
+      beforeEntityId: dropBefore ? targetEntityId : null,
     });
 
     await reloadPlacements();
@@ -40,11 +41,6 @@ export default function PlacementList({
     event.preventDefault();
 
     const draggedEntityId = event.dataTransfer.getData("text/plain");
-
-    console.log("DROP:", {
-      draggedEntityId,
-      columnId,
-    });
 
     if (!draggedEntityId) {
       return;
@@ -86,7 +82,7 @@ export default function PlacementList({
             key={placement.entityId}
             entity={entity}
             placement={placement}
-            onDropBefore={handleDropBefore}
+            onDrop={handleCardDrop}
           />
         );
       })}
