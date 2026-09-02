@@ -18,9 +18,11 @@ export default function PlacementList({
   entities,
   reloadPlacements,
 }: Readonly<Props>) {
-  const sortedPlacements = [...placements].sort((a, b) =>
-    a.position.localeCompare(b.position),
-  );
+  const sortedPlacements = [...placements].sort((a, b) => {
+    if (a.position < b.position) return -1;
+    if (a.position > b.position) return 1;
+    return 0;
+  });
 
   async function handleCardDrop(
     draggedEntityId: string,
@@ -37,37 +39,30 @@ export default function PlacementList({
     await reloadPlacements();
   }
 
-  async function handleDropAtStart(
-  event: DragEvent<HTMLDivElement>
-) {
-  event.preventDefault();
+  async function handleDropAtStart(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
 
-  const draggedEntityId =
-    event.dataTransfer.getData("text/plain");
+    const draggedEntityId = event.dataTransfer.getData("text/plain");
 
-  if (!draggedEntityId) {
-    return;
-  }
+    if (!draggedEntityId) {
+      return;
+    }
 
-  const remainingPlacements =
-    sortedPlacements.filter(
-      placement =>
-        placement.entityId !== draggedEntityId
+    const remainingPlacements = sortedPlacements.filter(
+      (placement) => placement.entityId !== draggedEntityId,
     );
 
-  const firstPlacement =
-    remainingPlacements[0];
+    const firstPlacement = remainingPlacements[0];
 
-  await createPlacement({
-    entityId: draggedEntityId,
-    columnId,
-    afterEntityId: null,
-    beforeEntityId:
-      firstPlacement?.entityId ?? null,
-  });
+    await createPlacement({
+      entityId: draggedEntityId,
+      columnId,
+      afterEntityId: null,
+      beforeEntityId: firstPlacement?.entityId ?? null,
+    });
 
-  await reloadPlacements();
-}
+    await reloadPlacements();
+  }
 
   async function handleDropAtEnd(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
@@ -95,37 +90,37 @@ export default function PlacementList({
   }
 
   return (
-  <div className="min-h-32 p-2">
-    <div
-      className="min-h-6"
-      onDragOver={(event) => event.preventDefault()}
-      onDrop={handleDropAtStart}
-    />
+    <div className="min-h-32 p-2">
+      <div
+        className="min-h-6"
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={handleDropAtStart}
+      />
 
-    {sortedPlacements.map((placement) => {
-      const entity = entities.find(
-        (entity) => entity.id === placement.entityId,
-      );
+      {sortedPlacements.map((placement) => {
+        const entity = entities.find(
+          (entity) => entity.id === placement.entityId,
+        );
 
-      if (!entity) {
-        return null;
-      }
+        if (!entity) {
+          return null;
+        }
 
-      return (
-        <PlacementCard
-          key={placement.entityId}
-          entity={entity}
-          placement={placement}
-          onDrop={handleCardDrop}
-        />
-      );
-    })}
+        return (
+          <PlacementCard
+            key={placement.entityId}
+            entity={entity}
+            placement={placement}
+            onDrop={handleCardDrop}
+          />
+        );
+      })}
 
-    <div
-      className="min-h-6"
-      onDragOver={(event) => event.preventDefault()}
-      onDrop={handleDropAtEnd}
-    />
-  </div>
-);
+      <div
+        className="min-h-6"
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={handleDropAtEnd}
+      />
+    </div>
+  );
 }
