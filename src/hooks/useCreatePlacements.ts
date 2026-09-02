@@ -8,9 +8,9 @@ export function useCreatePlacement() {
     mutationFn: (request: CreatePlacementRequest) =>
       createPlacement(request),
 
-    onSuccess: (_, request) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["placement", request.columnId],
+        queryKey: ["placements"],
       });
     },
   });

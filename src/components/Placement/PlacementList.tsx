@@ -4,24 +4,21 @@ import type { EntityType } from "../../types/entity";
 import PlacementCard from "./PlacementCard";
 import { useCreatePlacement } from "../../hooks/useCreatePlacements";
 import { usePlacements } from "../../hooks/usePlacements";
+import type { ColumnType } from "../../types/column";
+import type { PlacementType } from "../../types/placement";
 
 type Props = {
-  columnId: string;
+  column: ColumnType;
+  placements: PlacementType[];
   entities: EntityType[];
 };
 
-export default function PlacementList({ columnId, entities }: Readonly<Props>) {
-  const { placements, isLoading, isError } = usePlacements(columnId);
-
+export default function PlacementList({
+  column,
+  placements,
+  entities,
+}: Readonly<Props>) {
   const createPlacement = useCreatePlacement();
-
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (isError) {
-    return <p>Could not load placements.</p>;
-  }
 
   const sortedPlacements = [...placements].sort((a, b) =>
     a.position.localeCompare(b.position),
@@ -34,7 +31,7 @@ export default function PlacementList({ columnId, entities }: Readonly<Props>) {
   ) {
     await createPlacement.mutateAsync({
       entityId: draggedEntityId,
-      columnId,
+      columnId: column.id,
       afterEntityId: dropBefore ? null : targetEntityId,
       beforeEntityId: dropBefore ? targetEntityId : null,
     });
@@ -57,7 +54,7 @@ export default function PlacementList({ columnId, entities }: Readonly<Props>) {
 
     await createPlacement.mutateAsync({
       entityId: draggedEntityId,
-      columnId,
+      columnId: column.id,
       afterEntityId: null,
       beforeEntityId: firstPlacement?.entityId ?? null,
     });
@@ -80,7 +77,7 @@ export default function PlacementList({ columnId, entities }: Readonly<Props>) {
 
     await createPlacement.mutateAsync({
       entityId: draggedEntityId,
-      columnId,
+      columnId: column.id,
       afterEntityId: lastPlacement?.entityId ?? null,
       beforeEntityId: null,
     });
