@@ -19,9 +19,11 @@ export default function PlacementList({
 }: Readonly<Props>) {
   const createPlacement = useCreatePlacement();
 
-  const sortedPlacements = [...placements].sort((a, b) =>
-    a.position.localeCompare(b.position),
-  );
+  const sortedPlacements = [...placements].sort((a, b) => {
+    if (a.position < b.position) return -1;
+    if (a.position > b.position) return 1;
+    return 0;
+  });
 
   async function handleCardDrop(
     draggedEntityId: string,
