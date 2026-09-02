@@ -1,31 +1,36 @@
-import type { Column as ColumnType } from "../../types/column";
+import { useColumns } from "../../hooks/useColumns";
 import type { Entity as EntityType } from "../../types/entity";
-import type { Placement as PlacementType } from "../../types/placement";
 import PlacementList from "../Placement/PlacementList";
 import ColumnHeader from "./ColumnHeader";
 
 type Props = {
-  column: ColumnType;
-  placements: PlacementType[];
   entities: EntityType[];
-  reloadPlacements: () => Promise<void>;
+  getPlacements: () => Promise<void>;
 };
 export default function Column({
-  column,
-  placements,
   entities,
-  reloadPlacements,
+  getPlacements,
 }: Readonly<Props>) {
+  const { data: columns = [] } = useColumns();
+
+  const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
+
   return (
     <section className="outline flex flex-col">
-      <ColumnHeader column={column} />
+      {sortedColumns.map((column) => {
 
-      <PlacementList 
+        return (
+          <>
+            <ColumnHeader column={column} />
+
+            <PlacementList
               columnId={column.id}
-        placements={placements}
-        entities={entities}
-        reloadPlacements={reloadPlacements}
-      />
+              entities={entities}
+              getPlacements={getPlacements}
+            />
+          </>
+        );
+      })}
     </section>
   );
 }
