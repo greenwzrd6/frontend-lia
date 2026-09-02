@@ -3,7 +3,6 @@ import type { EntityType } from "../../types/entity";
 
 import PlacementCard from "./PlacementCard";
 import { useCreatePlacement } from "../../hooks/useCreatePlacements";
-import { usePlacements } from "../../hooks/usePlacements";
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
 
