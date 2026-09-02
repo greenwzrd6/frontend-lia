@@ -17,10 +17,13 @@ export default function ColumnList({
   entities,
   reloadPlacements,
 }: Readonly<Props>) {
+
+  const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
+
   return (
     <div className="flex justify-evenly">
       <EntityColumnMock entities={entities}/>
-      {columns.map((column) => {
+      {sortedColumns.map((column) => {
         const columnPlacements = placements.filter(
           (placement) => placement.columnId === column.id,
         );
