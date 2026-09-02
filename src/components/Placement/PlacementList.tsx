@@ -37,6 +37,38 @@ export default function PlacementList({
     await reloadPlacements();
   }
 
+  async function handleDropAtStart(
+  event: DragEvent<HTMLDivElement>
+) {
+  event.preventDefault();
+
+  const draggedEntityId =
+    event.dataTransfer.getData("text/plain");
+
+  if (!draggedEntityId) {
+    return;
+  }
+
+  const remainingPlacements =
+    sortedPlacements.filter(
+      placement =>
+        placement.entityId !== draggedEntityId
+    );
+
+  const firstPlacement =
+    remainingPlacements[0];
+
+  await createPlacement({
+    entityId: draggedEntityId,
+    columnId,
+    afterEntityId: null,
+    beforeEntityId:
+      firstPlacement?.entityId ?? null,
+  });
+
+  await reloadPlacements();
+}
+
   async function handleDropAtEnd(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
 
@@ -63,29 +95,37 @@ export default function PlacementList({
   }
 
   return (
+  <div className="min-h-32 p-2">
     <div
-      className="min-h-32 p-2"
+      className="min-h-6"
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={handleDropAtStart}
+    />
+
+    {sortedPlacements.map((placement) => {
+      const entity = entities.find(
+        (entity) => entity.id === placement.entityId,
+      );
+
+      if (!entity) {
+        return null;
+      }
+
+      return (
+        <PlacementCard
+          key={placement.entityId}
+          entity={entity}
+          placement={placement}
+          onDrop={handleCardDrop}
+        />
+      );
+    })}
+
+    <div
+      className="min-h-6"
       onDragOver={(event) => event.preventDefault()}
       onDrop={handleDropAtEnd}
-    >
-      {sortedPlacements.map((placement) => {
-        const entity = entities.find(
-          (entity) => entity.id === placement.entityId,
-        );
-
-        if (!entity) {
-          return null;
-        }
-
-        return (
-          <PlacementCard
-            key={placement.entityId}
-            entity={entity}
-            placement={placement}
-            onDrop={handleCardDrop}
-          />
-        );
-      })}
-    </div>
-  );
+    />
+  </div>
+);
 }
