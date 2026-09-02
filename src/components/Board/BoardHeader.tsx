@@ -1,7 +1,7 @@
-import type { Board } from "../../types/board";
+import type { BoardType } from "../../types/board";
 
 type Props = {
-  board: Board;
+  board: BoardType;
 };
 
 export default function BoardHeader({ board }: Readonly<Props>) {

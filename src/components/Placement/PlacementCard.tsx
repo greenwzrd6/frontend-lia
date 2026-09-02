@@ -1,11 +1,11 @@
 import type { DragEvent } from "react";
-import type { Entity } from "../../types/entity";
-import type { Placement } from "../../types/placement";
+import type { EntityType } from "../../types/entity";
+import type { PlacementType } from "../../types/placement";
 import { handleDragStart } from "../../utils/DragAndDrop";
 
 type Props = {
-  entity: Entity;
-  placement: Placement;
+  entity: EntityType;
+  placement: PlacementType | null | undefined;
   onDrop: (
     draggedEntityId: string,
     targetEntityId: string,
@@ -66,7 +66,7 @@ export default function PlacementCard({
 
       <small>Entity: {entity.id}</small>
 
-      <small>Position: {placement.position}</small>
+      <small>Position: {placement?.position}</small>
     </article>
   );
 }

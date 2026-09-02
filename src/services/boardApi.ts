@@ -1,8 +1,8 @@
 import { apiRequest } from "./api";
-import type { Board } from "../types/board";
+import type { BoardType } from "../types/board";
 
-export async function getBoard(id: string): Promise<Board> {
-  return apiRequest<Board>(`/api/boards/${id}`);
+export async function getBoard(id: string): Promise<BoardType> {
+  return apiRequest<BoardType>(`/api/boards/${id}`);
 }
 
 export async function createBoard(title: string): Promise<{ id: string }> {

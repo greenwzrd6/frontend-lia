@@ -1,36 +1,24 @@
-import { useColumns } from "../../hooks/useColumns";
-import type { Entity as EntityType } from "../../types/entity";
+import { mockEntities } from "../../services/mockEntities";
+import type { ColumnType } from "../../types/column";
+import type { PlacementType } from "../../types/placement";
 import PlacementList from "../Placement/PlacementList";
 import ColumnHeader from "./ColumnHeader";
 
 type Props = {
-  entities: EntityType[];
-  getPlacements: () => Promise<void>;
+  column: ColumnType;
+  placements: PlacementType[];
 };
-export default function Column({
-  entities,
-  getPlacements,
-}: Readonly<Props>) {
-  const { data: columns = [] } = useColumns();
 
-  const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
-
+export default function Column({ column, placements }: Readonly<Props>) {
   return (
     <section className="outline flex flex-col">
-      {sortedColumns.map((column) => {
+      <ColumnHeader column={column} />
 
-        return (
-          <>
-            <ColumnHeader column={column} />
-
-            <PlacementList
-              columnId={column.id}
-              entities={entities}
-              getPlacements={getPlacements}
-            />
-          </>
-        );
-      })}
+      <PlacementList
+        column={column}
+        placements={placements}
+        entities={mockEntities}
+      />
     </section>
   );
 }

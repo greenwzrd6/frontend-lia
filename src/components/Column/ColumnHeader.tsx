@@ -1,4 +1,4 @@
-import type { Column as ColumnType } from "../../types/column";
+import type { ColumnType } from "../../types/column";
 
 type Props = {
   column: ColumnType;

@@ -1,23 +1,34 @@
-import type { Entity as EntityType } from "../../types/entity";
+import { mockEntities } from "../../services/mockEntities";
+import type { ColumnType } from "../../types/column";
+import type { PlacementType } from "../../types/placement";
 import Column from "./Column";
 import EntityColumnMock from "./EntityColumnMock";
 
 type Props = {
-  entities: EntityType[];
-  getPlacements: () => Promise<void>;
+  columns: ColumnType[];
+  placements: PlacementType[];
 };
 
-export default function ColumnList({
-  entities,
-  getPlacements,
-}: Readonly<Props>) {
+export default function ColumnList({ columns, placements }: Readonly<Props>) {
+  const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
+
   return (
     <div className="flex justify-evenly">
-      <EntityColumnMock entities={entities} />
+      <EntityColumnMock entities={mockEntities} />
+
+      {sortedColumns.map((column) => {
+        const columnPlacements = placements.filter(
+          (placement) => placement.columnId === column.id,
+        );
+
+        return (
           <Column
-            entities={entities}
-            getPlacements={getPlacements}
+            key={column.id}
+            column={column}
+            placements={columnPlacements}
           />
+        );
+      })}
     </div>
   );
 }

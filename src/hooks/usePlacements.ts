@@ -1,28 +1,22 @@
-import { useQueries} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { mockEntities } from "../services/mockEntities";
-import { useColumns } from "./useColumns";
-import { useMemo } from "react";
 import { getPlacement } from "../services/placementApi";
+import type { PlacementType } from "../types/placement";
 
-export function usePlacements() {
-    const columnsQuery = useColumns();
+export function usePlacements(columnIds: string[]) {
+  return useQuery<PlacementType[]>({
+    queryKey: ["placements", columnIds],
+    queryFn: async () => {
+      const placements = await Promise.all(
+        mockEntities.map((entity) =>
+          getPlacement(entity.id, columnIds),
+        ),
+      );
 
-    const columnIds = useMemo(
-      () => (columnsQuery.data ? columnsQuery.data.map((c) => c.id) : []),
-      [columnsQuery], 
-    );
-
-    const placementsQueries = useQueries({
-    queries: mockEntities.map((entity) => {
-        return {
-          queryKey: ["placement", entity.id],
-          queryFn: () => getPlacement(entity.id, columnIds),
-        };
-      }),
-    });
-
-    return placementsQueries;
+      return placements.filter(
+        (placement): placement is PlacementType => placement != null,
+      );
+    },
+    enabled: columnIds.length > 0,
+  });
 }
-  
-  
-  
