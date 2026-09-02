@@ -1,28 +1,29 @@
 import type { DragEvent } from "react";
 import type { Entity } from "../../types/entity";
-import type { Placement } from "../../types/placement";
 
 import PlacementCard from "./PlacementCard";
 import { createPlacement } from "../../services/placementApi";
+import { usePlacements } from "../../hooks/usePlacements";
 
 type Props = {
   columnId: string;
-  placements: Placement[];
   entities: Entity[];
-  reloadPlacements: () => Promise<void>;
+  getPlacements: () => Promise<void>;
 };
 
 export default function PlacementList({
   columnId,
-  placements,
   entities,
-  reloadPlacements,
+  getPlacements
 }: Readonly<Props>) {
-  const sortedPlacements = [...placements].sort((a, b) => {
-    if (a.position < b.position) return -1;
-    if (a.position > b.position) return 1;
-    return 0;
-  });
+
+  const placements = usePlacements();
+
+  // const sortedPlacements = [...placements].sort((a, b) => {
+  //   if (a.position < b.position) return -1;
+  //   if (a.position > b.position) return 1;
+  //   return 0;
+  // });
 
   async function handleCardDrop(
     draggedEntityId: string,
@@ -36,7 +37,7 @@ export default function PlacementList({
       beforeEntityId: dropBefore ? targetEntityId : null,
     });
 
-    await reloadPlacements();
+    await getPlacements();
   }
 
   async function handleDropAtStart(event: DragEvent<HTMLDivElement>) {
@@ -61,7 +62,7 @@ export default function PlacementList({
       beforeEntityId: firstPlacement?.entityId ?? null,
     });
 
-    await reloadPlacements();
+    await getPlacements();
   }
 
   async function handleDropAtEnd(event: DragEvent<HTMLDivElement>) {
@@ -86,7 +87,7 @@ export default function PlacementList({
       beforeEntityId: null,
     });
 
-    await reloadPlacements();
+    await getPlacements();
   }
 
   return (
