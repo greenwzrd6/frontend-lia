@@ -1,24 +1,24 @@
-import { useEffect } from "react";
-import { HubConnectionBuilder } from "@microsoft/signalr";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { useEffect, useState } from "react";
+import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import { API_URL } from "../services/api";
 
 export function useBoardHub(onPlacementChanged: () => void) {
+  const [connection, setConnection] = useState<HubConnection | null>(null);
+
   useEffect(() => {
-    const connection = new HubConnectionBuilder()
+    const newConnection = new HubConnectionBuilder()
       .withUrl(`${API_URL}/hubs/board`)
       .withAutomaticReconnect()
       .build();
 
-    connection.on("PlacementChanged", onPlacementChanged);
+    setConnection(newConnection);
+  }, []);
 
-    connection
-      .start()
-      .then(() => console.log("signalr connected"))
-      .catch(console.error);
-
-    return () => {
-      connection.stop();
-    };
-  }, [onPlacementChanged]);
+  useEffect(() => {
+    if(connection) {
+      connection.start().then(() => {
+        connection.on("PlacementChanged", () => onPlacementChanged());
+      }).catch(e => console.log(e));
+    }
+  }, [connection])
 }
