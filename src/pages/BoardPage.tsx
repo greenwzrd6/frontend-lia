@@ -3,7 +3,7 @@ import ColumnList from "../components/Column/ColumnList";
 import { useBoard } from "../hooks/useBoard";
 import { useParams } from "react-router-dom";
 import { useColumns } from "../hooks/useColumns";
-import { usePlacements } from "../hooks/usePlacements";
+import { invalidateAllPlacements, usePlacements } from "../hooks/usePlacements"
 import { useQueryClient } from "@tanstack/react-query";
 import { useBoardHub } from "../hooks/useBoardHub";
 
@@ -12,21 +12,15 @@ export default function BoardPage() {
 
   const { data: columns = [] } = useColumns();
 
-  const columnIds = columns.map((column) => column.id);
-
   const queryClient = useQueryClient();
 
-  useBoardHub(() => {
-    queryClient.invalidateQueries({
-      queryKey: ["placements"],
-    });
-  });
+  useBoardHub(() => invalidateAllPlacements(queryClient));
 
   const {
     data: placements = [],
     isLoading: placementsLoading,
     isError: placementsError,
-  } = usePlacements(columnIds);
+  } = usePlacements(id!);
 
   const boardQuery = useBoard();
 
