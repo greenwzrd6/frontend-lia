@@ -3,6 +3,7 @@ import type { PlacementType } from "../types/placement";
 
 export type CreatePlacementRequest = {
   entityId: string;
+  boardId: string;
   columnId: string;
   afterEntityId: string | null;
   beforeEntityId: string | null;

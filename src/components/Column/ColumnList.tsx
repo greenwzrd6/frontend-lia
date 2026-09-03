@@ -7,9 +7,10 @@ import EntityColumnMock from "./EntityColumnMock";
 type Props = {
   columns: ColumnType[];
   placements: PlacementType[];
+  boardId: string;
 };
 
-export default function ColumnList({ columns, placements }: Readonly<Props>) {
+export default function ColumnList({ columns, placements, boardId }: Readonly<Props>) {
   const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
 
   return (
@@ -26,6 +27,7 @@ export default function ColumnList({ columns, placements }: Readonly<Props>) {
             key={column.id}
             column={column}
             placements={columnPlacements}
+            boardId={boardId}
           />
         );
       })}

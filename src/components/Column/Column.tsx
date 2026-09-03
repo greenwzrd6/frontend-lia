@@ -7,9 +7,10 @@ import ColumnHeader from "./ColumnHeader";
 type Props = {
   column: ColumnType;
   placements: PlacementType[];
+  boardId: string;
 };
 
-export default function Column({ column, placements }: Readonly<Props>) {
+export default function Column({ column, placements, boardId }: Readonly<Props>) {
   return (
     <section className="outline flex flex-col">
       <ColumnHeader column={column} />
@@ -18,6 +19,7 @@ export default function Column({ column, placements }: Readonly<Props>) {
         column={column}
         placements={placements}
         entities={mockEntities}
+        boardId={boardId}
       />
     </section>
   );
