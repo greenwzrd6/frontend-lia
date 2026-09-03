@@ -10,12 +10,14 @@ type Props = {
   column: ColumnType;
   placements: PlacementType[];
   entities: EntityType[];
+  boardId: string;
 };
 
 export default function PlacementList({
   column,
   placements,
   entities,
+  boardId
 }: Readonly<Props>) {
   const createPlacement = useCreatePlacement();
 
@@ -32,6 +34,7 @@ export default function PlacementList({
   ) {
     await createPlacement.mutateAsync({
       entityId: draggedEntityId,
+      boardId: boardId,
       columnId: column.id,
       afterEntityId: dropBefore ? null : targetEntityId,
       beforeEntityId: dropBefore ? targetEntityId : null,
@@ -55,6 +58,7 @@ export default function PlacementList({
 
     await createPlacement.mutateAsync({
       entityId: draggedEntityId,
+      boardId: boardId,
       columnId: column.id,
       afterEntityId: null,
       beforeEntityId: firstPlacement?.entityId ?? null,
@@ -78,6 +82,7 @@ export default function PlacementList({
 
     await createPlacement.mutateAsync({
       entityId: draggedEntityId,
+      boardId: boardId,
       columnId: column.id,
       afterEntityId: lastPlacement?.entityId ?? null,
       beforeEntityId: null,

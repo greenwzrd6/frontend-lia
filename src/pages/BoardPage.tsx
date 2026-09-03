@@ -10,6 +10,8 @@ import { useBoardHub } from "../hooks/useBoardHub";
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
 
+  console.log("ID FROM URL:", id);
+
   const { data: columns = [] } = useColumns();
 
   const queryClient = useQueryClient();
@@ -52,7 +54,7 @@ export default function BoardPage() {
     <>
       <BoardHeader board={boardQuery.data} />
 
-      <ColumnList columns={columns} placements={placements} />
+      <ColumnList columns={columns} placements={placements} boardId={id} />
     </>
   );
 }
