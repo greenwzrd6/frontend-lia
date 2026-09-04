@@ -9,7 +9,7 @@ export default function EntityColumnMock({ entities }: Readonly<Props>) {
   return (
     <section className="outline flex flex-col">
       <h2 className="text-xl flex flex-row justify-center">
-        Jajjamän
+        Mock data
       </h2>
 
       {entities.map((entity) => (

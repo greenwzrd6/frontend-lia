@@ -1,5 +1,9 @@
+type BoardId = {
+  id: string;
+};
+
 export type BoardType = {
-    id: string;
+    id: BoardId;
     title: string[];
     roots: string[];
 }

@@ -15,7 +15,6 @@ export async function getPlacements(boardId: string): Promise<PlacementType[]> {
   params.set("boardId", boardId);
 
   try {
-    console.log("gotted placement");
     return await apiRequest<PlacementType[]>(
       `/api/placements/board/${boardId}`,
     );
