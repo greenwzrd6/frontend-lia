@@ -3,9 +3,7 @@ import ColumnList from "../components/Column/ColumnList";
 import { useBoard } from "../hooks/useBoard";
 import { useParams } from "react-router-dom";
 import { useColumns } from "../hooks/useColumns";
-import { invalidateAllPlacements, usePlacements } from "../hooks/usePlacements";
-import { useQueryClient } from "@tanstack/react-query";
-import { useBoardHub } from "../hooks/useBoardHub";
+import { usePlacements } from "../hooks/usePlacements";
 import type { BoardId } from "../types/board";
 
 export default function BoardPage() {
@@ -14,11 +12,6 @@ export default function BoardPage() {
   console.log("ID FROM URL:", id);
 
   const { data: columns = [] } = useColumns();
-
-  const queryClient = useQueryClient();
-
-  useBoardHub(() => invalidateAllPlacements(queryClient));
-
   
   const boardQuery = useBoard();
   

@@ -1,8 +1,6 @@
-export type BoardId = {
-  id: string;
-};
+import type { ColumnId } from "./column";
 
-export type ColumnId = {
+export type BoardId = {
   id: string;
 };
 
