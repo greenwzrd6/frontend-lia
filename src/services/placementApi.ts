@@ -10,10 +10,6 @@ export type CreatePlacementRequest = {
 };
 
 export async function getPlacements(boardId: string): Promise<PlacementType[]> {
-  const params = new URLSearchParams();
-
-  params.set("boardId", boardId);
-
   try {
     return await apiRequest<PlacementType[]>(
       `/api/placements/board/${boardId}`,
@@ -28,24 +24,25 @@ export async function getPlacements(boardId: string): Promise<PlacementType[]> {
 }
 
 export async function getPlacement(
-  entityId: string,
+  entityIds: string[],
   boardId: string,
-): Promise<PlacementType | null> {
+): Promise<PlacementType[]> {
   const params = new URLSearchParams();
 
-  params.set("entityId", entityId);
+  entityIds.forEach((id) => params.append("entityId", id));
+
   params.set("boardId", boardId);
 
   try {
-    return await apiRequest<PlacementType>(
+    return await apiRequest<PlacementType[]>(
       `/api/placements/get?${params.toString()}`,
     );
   } catch (error) {
     console.log(
-      `Something went wrong while getting placement with entityId: ${entityId}`,
+      `Something went wrong while getting placement with entityIds: ${entityIds}`,
     );
     console.log(`Error: ${error}`);
-    return null;
+    return [];
   }
 }
 

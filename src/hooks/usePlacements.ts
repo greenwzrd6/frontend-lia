@@ -12,6 +12,28 @@ export function usePlacements(boardId: string) {
   });
 }
 
+export const updatePlacementCache = (
+  queryClient: QueryClient,
+  boardId: string,
+  updatedPlacements: PlacementType[],
+) => {
+  queryClient.setQueryData<PlacementType[]>(
+    ["placements", boardId],
+    (oldPlacements = []) => {
+      const updatedIds = new Set(
+        updatedPlacements.map((placement) => placement.entityId),
+      );
+
+      return [
+        ...oldPlacements.filter(
+          (placement) => !updatedIds.has(placement.entityId),
+        ),
+        ...updatedPlacements,
+      ];
+    },
+  );
+};
+
 export const invalidateAllPlacements = (queryClient: QueryClient) => {
   queryClient.invalidateQueries({
     queryKey: ["placements"],
