@@ -9,12 +9,13 @@ export async function apiRequest<T>(
         options
     );
 
-    if (!response.ok) {
-        throw new Error(
-            `API request failed: ${response.status}`
-        );
-    }
+if (!response.ok) {
+    const errorBody = await response.text();
 
+    throw new Error(
+        `API request failed: ${response.status} - ${errorBody}`
+    );
+}
     if (response.status === 204) {
         return undefined as T;
     }

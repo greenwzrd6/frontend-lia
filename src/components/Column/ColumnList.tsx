@@ -10,7 +10,11 @@ type Props = {
   boardId: string;
 };
 
-export default function ColumnList({ columns, placements, boardId }: Readonly<Props>) {
+export default function ColumnList({
+  columns,
+  placements,
+  boardId,
+}: Readonly<Props>) {
   const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
 
   return (
@@ -19,12 +23,12 @@ export default function ColumnList({ columns, placements, boardId }: Readonly<Pr
 
       {sortedColumns.map((column) => {
         const columnPlacements = placements.filter(
-          (placement) => placement.columnId === column.id,
+          (placement) => placement.columnId.id === column.id.id,
         );
 
         return (
           <Column
-            key={column.id}
+            key={column.id.id}
             column={column}
             placements={columnPlacements}
             boardId={boardId}

@@ -66,7 +66,7 @@ export default function PlacementCard({
 
       <small>Entity: {entity.id}</small>
 
-      <small>Position: {placement?.position}</small>
+      <small>sortKey: {placement?.sortKey}</small>
     </article>
   );
 }

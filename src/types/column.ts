@@ -1,6 +1,15 @@
+type ColumnId = {
+  id: string;
+};
+
+type BoardId = {
+  id: string;
+};
+
+
 export type ColumnType = {
-    id: string;
-    title: string;
-    position: number;
-    boardId: string;
-}
+  id: ColumnId;
+  title: string;
+  position: number;
+  boardId: BoardId
+};

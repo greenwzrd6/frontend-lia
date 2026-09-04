@@ -5,8 +5,7 @@ export function useCreatePlacement() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: CreatePlacementRequest) =>
-      createPlacement(request),
+    mutationFn: createPlacement,
 
     onSuccess: () => {
       queryClient.invalidateQueries({

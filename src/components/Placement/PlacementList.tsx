@@ -17,13 +17,13 @@ export default function PlacementList({
   column,
   placements,
   entities,
-  boardId
+  boardId,
 }: Readonly<Props>) {
   const createPlacement = useCreatePlacement();
 
   const sortedPlacements = [...placements].sort((a, b) => {
-    if (a.position < b.position) return -1;
-    if (a.position > b.position) return 1;
+    if (a.sortKey < b.sortKey) return -1;
+    if (a.sortKey > b.sortKey) return 1;
     return 0;
   });
 
@@ -35,7 +35,7 @@ export default function PlacementList({
     await createPlacement.mutateAsync({
       entityId: draggedEntityId,
       boardId: boardId,
-      columnId: column.id,
+      columnId: column.id.id,
       afterEntityId: dropBefore ? null : targetEntityId,
       beforeEntityId: dropBefore ? targetEntityId : null,
     });
@@ -51,7 +51,7 @@ export default function PlacementList({
     }
 
     const remainingPlacements = sortedPlacements.filter(
-      (placement) => placement.entityId !== draggedEntityId,
+      (placement) => placement.entityId.id !== draggedEntityId,
     );
 
     const firstPlacement = remainingPlacements.at(0);
@@ -59,9 +59,9 @@ export default function PlacementList({
     await createPlacement.mutateAsync({
       entityId: draggedEntityId,
       boardId: boardId,
-      columnId: column.id,
+      columnId: column.id.id,
       afterEntityId: null,
-      beforeEntityId: firstPlacement?.entityId ?? null,
+      beforeEntityId: firstPlacement?.entityId.id ?? null,
     });
   }
 
@@ -75,7 +75,7 @@ export default function PlacementList({
     }
 
     const remainingPlacements = sortedPlacements.filter(
-      (placement) => placement.entityId !== draggedEntityId,
+      (placement) => placement.entityId.id !== draggedEntityId,
     );
 
     const lastPlacement = remainingPlacements.at(-1);
@@ -83,8 +83,8 @@ export default function PlacementList({
     await createPlacement.mutateAsync({
       entityId: draggedEntityId,
       boardId: boardId,
-      columnId: column.id,
-      afterEntityId: lastPlacement?.entityId ?? null,
+      columnId: column.id.id,
+      afterEntityId: lastPlacement?.entityId.id ?? null,
       beforeEntityId: null,
     });
   }
@@ -99,7 +99,7 @@ export default function PlacementList({
 
       {sortedPlacements.map((placement) => {
         const entity = entities.find(
-          (entity) => entity.id === placement.entityId,
+          (entity) => entity.id === placement.entityId.id,
         );
 
         if (!entity) {
@@ -108,7 +108,7 @@ export default function PlacementList({
 
         return (
           <PlacementCard
-            key={placement.entityId}
+            key={placement.entityId.id}
             entity={entity}
             placement={placement}
             onDrop={handleCardDrop}
