@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createPlacement, type CreatePlacementRequest } from "../services/placementApi";
+import { createPlacement } from "../services/placementApi";
 
 export function useCreatePlacement() {
   const queryClient = useQueryClient();
