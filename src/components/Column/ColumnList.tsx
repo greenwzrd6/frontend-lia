@@ -1,4 +1,5 @@
 import { mockEntities } from "../../services/mockEntities";
+import type { BoardId } from "../../types/board";
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
 import Column from "./Column";
@@ -7,12 +8,11 @@ import EntityColumnMock from "./EntityColumnMock";
 type Props = {
   columns: ColumnType[];
   placements: PlacementType[];
-  boardId: string;
+  boardId: BoardId;
 };
 
 export default function ColumnList({
   columns,
-  placements,
   boardId,
 }: Readonly<Props>) {
   const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
@@ -22,15 +22,11 @@ export default function ColumnList({
       <EntityColumnMock entities={mockEntities} />
 
       {sortedColumns.map((column) => {
-        const columnPlacements = placements.filter(
-          (placement) => placement.columnId.id === column.id.id,
-        );
 
         return (
           <Column
             key={column.id.id}
             column={column}
-            placements={columnPlacements}
             boardId={boardId}
           />
         );

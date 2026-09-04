@@ -1,8 +1,8 @@
-type ColumnId = {
+export type ColumnId = {
   id: string;
 };
 
-type BoardId = {
+export type BoardId = {
   id: string;
 };
 
