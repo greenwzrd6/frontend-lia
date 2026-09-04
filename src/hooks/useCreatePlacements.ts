@@ -7,9 +7,11 @@ export function useCreatePlacement() {
   return useMutation({
     mutationFn: createPlacement,
 
-    onSuccess: () => {
+    onSuccess: (_, vars) => {
+      
       queryClient.invalidateQueries({
-        queryKey: ["placements"],
+        exact: false,
+        queryKey: ["placements", vars.columnId],
       });
     },
   });

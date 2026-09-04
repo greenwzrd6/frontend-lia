@@ -5,12 +5,13 @@ import PlacementCard from "./PlacementCard";
 import { useCreatePlacement } from "../../hooks/useCreatePlacements";
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
+import type { BoardId } from "../../types/board";
 
 type Props = {
   column: ColumnType;
-  placements: PlacementType[];
+  placements: PlacementType[] | undefined;
   entities: EntityType[];
-  boardId: string;
+  boardId: BoardId;
 };
 
 export default function PlacementList({
@@ -19,22 +20,24 @@ export default function PlacementList({
   entities,
   boardId,
 }: Readonly<Props>) {
-  const createPlacement = useCreatePlacement();
+  const { mutateAsync: createPlacement } = useCreatePlacement();
 
-  const sortedPlacements = [...placements].sort((a, b) => {
-    if (a.sortKey < b.sortKey) return -1;
-    if (a.sortKey > b.sortKey) return 1;
-    return 0;
-  });
+  const sortedPlacements = placements
+    ? [...placements].sort((a, b) => {
+        if (a.sortKey < b.sortKey) return -1;
+        if (a.sortKey > b.sortKey) return 1;
+        return 0;
+      })
+    : [];
 
   async function handleCardDrop(
     draggedEntityId: string,
     targetEntityId: string,
     dropBefore: boolean,
   ) {
-    await createPlacement.mutateAsync({
+    await createPlacement({
       entityId: draggedEntityId,
-      boardId: boardId,
+      boardId: boardId.id,
       columnId: column.id.id,
       afterEntityId: dropBefore ? null : targetEntityId,
       beforeEntityId: dropBefore ? targetEntityId : null,
@@ -56,9 +59,9 @@ export default function PlacementList({
 
     const firstPlacement = remainingPlacements.at(0);
 
-    await createPlacement.mutateAsync({
+    await createPlacement({
       entityId: draggedEntityId,
-      boardId: boardId,
+      boardId: boardId.id,
       columnId: column.id.id,
       afterEntityId: null,
       beforeEntityId: firstPlacement?.entityId.id ?? null,
@@ -80,9 +83,9 @@ export default function PlacementList({
 
     const lastPlacement = remainingPlacements.at(-1);
 
-    await createPlacement.mutateAsync({
+    await createPlacement({
       entityId: draggedEntityId,
-      boardId: boardId,
+      boardId: boardId.id,
       columnId: column.id.id,
       afterEntityId: lastPlacement?.entityId.id ?? null,
       beforeEntityId: null,

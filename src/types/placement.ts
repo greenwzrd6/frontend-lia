@@ -1,19 +1,19 @@
-type BoardId = {
+export type BoardId = {
   id: string;
 };
 
-type ColumnId = {
+export type ColumnId = {
   id: string;
 };
 
-type EntityId = {
-    id: string;
-}
+export type EntityId = {
+  id: string;
+};
 
 export type PlacementType = {
-    entityId: EntityId;
-    boardId: BoardId;
-    columnId: ColumnId;
-    timeStamp: string;
-    sortKey: string;
-}
+  entityId: EntityId;
+  boardId: BoardId;
+  columnId: ColumnId;
+  timeStamp: string;
+  sortKey: string;
+};

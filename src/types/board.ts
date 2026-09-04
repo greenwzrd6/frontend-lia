@@ -1,4 +1,4 @@
-type BoardId = {
+export type BoardId = {
   id: string;
 };
 
