@@ -5,6 +5,9 @@ import PlacementCard from "./PlacementCard";
 import { useCreatePlacement } from "../../hooks/useCreatePlacements";
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
+import { useQueryClient } from "@tanstack/react-query";
+import { updatePlacementCache } from "../../hooks/usePlacements";
+import { getPlacement } from "../../services/placementApi";
 
 type Props = {
   column: ColumnType;
@@ -20,12 +23,19 @@ export default function PlacementList({
   boardId,
 }: Readonly<Props>) {
   const createPlacement = useCreatePlacement();
+  const queryClient = useQueryClient();
 
   const sortedPlacements = [...placements].sort((a, b) => {
     if (a.sortKey < b.sortKey) return -1;
     if (a.sortKey > b.sortKey) return 1;
     return 0;
   });
+
+  async function updateCache(entityId: string) {
+    const updatedPlacements = await getPlacement([entityId], boardId);
+
+    updatePlacementCache(queryClient, boardId, updatedPlacements);
+  }
 
   async function handleCardDrop(
     draggedEntityId: string,
@@ -39,6 +49,8 @@ export default function PlacementList({
       afterEntityId: dropBefore ? null : targetEntityId,
       beforeEntityId: dropBefore ? targetEntityId : null,
     });
+
+    await updateCache(draggedEntityId);
   }
 
   async function handleDropAtStart(event: DragEvent<HTMLDivElement>) {
@@ -63,6 +75,8 @@ export default function PlacementList({
       afterEntityId: null,
       beforeEntityId: firstPlacement?.entityId.id ?? null,
     });
+
+    await updateCache(draggedEntityId);
   }
 
   async function handleDropAtEnd(event: DragEvent<HTMLDivElement>) {
@@ -87,6 +101,8 @@ export default function PlacementList({
       afterEntityId: lastPlacement?.entityId.id ?? null,
       beforeEntityId: null,
     });
+
+    await updateCache(draggedEntityId);
   }
 
   return (
