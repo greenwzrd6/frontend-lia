@@ -6,7 +6,6 @@ type BoardId = {
   id: string;
 };
 
-
 export type ColumnType = {
   id: ColumnId;
   title: string;
