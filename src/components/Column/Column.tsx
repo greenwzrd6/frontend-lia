@@ -13,7 +13,7 @@ type Props = {
 export default function Column({ column, boardId }: Readonly<Props>) {
   const { data: columnData } = usePlacement(column.id);
   return (
-    <section className="outline flex flex-col">
+    <section className="outline flex flex-col w-75">
       <ColumnHeader column={column} />
 
       <PlacementList
