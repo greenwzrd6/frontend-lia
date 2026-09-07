@@ -16,11 +16,11 @@ export async function getPlacements(
 ): Promise<PlacementType[]> {
   try {
     return await apiRequest<PlacementType[]>(
-      `/api/placements/board/${boardId.id}`,
+      `/api/placements/board/${boardId}`,
     );
   } catch (error) {
     console.log(
-      `Something went wrong while getting placements by BoardId: ${boardId.id}`,
+      `Something went wrong while getting placements by BoardId: ${boardId}`,
     );
     console.log(`Error: ${error}`);
     return [];
@@ -33,11 +33,11 @@ export async function getPlacementsByColumn(
 ): Promise<PlacementType[]> {
   try {
     return await apiRequest<PlacementType[]>(
-      `/api/placements/column/${columnId.id}?boardId=${boardId.id}`,
+      `/api/placements/column/${columnId}?boardId=${boardId}`,
     );
   } catch (error) {
     console.log(
-      `Something went wrong while getting placements in the column: ${columnId.id}`,
+      `Something went wrong while getting placements in the column: ${columnId}`,
     );
     console.log(`Error: ${error}`);
     return [];

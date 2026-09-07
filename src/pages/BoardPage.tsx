@@ -7,7 +7,7 @@ import { usePlacements } from "../hooks/usePlacements";
 import type { BoardId } from "../types/board";
 
 export default function BoardPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: BoardId }>();
 
   console.log("ID FROM URL:", id);
 
@@ -18,14 +18,12 @@ export default function BoardPage() {
   if (!id) {
     return <p>Board ID is missing.</p>;
   }
-
-  const boardId: BoardId = { id: id };
   
   const {
     data: placements = [],
     isLoading: placementsLoading,
     isError: placementsError,
-  } = usePlacements(boardId);
+  } = usePlacements(id);
 
   if (boardQuery.isLoading) {
     return <p>Loading...</p>;
@@ -51,7 +49,7 @@ export default function BoardPage() {
     <>
       <BoardHeader board={boardQuery.data} />
 
-      <ColumnList columns={columns} placements={placements} boardId={boardId} />
+      <ColumnList columns={columns} placements={placements} boardId={id} />
     </>
   );
 }
