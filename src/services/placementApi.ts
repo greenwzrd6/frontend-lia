@@ -29,10 +29,11 @@ export async function getPlacements(
 
 export async function getPlacementsByColumn(
   columnId: ColumnId,
+  boardId: BoardId
 ): Promise<PlacementType[]> {
   try {
     return await apiRequest<PlacementType[]>(
-      `/api/placements/column/${columnId.id}`,
+      `/api/placements/column/${columnId.id}?boardId=${boardId.id}`,
     );
   } catch (error) {
     console.log(
