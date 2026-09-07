@@ -47,7 +47,7 @@ export async function getPlacementsByColumn(
 export async function createPlacement(
   request: CreatePlacementRequest,
 ): Promise<void> {
-  console.log(request)
+  console.log(request);
   await apiRequest<void>("/api/placements/create", {
     method: "POST",
     headers: {
