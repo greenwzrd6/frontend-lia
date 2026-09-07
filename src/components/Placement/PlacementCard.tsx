@@ -54,7 +54,7 @@ export default function PlacementCard({
 
   return (
     <article
-      className="outline my-5 py-1 flex flex-row justify-center"
+      className="outline my-3 py-1 px-1 flex flex-col items justify-center"
       draggable
       onDragStart={(event) =>
         handleDragStart(event, entity.id)
