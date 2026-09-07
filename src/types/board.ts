@@ -1,5 +1,5 @@
-export type BoardId = {
-  id: string;
+export type BoardId = string & {
+  readonly __brand: "BoardId";
 };
 
 export type BoardType = {

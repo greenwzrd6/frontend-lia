@@ -3,7 +3,7 @@ import type { EntityType } from "../../types/entity";
 
 import PlacementCard from "./PlacementCard";
 import { useCreatePlacement } from "../../hooks/useCreatePlacements";
-import type { ColumnId, ColumnType } from "../../types/column";
+import { toColumnId, type ColumnId, type ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
 import type { BoardId } from "../../types/board";
 import { useQueryClient } from "@tanstack/react-query";
@@ -38,22 +38,20 @@ export default function PlacementList({
     draggedEntityId: string,
     targetEntityId: string,
     dropBefore: boolean,
-    sourceColumnId: string,
+    sourceColumnId: ColumnId,
   ) {
     await createPlacement({
       entityId: draggedEntityId,
-      boardId: boardId.id,
-      columnId: column.id.id,
+      boardId: boardId,
+      columnId: column.id,
       afterEntityId: dropBefore ? null : targetEntityId,
       beforeEntityId: dropBefore ? targetEntityId : null,
     });
 
-    const sourceId: ColumnId = { id: sourceColumnId };
-
-    if (sourceColumnId === column.id.id) {
+    if (!sourceColumnId || sourceColumnId === column.id) {
       invalidateColumnPlacements(queryClient, [column.id]);
     } else {
-      invalidateColumnPlacements(queryClient, [sourceId, column.id]);
+      invalidateColumnPlacements(queryClient, [sourceColumnId, column.id]);
     }
   }
 
@@ -61,32 +59,32 @@ export default function PlacementList({
     event.preventDefault();
 
     const draggedEntityId = event.dataTransfer.getData("text/plain");
-    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
+    const sourceColumnId = toColumnId(
+      event.dataTransfer.getData("sourceColumnId"),
+    );
 
     if (!draggedEntityId) {
       return;
     }
 
     const remainingPlacements = sortedPlacements.filter(
-      (placement) => placement.entityId.id !== draggedEntityId,
+      (placement) => placement.entityId !== draggedEntityId,
     );
 
     const firstPlacement = remainingPlacements.at(0);
 
     await createPlacement({
       entityId: draggedEntityId,
-      boardId: boardId.id,
-      columnId: column.id.id,
+      boardId: boardId,
+      columnId: column.id,
       afterEntityId: null,
-      beforeEntityId: firstPlacement?.entityId.id ?? null,
+      beforeEntityId: firstPlacement?.entityId ?? null,
     });
 
-    const sourceId: ColumnId = { id: sourceColumnId };
-
-    if (sourceColumnId === column.id.id) {
+    if (!sourceColumnId || sourceColumnId === column.id) {
       invalidateColumnPlacements(queryClient, [column.id]);
     } else {
-      invalidateColumnPlacements(queryClient, [sourceId, column.id]);
+      invalidateColumnPlacements(queryClient, [sourceColumnId, column.id]);
     }
   }
 
@@ -94,32 +92,33 @@ export default function PlacementList({
     event.preventDefault();
 
     const draggedEntityId = event.dataTransfer.getData("text/plain");
-    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
+
+    const sourceColumnId = toColumnId(
+      event.dataTransfer.getData("sourceColumnId"),
+    );
 
     if (!draggedEntityId) {
       return;
     }
 
     const remainingPlacements = sortedPlacements.filter(
-      (placement) => placement.entityId.id !== draggedEntityId,
+      (placement) => placement.entityId !== draggedEntityId,
     );
 
     const lastPlacement = remainingPlacements.at(-1);
 
     await createPlacement({
       entityId: draggedEntityId,
-      boardId: boardId.id,
-      columnId: column.id.id,
-      afterEntityId: lastPlacement?.entityId.id ?? null,
+      boardId: boardId,
+      columnId: column.id,
+      afterEntityId: lastPlacement?.entityId ?? null,
       beforeEntityId: null,
     });
 
-    const sourceId: ColumnId = { id: sourceColumnId };
-
-    if (sourceColumnId === column.id.id) {
+    if (!sourceColumnId || sourceColumnId === column.id) {
       invalidateColumnPlacements(queryClient, [column.id]);
     } else {
-      invalidateColumnPlacements(queryClient, [sourceId, column.id]);
+      invalidateColumnPlacements(queryClient, [sourceColumnId, column.id]);
     }
   }
 
@@ -133,7 +132,7 @@ export default function PlacementList({
 
       {sortedPlacements.map((placement) => {
         const entity = entities.find(
-          (entity) => entity.id === placement.entityId.id,
+          (entity) => entity.id === placement.entityId,
         );
 
         if (!entity) {
@@ -142,7 +141,7 @@ export default function PlacementList({
 
         return (
           <PlacementCard
-            key={placement.entityId.id}
+            key={placement.entityId}
             entity={entity}
             placement={placement}
             onDrop={handleCardDrop}

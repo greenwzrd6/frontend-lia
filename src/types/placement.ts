@@ -1,12 +1,6 @@
+import type { BoardId } from "./board";
 import type { ColumnId } from "./column";
-
-export type BoardId = {
-  id: string;
-};
-
-export type EntityId = {
-  id: string;
-};
+import type { EntityId } from "./entity";
 
 export type PlacementType = {
   entityId: EntityId;

@@ -2,6 +2,7 @@ import type { DragEvent } from "react";
 import type { EntityType } from "../../types/entity";
 import type { PlacementType } from "../../types/placement";
 import { handleDragStart } from "../../utils/DragAndDrop";
+import { toColumnId, type ColumnId } from "../../types/column";
 
 type Props = {
   entity: EntityType;
@@ -10,7 +11,7 @@ type Props = {
     draggedEntityId: string,
     targetEntityId: string,
     dropBefore: boolean,
-    sourceColumnId: string,
+    sourceColumnId: ColumnId,
   ) => Promise<void>;
 };
 
@@ -29,7 +30,9 @@ export default function PlacementCard({
 
     const draggedEntityId = event.dataTransfer.getData("text/plain");
 
-    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
+    const sourceColumnId = toColumnId(
+      event.dataTransfer.getData("sourceColumnId"),
+    );
 
     if (!draggedEntityId || draggedEntityId === entity.id || !sourceColumnId) {
       return;
@@ -52,7 +55,7 @@ export default function PlacementCard({
         handleDragStart(event, entity.id);
 
         if (placement) {
-          event.dataTransfer.setData("sourceColumnId", placement.columnId.id);
+          event.dataTransfer.setData("sourceColumnId", placement.columnId);
         }
       }}
       onDragOver={handleDragOver}

@@ -8,18 +8,17 @@ type Props = {
 export default function EntityColumnMock({ entities }: Readonly<Props>) {
   return (
     <section className="outline flex flex-col">
-      <h2 className="text-xl flex flex-row justify-center">
-        Mock data
-      </h2>
+      <h2 className="text-xl flex flex-row justify-center">Mock data</h2>
 
       {entities.map((entity) => (
         <span
           className="outline my-1.5 py-1 flex flex-row justify-center"
           key={entity.id}
           draggable
-          onDragStart={(event) =>
-            handleDragStart(event, entity.id)
-          }
+          onDragStart={(event) => {
+            handleDragStart(event, entity.id);
+            event.dataTransfer.setData("sourceColumnId", "");
+          }}
         >
           {entity.title}
         </span>
