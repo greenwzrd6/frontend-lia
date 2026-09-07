@@ -48,9 +48,13 @@ export default function PlacementList({
       beforeEntityId: dropBefore ? targetEntityId : null,
     });
 
-    const columnId: ColumnId = { id: sourceColumnId };
+    const sourceId: ColumnId = { id: sourceColumnId };
 
-    invalidateColumnPlacements(queryClient, [columnId, column.id]);
+    if (sourceColumnId === column.id.id) {
+      invalidateColumnPlacements(queryClient, [column.id]);
+    } else {
+      invalidateColumnPlacements(queryClient, [sourceId, column.id]);
+    }
   }
 
   async function handleDropAtStart(event: DragEvent<HTMLDivElement>) {
@@ -77,9 +81,13 @@ export default function PlacementList({
       beforeEntityId: firstPlacement?.entityId.id ?? null,
     });
 
-    const columnId: ColumnId = { id: sourceColumnId };
+    const sourceId: ColumnId = { id: sourceColumnId };
 
-    invalidateColumnPlacements(queryClient, [columnId, column.id]);
+    if (sourceColumnId === column.id.id) {
+      invalidateColumnPlacements(queryClient, [column.id]);
+    } else {
+      invalidateColumnPlacements(queryClient, [sourceId, column.id]);
+    }
   }
 
   async function handleDropAtEnd(event: DragEvent<HTMLDivElement>) {
@@ -106,9 +114,13 @@ export default function PlacementList({
       beforeEntityId: null,
     });
 
-    const columnId: ColumnId = { id: sourceColumnId };
+    const sourceId: ColumnId = { id: sourceColumnId };
 
-    invalidateColumnPlacements(queryClient, [columnId, column.id]);
+    if (sourceColumnId === column.id.id) {
+      invalidateColumnPlacements(queryClient, [column.id]);
+    } else {
+      invalidateColumnPlacements(queryClient, [sourceId, column.id]);
+    }
   }
 
   return (
