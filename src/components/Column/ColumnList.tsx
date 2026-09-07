@@ -19,9 +19,9 @@ export default function ColumnList({ columns, boardId }: Readonly<Props>) {
 
   const queryClient = useQueryClient();
 
-  const columnIds: ColumnId[] = columns.map((column) => column.id);
-
-  useBoardHub(() => invalidateColumnPlacements(queryClient, columnIds));
+  useBoardHub((placement) => {
+    invalidateColumnPlacements(queryClient, [placement.columnId]);
+  });
 
   return (
     <div className="flex justify-evenly">

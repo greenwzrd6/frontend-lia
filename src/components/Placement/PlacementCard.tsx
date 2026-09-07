@@ -9,7 +9,8 @@ type Props = {
   onDrop: (
     draggedEntityId: string,
     targetEntityId: string,
-    dropBefore: boolean
+    dropBefore: boolean,
+    sourceColumnId: string,
   ) => Promise<void>;
 };
 
@@ -26,39 +27,34 @@ export default function PlacementCard({
     event.preventDefault();
     event.stopPropagation();
 
-    const draggedEntityId =
-      event.dataTransfer.getData("text/plain");
+    const draggedEntityId = event.dataTransfer.getData("text/plain");
 
-    if (
-      !draggedEntityId ||
-      draggedEntityId === entity.id
-    ) {
+    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
+
+    if (!draggedEntityId || draggedEntityId === entity.id || !sourceColumnId) {
       return;
     }
 
-    const rect =
-      event.currentTarget.getBoundingClientRect();
+    const rect = event.currentTarget.getBoundingClientRect();
 
-    const middle =
-      rect.top + rect.height / 2;
+    const middle = rect.top + rect.height / 2;
 
-    const dropBefore =
-      event.clientY < middle;
+    const dropBefore = event.clientY < middle;
 
-    await onDrop(
-      draggedEntityId,
-      entity.id,
-      dropBefore
-    );
+    await onDrop(draggedEntityId, entity.id, dropBefore, sourceColumnId);
   }
 
   return (
     <article
       className="outline my-3 py-1 px-1 flex flex-col items justify-center"
       draggable
-      onDragStart={(event) =>
-        handleDragStart(event, entity.id)
-      }
+      onDragStart={(event) => {
+        handleDragStart(event, entity.id);
+
+        if (placement) {
+          event.dataTransfer.setData("sourceColumnId", placement.columnId.id);
+        }
+      }}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >

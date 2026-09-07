@@ -3,9 +3,11 @@ import type { EntityType } from "../../types/entity";
 
 import PlacementCard from "./PlacementCard";
 import { useCreatePlacement } from "../../hooks/useCreatePlacements";
-import type { ColumnType } from "../../types/column";
+import type { ColumnId, ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
 import type { BoardId } from "../../types/board";
+import { useQueryClient } from "@tanstack/react-query";
+import { invalidateColumnPlacements } from "../../hooks/usePlacement";
 
 type Props = {
   column: ColumnType;
@@ -22,6 +24,8 @@ export default function PlacementList({
 }: Readonly<Props>) {
   const { mutateAsync: createPlacement } = useCreatePlacement();
 
+  const queryClient = useQueryClient();
+
   const sortedPlacements = placements
     ? [...placements].sort((a, b) => {
         if (a.sortKey < b.sortKey) return -1;
@@ -34,6 +38,7 @@ export default function PlacementList({
     draggedEntityId: string,
     targetEntityId: string,
     dropBefore: boolean,
+    sourceColumnId: string,
   ) {
     await createPlacement({
       entityId: draggedEntityId,
@@ -42,12 +47,17 @@ export default function PlacementList({
       afterEntityId: dropBefore ? null : targetEntityId,
       beforeEntityId: dropBefore ? targetEntityId : null,
     });
+
+    const columnId: ColumnId = { id: sourceColumnId };
+
+    invalidateColumnPlacements(queryClient, [columnId, column.id]);
   }
 
   async function handleDropAtStart(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
 
     const draggedEntityId = event.dataTransfer.getData("text/plain");
+    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
 
     if (!draggedEntityId) {
       return;
@@ -66,12 +76,17 @@ export default function PlacementList({
       afterEntityId: null,
       beforeEntityId: firstPlacement?.entityId.id ?? null,
     });
+
+    const columnId: ColumnId = { id: sourceColumnId };
+
+    invalidateColumnPlacements(queryClient, [columnId, column.id]);
   }
 
   async function handleDropAtEnd(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
 
     const draggedEntityId = event.dataTransfer.getData("text/plain");
+    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
 
     if (!draggedEntityId) {
       return;
@@ -90,6 +105,10 @@ export default function PlacementList({
       afterEntityId: lastPlacement?.entityId.id ?? null,
       beforeEntityId: null,
     });
+
+    const columnId: ColumnId = { id: sourceColumnId };
+
+    invalidateColumnPlacements(queryClient, [columnId, column.id]);
   }
 
   return (
