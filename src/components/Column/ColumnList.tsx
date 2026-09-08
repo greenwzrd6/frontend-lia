@@ -5,7 +5,6 @@ import { mockEntities } from "../../services/mockEntities";
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
 import Column from "./Column";
-import EntityColumnMock from "./EntityColumnMock";
 
 type Props = {
   columns: ColumnType[];
@@ -25,7 +24,6 @@ export default function ColumnList({ columns, boardId }: Readonly<Props>) {
 
   return (
     <div className="flex justify-evenly">
-      <EntityColumnMock entities={mockEntities} />
 
       {sortedColumns.map((column) => {
         return <Column key={column.id} column={column} boardId={boardId} />;

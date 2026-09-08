@@ -1,7 +1,7 @@
 import type { DragEvent } from "react";
 import type { EntityType } from "../../types/entity";
 import type { PlacementType } from "../../types/placement";
-import { handleDragStart } from "../../utils/DragAndDrop";
+import { handleDragStart } from "../../utils/dragAndDrop";
 
 type Props = {
   entity: EntityType;
