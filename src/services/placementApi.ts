@@ -7,6 +7,7 @@ export type CreatePlacementRequest = {
   columnId: string;
   afterEntityId: string | null;
   beforeEntityId: string | null;
+  sourceColumnId: string | null;
 };
 
 export async function getPlacements(boardId: string): Promise<PlacementType[]> {

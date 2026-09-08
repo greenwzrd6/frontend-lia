@@ -1,11 +1,11 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useBoardHub } from "../../hooks/useBoardHub";
-import { invalidateColumnPlacements } from "../../hooks/usePlacement";
 import { mockEntities } from "../../services/mockEntities";
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
 import Column from "./Column";
 import EntityColumnMock from "./EntityColumnMock";
+import { invalidateColumnPlacements } from "../../hooks/usePlacement";
 
 type Props = {
   columns: ColumnType[];
@@ -18,10 +18,19 @@ export default function ColumnList({ columns, boardId }: Readonly<Props>) {
 
   const queryClient = useQueryClient();
 
-  // useBoardHub(() => {
-  //   const columnIds = columns.map((c) => c.id);
-  //   invalidateColumnPlacements(queryClient, columnIds);
-  // });
+  useBoardHub((event) => {
+    if (
+      !event.sourceColumnId ||
+      event.sourceColumnId === event.targetColumnId
+    ) {
+      invalidateColumnPlacements(queryClient, [event.targetColumnId]);
+    } else {
+      invalidateColumnPlacements(queryClient, [
+        event.sourceColumnId,
+        event.targetColumnId,
+      ]);
+    }
+  });
 
   return (
     <div className="flex justify-evenly">

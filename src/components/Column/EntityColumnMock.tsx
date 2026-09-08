@@ -1,5 +1,5 @@
 import type { EntityType } from "../../types/entity";
-import { handleDragStart } from "../../utils/DragAndDrop";
+import { handleDragStart } from "../../utils/dragAndDrop";
 
 type Props = {
   entities: EntityType[];

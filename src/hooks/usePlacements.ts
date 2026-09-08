@@ -1,4 +1,4 @@
-import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPlacements } from "../services/placementApi";
 import type { PlacementType } from "../types/placement";
 import { placementKeys } from "../utils/queryKeys";
@@ -24,9 +24,3 @@ export function usePlacements(boardId: string) {
     staleTime: Infinity,
   });
 }
-
-export const invalidateAllPlacements = (queryClient: QueryClient) => {
-  queryClient.invalidateQueries({
-    queryKey: ["placements"],
-  });
-};

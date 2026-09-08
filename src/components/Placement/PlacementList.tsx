@@ -5,8 +5,6 @@ import PlacementCard from "./PlacementCard";
 import { useCreatePlacement } from "../../hooks/useCreatePlacements";
 import { type ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
-import { useQueryClient } from "@tanstack/react-query";
-import { invalidateColumnPlacements } from "../../hooks/usePlacement";
 
 type Props = {
   column: ColumnType;
@@ -22,8 +20,6 @@ export default function PlacementList({
   boardId,
 }: Readonly<Props>) {
   const { mutateAsync: createPlacement } = useCreatePlacement();
-
-  const queryClient = useQueryClient();
 
   const sortedPlacements = placements
     ? [...placements].sort((a, b) => {
@@ -45,13 +41,8 @@ export default function PlacementList({
       columnId: column.id,
       afterEntityId: dropBefore ? null : targetEntityId,
       beforeEntityId: dropBefore ? targetEntityId : null,
+      sourceColumnId,
     });
-
-    if (!sourceColumnId || sourceColumnId === column.id) {
-      invalidateColumnPlacements(queryClient, [column.id]);
-    } else {
-      invalidateColumnPlacements(queryClient, [sourceColumnId, column.id]);
-    }
   }
 
   async function handleDropAtStart(event: DragEvent<HTMLDivElement>) {
@@ -76,13 +67,8 @@ export default function PlacementList({
       columnId: column.id,
       afterEntityId: null,
       beforeEntityId: firstPlacement?.entityId ?? null,
+      sourceColumnId,
     });
-
-    if (!sourceColumnId || sourceColumnId === column.id) {
-      invalidateColumnPlacements(queryClient, [column.id]);
-    } else {
-      invalidateColumnPlacements(queryClient, [sourceColumnId, column.id]);
-    }
   }
 
   async function handleDropAtEnd(event: DragEvent<HTMLDivElement>) {
@@ -108,13 +94,8 @@ export default function PlacementList({
       columnId: column.id,
       afterEntityId: lastPlacement?.entityId ?? null,
       beforeEntityId: null,
+      sourceColumnId,
     });
-
-    if (!sourceColumnId || sourceColumnId === column.id) {
-      invalidateColumnPlacements(queryClient, [column.id]);
-    } else {
-      invalidateColumnPlacements(queryClient, [sourceColumnId, column.id]);
-    }
   }
 
   return (
