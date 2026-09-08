@@ -1,13 +1,12 @@
 import { usePlacement } from "../../hooks/usePlacement";
 import { mockEntities } from "../../services/mockEntities";
-import type { BoardId } from "../../types/board";
 import type { ColumnType } from "../../types/column";
 import PlacementList from "../Placement/PlacementList";
 import ColumnHeader from "./ColumnHeader";
 
 type Props = {
   column: ColumnType;
-  boardId: BoardId;
+  boardId: string;
 };
 
 export default function Column({ column, boardId }: Readonly<Props>) {

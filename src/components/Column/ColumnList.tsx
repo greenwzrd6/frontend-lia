@@ -2,7 +2,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useBoardHub } from "../../hooks/useBoardHub";
 import { invalidateColumnPlacements } from "../../hooks/usePlacement";
 import { mockEntities } from "../../services/mockEntities";
-import type { BoardId } from "../../types/board";
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
 import Column from "./Column";
@@ -11,7 +10,7 @@ import EntityColumnMock from "./EntityColumnMock";
 type Props = {
   columns: ColumnType[];
   placements: PlacementType[];
-  boardId: BoardId;
+  boardId: string;
 };
 
 export default function ColumnList({ columns, boardId }: Readonly<Props>) {

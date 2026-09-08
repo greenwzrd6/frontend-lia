@@ -1,7 +1,5 @@
 import { apiRequest } from "./api";
 import type { PlacementType } from "../types/placement";
-import type { ColumnId } from "../types/column";
-import type { BoardId } from "../types/board";
 
 export type CreatePlacementRequest = {
   entityId: string;
@@ -11,9 +9,7 @@ export type CreatePlacementRequest = {
   beforeEntityId: string | null;
 };
 
-export async function getPlacements(
-  boardId: BoardId,
-): Promise<PlacementType[]> {
+export async function getPlacements(boardId: string): Promise<PlacementType[]> {
   try {
     return await apiRequest<PlacementType[]>(
       `/api/placements/board/${boardId}`,
@@ -28,8 +24,8 @@ export async function getPlacements(
 }
 
 export async function getPlacementsByColumn(
-  columnId: ColumnId,
-  boardId: BoardId
+  columnId: string,
+  boardId: string,
 ): Promise<PlacementType[]> {
   try {
     return await apiRequest<PlacementType[]>(

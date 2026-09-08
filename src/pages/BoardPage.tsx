@@ -4,21 +4,20 @@ import { useBoard } from "../hooks/useBoard";
 import { useParams } from "react-router-dom";
 import { useColumns } from "../hooks/useColumns";
 import { usePlacements } from "../hooks/usePlacements";
-import type { BoardId } from "../types/board";
 
 export default function BoardPage() {
-  const { id } = useParams<{ id: BoardId }>();
+  const { id } = useParams<{ id: string }>();
 
   console.log("ID FROM URL:", id);
 
   const { data: columns = [] } = useColumns();
-  
+
   const boardQuery = useBoard();
-  
+
   if (!id) {
     return <p>Board ID is missing.</p>;
   }
-  
+
   const {
     data: placements = [],
     isLoading: placementsLoading,

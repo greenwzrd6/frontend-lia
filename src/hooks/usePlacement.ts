@@ -2,10 +2,8 @@ import { type QueryClient, useQuery } from "@tanstack/react-query";
 import type { PlacementType } from "../types/placement";
 import { getPlacementsByColumn } from "../services/placementApi";
 import { placementKeys } from "../utils/queryKeys";
-import type { ColumnId } from "../types/column";
-import type { BoardId } from "../types/board"
 
-export function usePlacement(columnId: ColumnId, boardId: BoardId) {
+export function usePlacement(columnId: string, boardId: string) {
   return useQuery<PlacementType[]>({
     queryKey: placementKeys.byColumnId(columnId),
     queryFn: () => getPlacementsByColumn(columnId, boardId),
@@ -17,7 +15,7 @@ export function usePlacement(columnId: ColumnId, boardId: BoardId) {
 
 export const invalidateColumnPlacements = (
   queryClient: QueryClient,
-  columnIds: ColumnId[],
+  columnIds: string[],
 ) => {
   columnIds.forEach((id) =>
     queryClient.invalidateQueries({
