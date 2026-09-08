@@ -1,10 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useBoardHub } from "../../hooks/useBoardHub";
-import { mockEntities } from "../../services/mockEntities";
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
 import Column from "./Column";
-import EntityColumnMock from "./EntityColumnMock";
 import { invalidateColumnPlacements } from "../../hooks/usePlacement";
 
 type Props = {

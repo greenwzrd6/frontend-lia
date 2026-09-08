@@ -21,7 +21,7 @@ export async function getPlacements(
     params.append("EntityIds", entityId);
   }
 
-  params.set("boardId", boardId)
+  params.set("boardId", boardId);
 
   try {
     return await apiRequest<PlacementType[]>(
@@ -67,7 +67,6 @@ export async function createPlacement(
   });
 }
 
-
 export async function createMissingPlacements(
   entities: EntityType[],
   placements: PlacementType[],
@@ -91,5 +90,6 @@ export async function createMissingPlacements(
     columnId: "22222222-2222-2222-2222-222222222220",
     afterEntityId: null,
     beforeEntityId: null,
+    sourceColumnId: null,
   });
 }
