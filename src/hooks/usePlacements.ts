@@ -1,4 +1,4 @@
-import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createMissingPlacements,
   getPlacements,
@@ -18,7 +18,7 @@ export function usePlacements(entities: EntityType[], boardId: string) {
     queryFn: async () => {
       const res = await getPlacements(entityIds, boardId);
       console.log("GET placements result:", res);
-console.log("Number of placements:", res.length);
+      console.log("Number of placements:", res.length);
 
       console.log("entityIds:", entityIds);
       console.log("existing placements:", res);
@@ -37,9 +37,3 @@ console.log("Number of placements:", res.length);
     staleTime: Infinity,
   });
 }
-
-export const invalidateAllPlacements = (queryClient: QueryClient) => {
-  queryClient.invalidateQueries({
-    queryKey: ["placements"],
-  });
-};

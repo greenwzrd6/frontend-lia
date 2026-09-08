@@ -17,9 +17,11 @@ export const invalidateColumnPlacements = (
   queryClient: QueryClient,
   columnIds: string[],
 ) => {
-  columnIds.forEach((id) =>
+  columnIds.forEach((id) => {
+    const key = placementKeys.byColumnId(id);
+
     queryClient.invalidateQueries({
-      queryKey: placementKeys.byColumnId(id),
-    }),
-  );
+      queryKey: key,
+    });
+  });
 };

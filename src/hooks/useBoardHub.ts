@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import type { PlacementCreatedEvent } from "../types/placement";
 import { API_URL } from "../services/api";
-
-import type { PlacementType } from "../types/placement";
+import { useEffect, useState } from "react";
 
 export function useBoardHub(
-  onPlacementChanged: (placement: PlacementType) => void,
+  onPlacementCreated: (event: PlacementCreatedEvent) => void,
 ) {
   const [connection, setConnection] = useState<HubConnection | null>(null);
 
@@ -19,15 +18,17 @@ export function useBoardHub(
   }, []);
 
   useEffect(() => {
-    if (connection) {
-      connection
-        .start()
-        .then(() => {
-          connection.on("PlacementChanged", (placement: PlacementType) => {
-            onPlacementChanged(placement);
-          });
-        })
-        .catch((e) => console.log(e));
-    }
-  }, [connection, onPlacementChanged]);
+    if (!connection) return;
+
+    connection
+      .start()
+      .then(() => {
+        connection.on("PlacementCreated", (event: PlacementCreatedEvent) => {
+          onPlacementCreated(event);
+        });
+      })
+      .catch((e) => {
+        console.error("SignalR connection failed:", e);
+      });
+  }, [connection, onPlacementCreated]);
 }
