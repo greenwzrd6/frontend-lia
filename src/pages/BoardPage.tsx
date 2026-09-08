@@ -4,6 +4,7 @@ import { useBoard } from "../hooks/useBoard";
 import { useParams } from "react-router-dom";
 import { useColumns } from "../hooks/useColumns";
 import { usePlacements } from "../hooks/usePlacements";
+import { mockEntities } from "../services/mockEntities";
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +23,7 @@ export default function BoardPage() {
     data: placements = [],
     isLoading: placementsLoading,
     isError: placementsError,
-  } = usePlacements(id);
+  } = usePlacements(mockEntities, id);
 
   if (boardQuery.isLoading) {
     return <p>Loading...</p>;

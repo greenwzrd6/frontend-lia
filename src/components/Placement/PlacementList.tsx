@@ -36,7 +36,7 @@ export default function PlacementList({
     sourceColumnId: string,
   ) {
     await createPlacement({
-      entityId: draggedEntityId,
+      entityIds: [draggedEntityId],
       boardId: boardId,
       columnId: column.id,
       afterEntityId: dropBefore ? null : targetEntityId,
@@ -62,7 +62,7 @@ export default function PlacementList({
     const firstPlacement = remainingPlacements.at(0);
 
     await createPlacement({
-      entityId: draggedEntityId,
+      entityIds: [draggedEntityId],
       boardId: boardId,
       columnId: column.id,
       afterEntityId: null,
@@ -89,7 +89,7 @@ export default function PlacementList({
     const lastPlacement = remainingPlacements.at(-1);
 
     await createPlacement({
-      entityId: draggedEntityId,
+      entityIds: [draggedEntityId],
       boardId: boardId,
       columnId: column.id,
       afterEntityId: lastPlacement?.entityId ?? null,
