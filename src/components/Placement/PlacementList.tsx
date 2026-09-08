@@ -1,10 +1,9 @@
-import type { DragEvent } from "react";
 import type { EntityType } from "../../types/entity";
-
-import PlacementCard from "./PlacementCard";
-import { useCreatePlacement } from "../../hooks/useCreatePlacements";
-import { type ColumnType } from "../../types/column";
+import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
+
+import { useDroppable } from "@dnd-kit/core";
+import PlacementCard from "./PlacementCard";
 
 type Props = {
   column: ColumnType;
@@ -17,10 +16,7 @@ export default function PlacementList({
   column,
   placements,
   entities,
-  boardId,
 }: Readonly<Props>) {
-  const { mutateAsync: createPlacement } = useCreatePlacement();
-
   const sortedPlacements = placements
     ? [...placements].sort((a, b) => {
         if (a.sortKey < b.sortKey) return -1;
@@ -29,83 +25,16 @@ export default function PlacementList({
       })
     : [];
 
-  async function handleCardDrop(
-    draggedEntityId: string,
-    targetEntityId: string,
-    dropBefore: boolean,
-    sourceColumnId: string,
-  ) {
-    await createPlacement({
-      entityIds: [draggedEntityId],
-      boardId: boardId,
+  const { setNodeRef } = useDroppable({
+    id: `column-${column.id}`,
+    data: {
+      type: "column",
       columnId: column.id,
-      afterEntityId: dropBefore ? null : targetEntityId,
-      beforeEntityId: dropBefore ? targetEntityId : null,
-      sourceColumnId,
-    });
-  }
-
-  async function handleDropAtStart(event: DragEvent<HTMLDivElement>) {
-    event.preventDefault();
-
-    const draggedEntityId = event.dataTransfer.getData("text/plain");
-    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
-
-    if (!draggedEntityId) {
-      return;
-    }
-
-    const remainingPlacements = sortedPlacements.filter(
-      (placement) => placement.entityId !== draggedEntityId,
-    );
-
-    const firstPlacement = remainingPlacements.at(0);
-
-    await createPlacement({
-      entityIds: [draggedEntityId],
-      boardId: boardId,
-      columnId: column.id,
-      afterEntityId: null,
-      beforeEntityId: firstPlacement?.entityId ?? null,
-      sourceColumnId,
-    });
-  }
-
-  async function handleDropAtEnd(event: DragEvent<HTMLDivElement>) {
-    event.preventDefault();
-
-    const draggedEntityId = event.dataTransfer.getData("text/plain");
-
-    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
-
-    if (!draggedEntityId) {
-      return;
-    }
-
-    const remainingPlacements = sortedPlacements.filter(
-      (placement) => placement.entityId !== draggedEntityId,
-    );
-
-    const lastPlacement = remainingPlacements.at(-1);
-
-    await createPlacement({
-      entityIds: [draggedEntityId],
-      boardId: boardId,
-      columnId: column.id,
-      afterEntityId: lastPlacement?.entityId ?? null,
-      beforeEntityId: null,
-      sourceColumnId,
-    });
-  }
+    },
+  });
 
   return (
-    <div className="min-h-32 p-2">
-      <div
-        className="min-h-6"
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={handleDropAtStart}
-      />
-
+    <div ref={setNodeRef} className="min-h-32 p-2">
       {sortedPlacements.map((placement) => {
         const entity = entities.find(
           (entity) => entity.id === placement.entityId,
@@ -120,16 +49,9 @@ export default function PlacementList({
             key={placement.entityId}
             entity={entity}
             placement={placement}
-            onDrop={handleCardDrop}
           />
         );
       })}
-
-      <div
-        className="min-h-6"
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={handleDropAtEnd}
-      />
     </div>
   );
 }
