@@ -3,9 +3,8 @@ import type { EntityType } from "../../types/entity";
 
 import PlacementCard from "./PlacementCard";
 import { useCreatePlacement } from "../../hooks/useCreatePlacements";
-import { toColumnId, type ColumnId, type ColumnType } from "../../types/column";
+import { type ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
-import type { BoardId } from "../../types/board";
 import { useQueryClient } from "@tanstack/react-query";
 import { invalidateColumnPlacements } from "../../hooks/usePlacement";
 
@@ -13,7 +12,7 @@ type Props = {
   column: ColumnType;
   placements: PlacementType[] | undefined;
   entities: EntityType[];
-  boardId: BoardId;
+  boardId: string;
 };
 
 export default function PlacementList({
@@ -38,7 +37,7 @@ export default function PlacementList({
     draggedEntityId: string,
     targetEntityId: string,
     dropBefore: boolean,
-    sourceColumnId: ColumnId,
+    sourceColumnId: string,
   ) {
     await createPlacement({
       entityId: draggedEntityId,
@@ -59,9 +58,7 @@ export default function PlacementList({
     event.preventDefault();
 
     const draggedEntityId = event.dataTransfer.getData("text/plain");
-    const sourceColumnId = toColumnId(
-      event.dataTransfer.getData("sourceColumnId"),
-    );
+    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
 
     if (!draggedEntityId) {
       return;
@@ -93,9 +90,7 @@ export default function PlacementList({
 
     const draggedEntityId = event.dataTransfer.getData("text/plain");
 
-    const sourceColumnId = toColumnId(
-      event.dataTransfer.getData("sourceColumnId"),
-    );
+    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
 
     if (!draggedEntityId) {
       return;
