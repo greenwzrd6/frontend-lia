@@ -59,7 +59,7 @@ export default function BoardPage() {
     <>
       <BoardHeader board={boardQuery.data} />
 
-      <ColumnList columns={columns} placements={placements} boardId={id} />
+      <ColumnList columns={columns} placements={placements} boardId={id} entities={boardEntities} />
     </>
   );
 }
