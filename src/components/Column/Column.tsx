@@ -1,5 +1,5 @@
 import { usePlacement } from "../../hooks/usePlacement";
-import { mockEntities } from "../../services/mockEntities";
+import type { EntityType } from "../../types/entity";
 import type { ColumnType } from "../../types/column";
 import PlacementList from "../Placement/PlacementList";
 import ColumnHeader from "./ColumnHeader";
@@ -7,9 +7,10 @@ import ColumnHeader from "./ColumnHeader";
 type Props = {
   column: ColumnType;
   boardId: string;
+  entities: EntityType[];
 };
 
-export default function Column({ column, boardId }: Readonly<Props>) {
+export default function Column({ column, boardId, entities }: Readonly<Props>) {
   const { data: columnData } = usePlacement(column.id, boardId);
   return (
     <section className="outline flex flex-col w-75">
@@ -18,7 +19,7 @@ export default function Column({ column, boardId }: Readonly<Props>) {
       <PlacementList
         column={column}
         placements={columnData}
-        entities={mockEntities}
+        entities={entities}
         boardId={boardId}
       />
     </section>

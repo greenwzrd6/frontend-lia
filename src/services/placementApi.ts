@@ -80,6 +80,13 @@ export async function createMissingPlacements(
     .filter((entity) => !placedEntityIds.has(entity.id))
     .map((entity) => entity.id);
 
+  console.log(
+    "ENTITIES:",
+    entities.map((entity) => entity.id),
+  );
+  console.log("EXISTING PLACEMENTS:", [...placedEntityIds]);
+  console.log("MISSING ENTITY IDS:", missingEntityIds);
+
   if (missingEntityIds.length === 0) {
     return;
   }

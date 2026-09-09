@@ -17,14 +17,16 @@ import { invalidateColumnPlacements } from "../../hooks/usePlacement";
 import { useBoardHub } from "../../hooks/useBoardHub";
 import { createPlacement } from "../../services/placementApi";
 import { placementKeys } from "../../utils/queryKeys";
+import type { EntityType } from "../../types/entity";
 
 type Props = {
   columns: ColumnType[];
   placements: PlacementType[];
   boardId: string;
+  entities: EntityType[];
 };
 
-export default function ColumnList({ columns, boardId }: Readonly<Props>) {
+export default function ColumnList({ columns, boardId, entities }: Readonly<Props>) {
   const queryClient = useQueryClient();
 
   const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
@@ -215,7 +217,7 @@ export default function ColumnList({ columns, boardId }: Readonly<Props>) {
     >
       <div className="flex justify-evenly">
         {sortedColumns.map((column) => (
-          <Column key={column.id} column={column} boardId={boardId} />
+          <Column key={column.id} column={column} boardId={boardId} entities={entities} />
         ))}
       </div>
     </DndContext>

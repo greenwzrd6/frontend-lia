@@ -14,26 +14,26 @@ export function usePlacements(entities: EntityType[], boardId: string) {
 
   const qc = useQueryClient();
   return useQuery<PlacementType[]>({
-    queryKey: placementKeys.all,
+    queryKey: ["placements", boardId, ...entityIds],
     queryFn: async () => {
       const res = await getPlacements(entityIds, boardId);
-      console.log("GET placements result:", res);
-      console.log("Number of placements:", res.length);
-
-      console.log("entityIds:", entityIds);
-      console.log("existing placements:", res);
 
       await createMissingPlacements(entities, res, boardId);
-      res.forEach((placement) => {
+
+      const updatedPlacements = await getPlacements(
+        entityIds,
+        boardId
+      );
+      updatedPlacements.forEach((placement) => {
         qc.setQueryData<PlacementType[]>(
           placementKeys.byColumnId(placement.columnId),
           (foundPlacements) =>
             foundPlacements ? [...foundPlacements, placement] : [placement],
         );
       });
-      return res;
+      return updatedPlacements;
     },
-    enabled: !!boardId,
+    enabled: !!boardId && entities.length > 0,
     staleTime: Infinity,
   });
 }

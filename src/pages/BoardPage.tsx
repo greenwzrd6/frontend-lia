@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useColumns } from "../hooks/useColumns";
 import { usePlacements } from "../hooks/usePlacements";
 import { mockEntities } from "../services/mockEntities";
+import { getDescendants } from "../utils/entityTree";
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
@@ -15,15 +16,24 @@ export default function BoardPage() {
 
   const boardQuery = useBoard();
 
-  if (!id) {
-    return <p>Board ID is missing.</p>;
-  }
+  const boardEntities = boardQuery.data
+    ? getDescendants(mockEntities, boardQuery.data.roots)
+    : [];
+
+    
+  console.log("BOARD ROOTS:", boardQuery.data?.roots);
+  console.log("BOARD ENTITIES:", boardEntities);
+  console.log("BOARD ENTITIES COUNT:", boardEntities.length);
 
   const {
     data: placements = [],
     isLoading: placementsLoading,
     isError: placementsError,
-  } = usePlacements(mockEntities, id);
+  } = usePlacements(boardEntities, id ?? "");
+
+  if (!id) {
+    return <p>Board ID is missing.</p>;
+  }
 
   if (boardQuery.isLoading) {
     return <p>Loading...</p>;
@@ -49,7 +59,7 @@ export default function BoardPage() {
     <>
       <BoardHeader board={boardQuery.data} />
 
-      <ColumnList columns={columns} placements={placements} boardId={id} />
+      <ColumnList columns={columns} placements={placements} boardId={id} entities={boardEntities} />
     </>
   );
 }
