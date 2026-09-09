@@ -91,12 +91,18 @@ export async function createMissingPlacements(
     return;
   }
 
-  await createPlacement({
-    entityIds: missingEntityIds,
-    boardId,
-    columnId: "22222222-2222-2222-2222-222222222220",
-    afterEntityId: null,
-    beforeEntityId: null,
-    sourceColumnId: null,
-  });
+  let afterEntityId: string | null = null;
+
+  for (const entityId of missingEntityIds) {
+    await createPlacement({
+      entityIds: [entityId],
+      boardId,
+      columnId: "22222222-2222-2222-2222-222222222220",
+      afterEntityId,
+      beforeEntityId: null,
+      sourceColumnId: null,
+    });
+
+    afterEntityId = entityId;
+  }
 }

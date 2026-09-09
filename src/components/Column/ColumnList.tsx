@@ -1,23 +1,25 @@
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+
 import {
   closestCenter,
   DndContext,
+  DragOverlay,
   pointerWithin,
   type CollisionDetection,
   type DragEndEvent,
+  type DragStartEvent,
 } from "@dnd-kit/core";
-
-import { useQueryClient } from "@tanstack/react-query";
 
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
-
+import type { EntityType } from "../../types/entity";
 import Column from "./Column";
-
+import PlacementCard from "../Placement/PlacementCard";
 import { invalidateColumnPlacements } from "../../hooks/usePlacement";
 import { useBoardHub } from "../../hooks/useBoardHub";
 import { createPlacement } from "../../services/placementApi";
 import { placementKeys } from "../../utils/queryKeys";
-import type { EntityType } from "../../types/entity";
 
 type Props = {
   columns: ColumnType[];
@@ -26,19 +28,30 @@ type Props = {
   entities: EntityType[];
 };
 
-export default function ColumnList({ columns, boardId, entities }: Readonly<Props>) {
+export default function ColumnList({
+  columns,
+  boardId,
+  entities,
+  placements,
+}: Readonly<Props>) {
   const queryClient = useQueryClient();
+
+  const [activeEntityId, setActiveEntityId] = useState<string | null>(null);
 
   const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
 
   const kanbanCollisionDetection: CollisionDetection = (args) => {
     const { droppableContainers } = args;
 
-    // Cards have priority over the column container.
     const cardContainers = droppableContainers.filter(
       (container) => container.data.current?.type !== "column",
     );
 
+    const columnContainers = droppableContainers.filter(
+      (container) => container.data.current?.type === "column",
+    );
+
+    // For dropping onto cards
     const cardCollisions = pointerWithin({
       ...args,
       droppableContainers: cardContainers,
@@ -48,15 +61,33 @@ export default function ColumnList({ columns, boardId, entities }: Readonly<Prop
       return cardCollisions;
     }
 
-    // If we're not directly over a card, fall back to
-    // the column droppable.
-    const columnContainers = droppableContainers.filter(
-      (container) => container.data.current?.type === "column",
-    );
+    // Find empty columns
+    const emptyColumnContainers = columnContainers.filter((container) => {
+      const columnId = container.data.current?.columnId;
 
+      if (!columnId) return false;
+
+      const columnPlacements = queryClient.getQueryData<PlacementType[]>(
+        placementKeys.byColumnId(columnId),
+      );
+
+      return !columnPlacements || columnPlacements.length === 0;
+    });
+
+    // For empty columns
+    const emptyColumnCollisions = pointerWithin({
+      ...args,
+      droppableContainers: emptyColumnContainers,
+    });
+
+    if (emptyColumnCollisions.length > 0) {
+      return emptyColumnCollisions;
+    }
+
+    // For dropping in margins
     return closestCenter({
       ...args,
-      droppableContainers: columnContainers,
+      droppableContainers: cardContainers,
     });
   };
 
@@ -74,7 +105,18 @@ export default function ColumnList({ columns, boardId, entities }: Readonly<Prop
     }
   });
 
+  function handleDragStart(event: DragStartEvent) {
+    setActiveEntityId(String(event.active.id));
+  }
+
+  function handleDragCancel() {
+    setActiveEntityId(null);
+  }
+
   async function handleDragEnd(event: DragEndEvent) {
+    // Remove the overlay when the drag finishes
+    setActiveEntityId(null);
+
     const { active, over } = event;
 
     if (!over) {
@@ -90,12 +132,7 @@ export default function ColumnList({ columns, boardId, entities }: Readonly<Prop
 
     const overType = over.data.current?.type;
 
-
-    /*
-     * --------------------------------------------------
-     * Dropped on the column itself.
-     * --------------------------------------------------
-     */
+    // Dropped on the column itself
     if (overType === "column") {
       const targetColumnId = over.data.current?.columnId;
 
@@ -107,9 +144,7 @@ export default function ColumnList({ columns, boardId, entities }: Readonly<Prop
         placementKeys.byColumnId(targetColumnId),
       );
 
-      /*
-       * Empty column
-       */
+      // Empty column
       if (!targetPlacements || targetPlacements.length === 0) {
         await createPlacement({
           entityIds: [draggedEntityId],
@@ -123,15 +158,15 @@ export default function ColumnList({ columns, boardId, entities }: Readonly<Prop
         return;
       }
 
-      /*
-       * Dropped in the empty space at the bottom
-       * of a non-empty column.
-       */
-      const lastPlacement = [...targetPlacements].sort((a, b) => {
+      // Dropped at the bottom of a column
+      const sortedTargetPlacements = [...targetPlacements].sort((a, b) => {
         if (a.sortKey < b.sortKey) return -1;
         if (a.sortKey > b.sortKey) return 1;
         return 0;
-      })[targetPlacements.length - 1];
+      });
+
+      const lastPlacement =
+        sortedTargetPlacements[sortedTargetPlacements.length - 1];
 
       await createPlacement({
         entityIds: [draggedEntityId],
@@ -145,11 +180,7 @@ export default function ColumnList({ columns, boardId, entities }: Readonly<Prop
       return;
     }
 
-    /*
-     * --------------------------------------------------
-     * Dropped on another card
-     * --------------------------------------------------
-     */
+    // Dropped on another card
 
     const targetEntityId = String(over.id);
     const targetColumnId = over.data.current?.columnId;
@@ -158,7 +189,7 @@ export default function ColumnList({ columns, boardId, entities }: Readonly<Prop
       return;
     }
 
-    // Don't create a placement against itself.
+    // Dropped on itself
     if (draggedEntityId === targetEntityId) {
       return;
     }
@@ -171,21 +202,7 @@ export default function ColumnList({ columns, boardId, entities }: Readonly<Prop
       return;
     }
 
-    const targetIndex = targetPlacements.findIndex(
-      (placement) => placement.entityId === targetEntityId,
-    );
-
-    if (targetIndex === -1) {
-      return;
-    }
-
-    /*
-     * Determine whether the dragged card's center
-     * is above or below the target card's center.
-     *
-     * Above  -> insert BEFORE target
-     * Below  -> insert AFTER target
-     */
+    // Decide if the dragged cards center is above or below the target cards center
     const activeRect = active.rect.current.translated;
 
     if (!activeRect) {
@@ -202,25 +219,47 @@ export default function ColumnList({ columns, boardId, entities }: Readonly<Prop
       entityIds: [draggedEntityId],
       boardId,
       columnId: targetColumnId,
-
       beforeEntityId: dropBefore ? targetEntityId : null,
-
       afterEntityId: dropBefore ? null : targetEntityId,
-
       sourceColumnId,
     });
   }
 
+  const activeEntity = activeEntityId
+    ? entities.find((entity) => entity.id === activeEntityId)
+    : null;
+
+  const activePlacement = activeEntityId
+    ? placements.find((placement) => placement.entityId === activeEntityId)
+    : null;
+
   return (
     <DndContext
       collisionDetection={kanbanCollisionDetection}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
     >
       <div className="flex justify-evenly">
         {sortedColumns.map((column) => (
-          <Column key={column.id} column={column} boardId={boardId} entities={entities} />
+          <Column
+            key={column.id}
+            column={column}
+            boardId={boardId}
+            entities={entities}
+          />
         ))}
       </div>
+
+      <DragOverlay dropAnimation={null}>
+        {activeEntity ? (
+          <PlacementCard
+            entity={activeEntity}
+            placement={activePlacement}
+            isOverlay
+          />
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 }

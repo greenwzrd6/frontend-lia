@@ -1,7 +1,8 @@
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import { useEffect, useState } from "react";
+
 import type { PlacementCreatedEvent } from "../types/placement";
 import { API_URL } from "../services/api";
-import { useEffect, useState } from "react";
 
 export function useBoardHub(
   onPlacementCreated: (event: PlacementCreatedEvent) => void,
