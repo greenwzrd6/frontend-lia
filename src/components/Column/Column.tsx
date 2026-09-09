@@ -23,5 +23,6 @@ export default function Column({ column, boardId, entities }: Readonly<Props>) {
         boardId={boardId}
       />
     </section>
+    
   );
 }
