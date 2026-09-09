@@ -1,6 +1,8 @@
 import { apiRequest } from "./api";
 import type { PlacementType } from "../types/placement";
 import type { EntityType } from "../types/entity";
+import Column from "../components/Column/Column";
+import type { ColumnType } from "../types/column";
 
 export type CreatePlacementRequest = {
   entityIds: string[];
@@ -57,7 +59,7 @@ export async function getPlacementsByColumn(
 export async function createPlacement(
   request: CreatePlacementRequest,
 ): Promise<void> {
-  console.log(request);
+  console.log("CREATE PLACEMENT REQUEST:", request);
   await apiRequest<void>("/api/placements/create", {
     method: "POST",
     headers: {
@@ -71,6 +73,7 @@ export async function createMissingPlacements(
   entities: EntityType[],
   placements: PlacementType[],
   boardId: string,
+  columns: ColumnType[]
 ) {
   const placedEntityIds = new Set(
     placements.map((placement) => placement.entityId),
@@ -86,11 +89,19 @@ export async function createMissingPlacements(
 
   let afterEntityId: string | null = null;
 
+  const inboxColumn = columns.find(
+    (column) => column.position === 0
+  );
+
+    if (!inboxColumn) {
+    return;
+  }
+
   for (const entityId of missingEntityIds) {
     await createPlacement({
       entityIds: [entityId],
       boardId,
-      columnId: "22222222-2222-2222-2222-222222222220",
+      columnId: inboxColumn.id,
       afterEntityId,
       beforeEntityId: null,
       sourceColumnId: null,

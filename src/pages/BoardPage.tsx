@@ -22,7 +22,7 @@ export default function BoardPage() {
     data: placements = [],
     isLoading: placementsLoading,
     isError: placementsError,
-  } = usePlacements(boardEntities, id ?? "");
+  } = usePlacements(boardEntities, id ?? "", columns);
 
   if (!id) {
     return <p>Board ID is missing.</p>;
