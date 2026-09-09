@@ -9,7 +9,6 @@ import { placementKeys } from "../utils/queryKeys";
 import type { EntityType } from "../types/entity";
 
 export function usePlacements(entities: EntityType[], boardId: string) {
-  console.log("usePlacements:", boardId);
 
   const entityIds = entities.map((entity) => entity.id);
 
@@ -25,8 +24,16 @@ export function usePlacements(entities: EntityType[], boardId: string) {
       updatedPlacements.forEach((placement) => {
         qc.setQueryData<PlacementType[]>(
           placementKeys.byColumnId(placement.columnId),
-          (foundPlacements) =>
-            foundPlacements ? [...foundPlacements, placement] : [placement],
+          (foundPlacements) => {
+            if (!foundPlacements) {
+              return [placement];
+            }
+            const withoutOldPlacements = foundPlacements.filter(
+              (found) => found.entityId !== placement.entityId,
+            );
+
+            return [...withoutOldPlacements, placement]
+          }
         );
       });
       return updatedPlacements;

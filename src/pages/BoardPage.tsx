@@ -9,21 +9,14 @@ import { mockEntities } from "../services/mockEntities";
 import { getDescendants } from "../utils/entityTree";
 
 export default function BoardPage() {
+  
   const { id } = useParams<{ id: string }>();
-
-  console.log("ID FROM URL:", id);
-
   const { data: columns = [] } = useColumns();
-
   const boardQuery = useBoard();
 
   const boardEntities = boardQuery.data
     ? getDescendants(mockEntities, boardQuery.data.roots)
     : [];
-
-  console.log("BOARD ROOTS:", boardQuery.data?.roots);
-  console.log("BOARD ENTITIES:", boardEntities);
-  console.log("BOARD ENTITIES COUNT:", boardEntities.length);
 
   const {
     data: placements = [],
