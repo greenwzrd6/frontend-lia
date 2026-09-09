@@ -37,7 +37,7 @@ export default function PlacementCard({
       {...(isOverlay ? {} : listeners)}
       className={`
         outline my-3 py-1 px-1
-        flex flex-col items-center justify-center
+        flex flex-col items-left justify-center
         select-none
         ${
           isOverlay
@@ -48,8 +48,9 @@ export default function PlacementCard({
       `}
     >
       <h3>{entity.title}</h3>
-      <small>Entity: {entity.id}</small>
+      <small>Entity: {entity.id.slice(30)}</small>
       <small>sortKey: {placement?.sortKey}</small>
+      <small>Parent: {entity?.parentId?.slice(30)}</small>
     </article>
   );
 }
