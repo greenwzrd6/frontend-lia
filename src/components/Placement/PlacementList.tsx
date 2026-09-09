@@ -1,8 +1,8 @@
+import { useDroppable } from "@dnd-kit/core";
+
 import type { EntityType } from "../../types/entity";
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
-
-import { useDroppable } from "@dnd-kit/core";
 import PlacementCard from "./PlacementCard";
 
 type Props = {
