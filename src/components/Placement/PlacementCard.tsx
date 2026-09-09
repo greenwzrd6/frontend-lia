@@ -1,41 +1,54 @@
-import type { EntityType } from "../../types/entity";
-import type { PlacementType } from "../../types/placement";
-
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+
+import type { EntityType } from "../../types/entity";
+import type { PlacementType } from "../../types/placement";
 
 type Props = {
   entity: EntityType;
   placement: PlacementType | null | undefined;
+  isOverlay?: boolean;
 };
 
-export default function PlacementCard({ entity, placement }: Readonly<Props>) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
+export default function PlacementCard({
+  entity,
+  placement,
+  isOverlay = false,
+}: Readonly<Props>) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({
       id: entity.id,
       data: {
         entityId: entity.id,
         columnId: placement?.columnId,
       },
+      disabled: isOverlay,
     });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: isOverlay ? undefined : CSS.Transform.toString(transform),
   };
 
   return (
     <article
-      ref={setNodeRef}
+      ref={isOverlay ? undefined : setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      className="outline my-3 py-1 px-1 flex flex-col items-center justify-center cursor-grab"
+      {...(isOverlay ? {} : attributes)}
+      {...(isOverlay ? {} : listeners)}
+      className={`
+        outline my-3 py-1 px-1
+        flex flex-col items-center justify-center
+        select-none
+        ${
+          isOverlay
+            ? "shadow-2xl cursor-grabbing bg-white opacity-95"
+            : "cursor-grab"
+        }
+        ${isDragging && !isOverlay ? "opacity-25" : ""}
+      `}
     >
       <h3>{entity.title}</h3>
-
       <small>Entity: {entity.id}</small>
-
       <small>sortKey: {placement?.sortKey}</small>
     </article>
   );

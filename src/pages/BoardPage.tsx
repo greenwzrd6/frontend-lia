@@ -1,7 +1,8 @@
+import { useParams } from "react-router-dom";
+
 import BoardHeader from "../components/Board/BoardHeader";
 import ColumnList from "../components/Column/ColumnList";
 import { useBoard } from "../hooks/useBoard";
-import { useParams } from "react-router-dom";
 import { useColumns } from "../hooks/useColumns";
 import { usePlacements } from "../hooks/usePlacements";
 import { mockEntities } from "../services/mockEntities";
@@ -46,12 +47,17 @@ export default function BoardPage() {
   if (placementsError) {
     return <p>Could not load data.</p>;
   }
-  
+
   return (
     <>
       <BoardHeader board={boardQuery.data} />
 
-      <ColumnList columns={columns} placements={placements} boardId={id} entities={boardEntities} />
+      <ColumnList
+        columns={columns}
+        placements={placements}
+        boardId={id}
+        entities={boardEntities}
+      />
     </>
   );
 }

@@ -95,6 +95,7 @@ export async function createMissingPlacements(
       beforeEntityId: null,
       sourceColumnId: null,
     });
+
     afterEntityId = entityId;
   }
 }

@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
   createMissingPlacements,
   getPlacements,
@@ -19,10 +20,7 @@ export function usePlacements(entities: EntityType[], boardId: string) {
 
       await createMissingPlacements(entities, res, boardId);
 
-      const updatedPlacements = await getPlacements(
-        entityIds,
-        boardId
-      );
+      const updatedPlacements = await getPlacements(entityIds, boardId);
       updatedPlacements.forEach((placement) => {
         qc.setQueryData<PlacementType[]>(
           placementKeys.byColumnId(placement.columnId),
