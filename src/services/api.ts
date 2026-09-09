@@ -1,11 +1,13 @@
 export const API_URL = import.meta.env.VITE_API_URL;
+export const TOJ_API_URL = import.meta.env.VITE_TOJ_API_URL;
 
 export async function apiRequest<T>(
     path: string,
-    options?: RequestInit
+    options?: RequestInit,
+    baseUrl: string = API_URL,
 ): Promise<T> {
     const response = await fetch(
-        `${API_URL}${path}`,
+        `${baseUrl}${path}`,
         options
     );
 
