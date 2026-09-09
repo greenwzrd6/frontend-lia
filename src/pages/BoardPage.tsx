@@ -52,9 +52,9 @@ export default function BoardPage() {
   }
 
   if (placementsError) {
-    return <p>Could not load placements.</p>;
+    return <p>Could not load data.</p>;
   }
-
+  
   return (
     <>
       <BoardHeader board={boardQuery.data} />

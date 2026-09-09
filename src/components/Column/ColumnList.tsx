@@ -90,9 +90,10 @@ export default function ColumnList({ columns, boardId, entities }: Readonly<Prop
 
     const overType = over.data.current?.type;
 
+
     /*
      * --------------------------------------------------
-     * Dropped on the column itself
+     * Dropped on the column itself.
      * --------------------------------------------------
      */
     if (overType === "column") {
