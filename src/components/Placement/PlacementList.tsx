@@ -1,9 +1,4 @@
-import { useDroppable } from "@dnd-kit/core";
-
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/react";
 
 import type { EntityType } from "../../types/entity";
 import type { ColumnType } from "../../types/column";
@@ -38,12 +33,7 @@ export default function PlacementList({
         return 0;
       });
 
-  /*
-   * The whole column is also a droppable area.
-   *
-   * This is especially important for empty columns.
-   */
-  const { setNodeRef } = useDroppable({
+  const { ref } = useDroppable({
     id: `${column.id}`,
     data: {
       type: "column",
@@ -52,15 +42,7 @@ export default function PlacementList({
   });
 
   return (
-    <SortableContext
-      /*
-       * These IDs tell dnd-kit which entities belong
-       * to this sortable list.
-       */
-      items={sortedPlacements.map((placement) => placement.entityId)}
-      strategy={verticalListSortingStrategy}
-    >
-      <div ref={setNodeRef} className="min-h-32 p-2">
+      <div ref={ref} className="min-h-32 p-2">
         {sortedPlacements.map((placement, index) => {
           const entity = entities.find(
             (entity) => entity.Id === placement.entityId,
@@ -73,13 +55,12 @@ export default function PlacementList({
           return (
             <PlacementCard
               key={placement.entityId}
-              index={index}
               entity={entity}
               placement={placement}
+              index={index}
             />
           );
         })}
       </div>
-    </SortableContext>
   );
 }

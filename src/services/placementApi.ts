@@ -1,7 +1,6 @@
 import { apiRequest } from "./api";
 import type { PlacementType } from "../types/placement";
 import type { EntityType } from "../types/entity";
-import Column from "../components/Column/Column";
 import type { ColumnType } from "../types/column";
 
 export type CreatePlacementRequest = {

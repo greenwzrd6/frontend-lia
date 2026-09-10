@@ -14,8 +14,8 @@ export default function BoardPage() {
   const boardQuery = useBoard();
   const {
     data: entities = [],
-    isLoading: entitiesLoading,
-    isError: entitiesError,
+//    isLoading: entitiesLoading,
+//    isError: entitiesError,
   } = useEntities();
 
   const boardEntities = boardQuery.data
