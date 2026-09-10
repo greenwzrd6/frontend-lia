@@ -5,18 +5,26 @@ import ColumnList from "../components/Column/ColumnList";
 import { useBoard } from "../hooks/useBoard";
 import { useColumns } from "../hooks/useColumns";
 import { usePlacements } from "../hooks/usePlacements";
-import { mockEntities } from "../services/mockEntities";
 import { getDescendants } from "../utils/entityTree";
+import { useEntities } from "../hooks/useEntities";
 
 export default function BoardPage() {
-  
   const { id } = useParams<{ id: string }>();
   const { data: columns = [] } = useColumns();
   const boardQuery = useBoard();
+  const {
+    data: entities = [],
+    isLoading: entitiesLoading,
+    isError: entitiesError,
+  } = useEntities();
 
   const boardEntities = boardQuery.data
-    ? getDescendants(mockEntities, boardQuery.data.roots)
+    ? getDescendants(entities, boardQuery.data.roots)
     : [];
+
+  console.log("ALL ENTITIES:", entities);
+  console.log("BOARD ROOTS:", boardQuery.data?.roots);
+  console.log("BOARD ENTITIES:", boardEntities);
 
   const {
     data: placements = [],

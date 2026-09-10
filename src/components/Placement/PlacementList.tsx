@@ -60,7 +60,7 @@ export default function PlacementList({
       <div ref={setNodeRef} className="min-h-32 p-2">
         {sortedPlacements.map((placement) => {
           const entity = entities.find(
-            (entity) => entity.id === placement.entityId,
+            (entity) => entity.Id === placement.entityId,
           );
 
           if (!entity) {

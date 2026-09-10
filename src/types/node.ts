@@ -1,4 +1,4 @@
-export type TaskType = {
+export type NodeType = {
   Id: string;
   ProjectId: string;
   ParentId: string | null;

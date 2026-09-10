@@ -8,12 +8,12 @@ export function getDescendants(
 
   function collectChildren(parentId: string) {
     const children = entities.filter(
-        (entity) => entity.parentId === parentId
+        (entity) => entity.ParentId === parentId
     );
 
     for (const child of children) {
       result.push(child);
-      collectChildren(child.id);
+      collectChildren(child.Id);
     }
   }
 

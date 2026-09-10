@@ -17,9 +17,9 @@ export default function PlacementCard({
 }: Readonly<Props>) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({
-      id: entity.id,
+      id: entity.Id,
       data: {
-        entityId: entity.id,
+        entityId: entity.Id,
         columnId: placement?.columnId,
       },
       disabled: isOverlay,
@@ -47,10 +47,10 @@ export default function PlacementCard({
         ${isDragging && !isOverlay ? "opacity-25" : ""}
       `}
     >
-      <h3>{entity.title}</h3>
-      <small>Entity: {entity.id.slice(30)}</small>
+      <h3>{entity.Title}</h3>
+      <small>Entity: {entity.Id}</small>
       <small>sortKey: {placement?.sortKey}</small>
-      <small>Parent: {entity?.parentId?.slice(30)}</small>
+      <small>Parent: {entity?.ParentId}</small>
     </article>
   );
 }
