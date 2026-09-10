@@ -1,4 +1,9 @@
 export const placementKeys = {
   all: ["placements"] as const,
-  byColumnId: (columnId: string) => [...placementKeys.all, columnId],
+
+  byBoard: (boardId: string, entityIds: string[]) =>
+    ["placements", boardId, ...entityIds] as const,
+
+  byColumnId: (columnId: string) =>
+    ["placements", "column", columnId] as const,
 };

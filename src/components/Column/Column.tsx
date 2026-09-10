@@ -1,6 +1,6 @@
-import { usePlacement } from "../../hooks/usePlacement";
 import type { EntityType } from "../../types/entity";
 import type { ColumnType } from "../../types/column";
+import type { PlacementType } from "../../types/placement";
 import PlacementList from "../Placement/PlacementList";
 import ColumnHeader from "./ColumnHeader";
 
@@ -8,21 +8,25 @@ type Props = {
   column: ColumnType;
   boardId: string;
   entities: EntityType[];
+  placements: PlacementType[];
 };
 
-export default function Column({ column, boardId, entities }: Readonly<Props>) {
-  const { data: columnData } = usePlacement(column.id, boardId);
+export default function Column({
+  column,
+  boardId,
+  entities,
+  placements,
+}: Readonly<Props>) {
   return (
-    <section className="outline flex flex-col w-75">
+    <section className="flex flex-col w-75 hover:bg-gray-100" >
       <ColumnHeader column={column} />
 
       <PlacementList
         column={column}
-        placements={columnData}
+        placements={placements}
         entities={entities}
         boardId={boardId}
       />
     </section>
-    
   );
 }

@@ -22,16 +22,6 @@ export default function PlacementList({
   ? placements.filter((placement) => 
     entities.some((entity) => entity.Id === placement.entityId),
 ) : [];
-  /*
-   * The backend uses sortKey to determine the actual order.
-   *
-   * We continue sorting by it when displaying the list.
-   */
-  const sortedPlacements = [...visiblePlacements].sort((a, b) => {
-        if (a.sortKey < b.sortKey) return -1;
-        if (a.sortKey > b.sortKey) return 1;
-        return 0;
-      });
 
   const { ref } = useDroppable({
     id: `${column.id}`,
@@ -43,7 +33,7 @@ export default function PlacementList({
 
   return (
       <div ref={ref} className="min-h-32 p-2">
-        {sortedPlacements.map((placement, index) => {
+        {visiblePlacements.map((placement, index) => {
           const entity = entities.find(
             (entity) => entity.Id === placement.entityId,
           );

@@ -13,25 +13,24 @@ export default function PlacementCard({
   placement,
   index
 }: Readonly<Props>) {
-  const { ref } =
-    useSortable({
-      id: entity.Id,
-      index,
-      data: {
-        type: "card",
-        entityId: entity.Id,
-        columnId: placement?.columnId,
-      },
-    });
+
+const { ref } = useSortable({
+  id: entity.Id,
+  index,
+  group: placement?.columnId,
+  type: "card",
+  accept: "card",
+  data: {
+    type: "card",
+    entityId: entity.Id,
+    columnId: placement?.columnId,
+  },
+});
 
   return (
     <article
       ref={ref}
-      className={`
-        outline my-3 py-1 px-1
-        flex flex-col items-left justify-center
-        select-none cursor-grab
-      `}
+      className="bg-white rounded-2xl p-5 m-1 border-1 border-gray-200"
     >
       <h3>{entity.Title}</h3>
       <small>Entity: {entity.Id}</small>

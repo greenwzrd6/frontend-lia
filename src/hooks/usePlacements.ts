@@ -15,7 +15,7 @@ export function usePlacements(entities: EntityType[], boardId: string, column: C
   const qc = useQueryClient();
 
   return useQuery<PlacementType[]>({
-    queryKey: ["placements", boardId, ...entityIds],
+    queryKey: placementKeys.byBoard(boardId, entityIds),
     queryFn: async () => {
       const res = await getPlacements(entityIds, boardId);
 
