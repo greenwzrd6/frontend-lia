@@ -22,18 +22,21 @@ export default function PlacementList({
   placements,
   entities,
 }: Readonly<Props>) {
+
+  const visiblePlacements = placements 
+  ? placements.filter((placement) => 
+    entities.some((entity) => entity.Id === placement.entityId),
+) : [];
   /*
    * The backend uses sortKey to determine the actual order.
    *
    * We continue sorting by it when displaying the list.
    */
-  const sortedPlacements = placements
-    ? [...placements].sort((a, b) => {
+  const sortedPlacements = [...visiblePlacements].sort((a, b) => {
         if (a.sortKey < b.sortKey) return -1;
         if (a.sortKey > b.sortKey) return 1;
         return 0;
-      })
-    : [];
+      });
 
   /*
    * The whole column is also a droppable area.
@@ -41,7 +44,7 @@ export default function PlacementList({
    * This is especially important for empty columns.
    */
   const { setNodeRef } = useDroppable({
-    id: `column-${column.id}`,
+    id: `${column.id}`,
     data: {
       type: "column",
       columnId: column.id,
@@ -58,7 +61,7 @@ export default function PlacementList({
       strategy={verticalListSortingStrategy}
     >
       <div ref={setNodeRef} className="min-h-32 p-2">
-        {sortedPlacements.map((placement) => {
+        {sortedPlacements.map((placement, index) => {
           const entity = entities.find(
             (entity) => entity.Id === placement.entityId,
           );
@@ -70,6 +73,7 @@ export default function PlacementList({
           return (
             <PlacementCard
               key={placement.entityId}
+              index={index}
               entity={entity}
               placement={placement}
             />

@@ -8,7 +8,6 @@ import {
   pointerWithin,
   type CollisionDetection,
   type DragEndEvent,
-  type DragOverEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
 
@@ -16,7 +15,6 @@ import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
 import type { EntityType } from "../../types/entity";
 import Column from "./Column";
-import PlacementCard from "../Placement/PlacementCard";
 import { invalidateColumnPlacements } from "../../hooks/usePlacement";
 import { useBoardHub } from "../../hooks/useBoardHub";
 import { createPlacement } from "../../services/placementApi";
@@ -39,15 +37,19 @@ export default function ColumnList({
 
   const [activeEntityId, setActiveEntityId] = useState<string | null>(null);
 
-  const [dragColumnId, setDragColumnId] = useState<string | null>(null);
+  const [sourceColumnId, setSourceColumnId] = useState<string | null>(null);
+  const [targetColumnId, setTargetColumnId] = useState<string | null>(null);
 
   const sortedColumns = [...columns].sort((a, b) => a.position - b.position);
 
   function getColumnPlacements(columnId: string): PlacementType[] {
-    return (
+    const placements =
       queryClient.getQueryData<PlacementType[]>(
         placementKeys.byColumnId(columnId),
-      ) ?? []
+      ) ?? [];
+
+    return placements.filter((placement) =>
+      entities.some((entity) => entity.Id === placement.entityId),
     );
   }
 
@@ -60,6 +62,8 @@ export default function ColumnList({
    */
   const kanbanCollisionDetection: CollisionDetection = (args) => {
     const { droppableContainers } = args;
+
+    console.log(args);
 
     const cardContainers = droppableContainers.filter(
       (container) => container.data.current?.type !== "column",
@@ -127,121 +131,16 @@ export default function ColumnList({
     setActiveEntityId(String(event.active.id));
 
     // The column where the drag started.
-    setDragColumnId(event.active.data.current?.columnId ?? null);
+    const columnId = event.active.data.current?.columnId ?? null;
+
+    setSourceColumnId(columnId);
+    setTargetColumnId(columnId);
   }
 
   function handleDragCancel() {
     setActiveEntityId(null);
-    setDragColumnId(null);
-  }
-
-  /*
-   * When the dragged card enters another column, we temporarily
-   * move it into that column's placement list.
-   */
-  function handleDragOver(event: DragOverEvent) {
-    const { active, over } = event;
-
-    if (!over) {
-      return;
-    }
-
-    const draggedEntityId = String(active.id);
-
-    const sourceColumnId = dragColumnId;
-
-    if (!sourceColumnId) {
-      return;
-    }
-
-    const targetColumnId = over.data.current?.columnId;
-
-    if (!targetColumnId) {
-      return;
-    }
-
-    /*
-     * We're still in the same column.
-     *
-     * SortableContext handles the visual movement for us.
-     */
-    if (sourceColumnId === targetColumnId) {
-      return;
-    }
-
-    const sourcePlacements = getColumnPlacements(sourceColumnId);
-    const targetPlacements = getColumnPlacements(targetColumnId);
-
-    const draggedPlacement = sourcePlacements.find(
-      (placement) => placement.entityId === draggedEntityId,
-    );
-
-    if (!draggedPlacement) {
-      return;
-    }
-
-    /*
-     * Remove the dragged placement from its old column.
-     */
-    const newSourcePlacements = sourcePlacements.filter(
-      (placement) => placement.entityId !== draggedEntityId,
-    );
-
-    /*
-     * Prevent adding the same entity multiple times.
-     */
-    const targetWithoutDragged = targetPlacements.filter(
-      (placement) => placement.entityId !== draggedEntityId,
-    );
-
-    /*
-     * Determine where the dragged item should appear
-     * in the target column.
-     *
-     * If we're over a card, put the dragged item before it.
-     * If we're over the column itself, put it at the bottom.
-     */
-    let targetIndex = targetWithoutDragged.length;
-
-    if (over.data.current?.type !== "column") {
-      const overEntityId = String(over.id);
-
-      const overIndex = targetWithoutDragged.findIndex(
-        (placement) => placement.entityId === overEntityId,
-      );
-
-      if (overIndex !== -1) {
-        targetIndex = overIndex;
-      }
-    }
-
-    const newTargetPlacements = [...targetWithoutDragged];
-
-    newTargetPlacements.splice(targetIndex, 0, {
-      ...draggedPlacement,
-      columnId: targetColumnId,
-    });
-
-    /*
-     * Temporarily update the React Query cache.
-     *
-     * This is only for the visual drag operation.
-     */
-    queryClient.setQueryData(
-      placementKeys.byColumnId(sourceColumnId),
-      newSourcePlacements,
-    );
-
-    queryClient.setQueryData(
-      placementKeys.byColumnId(targetColumnId),
-      newTargetPlacements,
-    );
-
-    /*
-     * The dragged card now belongs to the target column
-     * for the duration of this drag.
-     */
-    setDragColumnId(targetColumnId);
+    setTargetColumnId(null);
+    setSourceColumnId(null);
   }
 
   async function handleDragEnd(event: DragEndEvent) {
@@ -249,7 +148,7 @@ export default function ColumnList({
 
     if (!over) {
       setActiveEntityId(null);
-      setDragColumnId(null);
+      setTargetColumnId(null);
       return;
     }
 
@@ -264,40 +163,29 @@ export default function ColumnList({
      * that existed before the drag.
      */
 
-    const targetColumnId = over.data.current?.columnId ?? dragColumnId;
+    const finalTargetColumnId = over.data.current?.columnId ?? targetColumnId;
 
-    if (!targetColumnId) {
+    if (!finalTargetColumnId || !sourceColumnId) {
       setActiveEntityId(null);
-      setDragColumnId(null);
+      setSourceColumnId(null);
+      setTargetColumnId(null);
       return;
     }
-
-    /*
-     * Find the original placement information.
-     *
-     * The original placements prop contains the placements
-     * from when the board was loaded.
-     */
-    const originalPlacement = placements.find(
-      (placement) => placement.entityId === draggedEntityId,
-    );
-
-    const sourceColumnId = originalPlacement?.columnId ?? null;
 
     /*
      * If the drag stayed in the same column and was dropped
      * on itself, there is nothing to save.
      */
     if (
-      sourceColumnId === targetColumnId &&
+      sourceColumnId === finalTargetColumnId &&
       String(over.id) === draggedEntityId
     ) {
       setActiveEntityId(null);
-      setDragColumnId(null);
+      setTargetColumnId(null);
       return;
     }
 
-    const targetPlacements = getColumnPlacements(targetColumnId)
+    const targetPlacements = getColumnPlacements(finalTargetColumnId)
       .filter((placement) => placement.entityId !== draggedEntityId)
       .sort((a, b) => {
         if (a.sortKey < b.sortKey) return -1;
@@ -313,14 +201,15 @@ export default function ColumnList({
       await createPlacement({
         entityIds: [draggedEntityId],
         boardId,
-        columnId: targetColumnId,
+        columnId: finalTargetColumnId,
         beforeEntityId: null,
         afterEntityId: null,
         sourceColumnId,
       });
 
       setActiveEntityId(null);
-      setDragColumnId(null);
+      setActiveEntityId(null);
+      setTargetColumnId(null);
       return;
     }
 
@@ -333,22 +222,31 @@ export default function ColumnList({
     );
 
     /*
-     * If we're dropping on a card, put the dragged card before it.
+     * If we're dropping on a card, put the dragged card before or after it depending on where we drop.
      */
-    if (over.data.current?.type !== "column" && targetIndex !== -1) {
+    if (over.data.current?.type === "card" && targetIndex !== -1) {
       const targetEntityId = targetPlacements[targetIndex].entityId;
+
+      const activeRect = active.rect.current.translated;
+      const overRect = over.rect;
+
+      const isBelow =
+        activeRect !== null &&
+        activeRect.top + activeRect.height / 2 >
+          overRect.top + overRect.height / 2;
 
       await createPlacement({
         entityIds: [draggedEntityId],
         boardId,
-        columnId: targetColumnId,
-        beforeEntityId: targetEntityId,
-        afterEntityId: null,
+        columnId: finalTargetColumnId,
+        beforeEntityId: isBelow ? null : targetEntityId,
+        afterEntityId: isBelow ? targetEntityId : null,
         sourceColumnId,
       });
 
       setActiveEntityId(null);
-      setDragColumnId(null);
+      setActiveEntityId(null);
+      setTargetColumnId(null);
       return;
     }
 
@@ -360,18 +258,19 @@ export default function ColumnList({
     await createPlacement({
       entityIds: [draggedEntityId],
       boardId,
-      columnId: targetColumnId,
+      columnId: finalTargetColumnId,
       beforeEntityId: null,
       afterEntityId: lastPlacement.entityId,
       sourceColumnId,
     });
 
     setActiveEntityId(null);
-    setDragColumnId(null);
+    setActiveEntityId(null);
+    setTargetColumnId(null);
   }
 
   const activeEntity = activeEntityId
-    ? entities.find((entity) => entity.id === activeEntityId)
+    ? entities.find((entity) => entity.Id === activeEntityId)
     : null;
 
   const activePlacement = activeEntityId
@@ -382,7 +281,6 @@ export default function ColumnList({
     <DndContext
       collisionDetection={kanbanCollisionDetection}
       onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
@@ -399,11 +297,18 @@ export default function ColumnList({
 
       <DragOverlay dropAnimation={null}>
         {activeEntity ? (
-          <PlacementCard
-            entity={activeEntity}
-            placement={activePlacement}
-            isOverlay
-          />
+          <article
+            className="
+              outline my-3 py-1 px-1
+              flex flex-col items-left justify-center
+              select-none shadow-2xl cursor-grabbing bg-white opacity-95
+            "
+          >
+            <h3>{activeEntity.Title}</h3>
+            <small>Entity: {activeEntity.Id}</small>
+            <small>sortKey: {activePlacement?.sortKey}</small>
+            <small>Parent: {activeEntity.ParentId}</small>
+          </article>
         ) : null}
       </DragOverlay>
     </DndContext>

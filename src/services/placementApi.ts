@@ -44,9 +44,11 @@ export async function getPlacementsByColumn(
   boardId: string,
 ): Promise<PlacementType[]> {
   try {
-    return await apiRequest<PlacementType[]>(
+    const placements = await apiRequest<PlacementType[] | undefined>(
       `/api/placements/column/${columnId}?boardId=${boardId}`,
     );
+
+    return placements ?? [];
   } catch (error) {
     console.log(
       `Something went wrong while getting placements in the column: ${columnId}`,

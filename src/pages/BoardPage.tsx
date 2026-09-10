@@ -22,10 +22,6 @@ export default function BoardPage() {
     ? getDescendants(entities, boardQuery.data.roots)
     : [];
 
-  console.log("ALL ENTITIES:", entities);
-  console.log("BOARD ROOTS:", boardQuery.data?.roots);
-  console.log("BOARD ENTITIES:", boardEntities);
-
   const {
     data: placements = [],
     isLoading: placementsLoading,
