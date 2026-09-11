@@ -53,6 +53,8 @@ export default function ColumnList({
   }, [placements]);
 
   useBoardHub(() => {
+
+      console.log("SIGNALR EVENT:", event);
     const entityIds = entities.map((entity) => entity.Id);
 
     queryClient.invalidateQueries({
