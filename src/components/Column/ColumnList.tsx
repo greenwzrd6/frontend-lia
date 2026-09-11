@@ -52,14 +52,26 @@ export default function ColumnList({
     }
   }, [placements]);
 
-  useBoardHub(() => {
-    const entityIds = entities.map((entity) => entity.Id);
-
+useBoardHub((event) => {
+  if (
+    !event.sourceColumnId ||
+    event.sourceColumnId === event.targetColumnId
+  ) {
     queryClient.invalidateQueries({
-      queryKey: placementKeys.byBoard(boardId, entityIds),
-      exact: true,
+      queryKey: placementKeys.byColumnId(event.targetColumnId),
     });
+
+    return;
+  }
+
+  queryClient.invalidateQueries({
+    queryKey: placementKeys.byColumnId(event.sourceColumnId),
   });
+
+  queryClient.invalidateQueries({
+    queryKey: placementKeys.byColumnId(event.targetColumnId),
+  });
+});
 
   function handleDragStart(event: any) {
     isDragging.current = true;
