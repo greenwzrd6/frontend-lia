@@ -142,8 +142,10 @@ export default function ColumnList({
     );
 
     const targetIndex =
-      target?.data?.type === "column" && otherPlacements.length === 0
-        ? 0
+      target?.data?.type === "column"
+        ? otherPlacements.length === 0
+          ? 0
+          : otherPlacements.length
         : index;
 
     const itemAfter = otherPlacements[targetIndex];
