@@ -5,7 +5,6 @@ import PlacementList from "../Placement/PlacementList";
 import ColumnHeader from "./ColumnHeader";
 import { useDroppable } from "@dnd-kit/react";
 import { CollisionPriority } from "@dnd-kit/abstract";
-import { useDragDropManager } from "@dnd-kit/react";
 
 type Props = {
   column: ColumnType;
