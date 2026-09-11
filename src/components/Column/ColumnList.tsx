@@ -52,16 +52,26 @@ export default function ColumnList({
     }
   }, [placements]);
 
-  useBoardHub(() => {
-
-      console.log("SIGNALR EVENT:", event);
-    const entityIds = entities.map((entity) => entity.Id);
-
+useBoardHub((event) => {
+  if (
+    !event.sourceColumnId ||
+    event.sourceColumnId === event.targetColumnId
+  ) {
     queryClient.invalidateQueries({
-      queryKey: placementKeys.byBoard(boardId, entityIds),
-      exact: true,
+      queryKey: placementKeys.byColumnId(event.targetColumnId),
     });
+
+    return;
+  }
+
+  queryClient.invalidateQueries({
+    queryKey: placementKeys.byColumnId(event.sourceColumnId),
   });
+
+  queryClient.invalidateQueries({
+    queryKey: placementKeys.byColumnId(event.targetColumnId),
+  });
+});
 
   function handleDragStart(event: any) {
     isDragging.current = true;
@@ -203,17 +213,12 @@ export default function ColumnList({
     >
       <div className="flex justify-evenly">
         {sortedColumns.map((column) => {
-          const columnPlacements = dragPlacements.filter(
-            (placement) => placement.columnId === column.id,
-          );
-
           return (
             <Column
               key={column.id}
               column={column}
               boardId={boardId}
               entities={entities}
-              placements={columnPlacements}
             />
           );
         })}
