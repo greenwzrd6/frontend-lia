@@ -21,12 +21,6 @@ const { ref } = useSortable({
   type: "card",
   accept: "card",
 
-  transition: {
-  duration: 250,
-  easing: "ease",
-  idle: false,
-},
-
   data: {
     type: "card",
     entityId: entity.Id,

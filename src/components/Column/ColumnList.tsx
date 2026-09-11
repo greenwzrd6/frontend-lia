@@ -213,10 +213,6 @@ useBoardHub((event) => {
     >
       <div className="flex justify-evenly">
         {sortedColumns.map((column) => {
-          const columnPlacements = dragPlacements.filter(
-            (placement) => placement.columnId === column.id,
-          );
-
           return (
             <Column
               key={column.id}
