@@ -38,7 +38,7 @@ export default function ColumnList({
 
   useEffect(() => {
     console.log("NEW PLACEMENTS FROM QUERY:", placements);
-    
+
     if (!isDragging.current) {
       const sorted = [...placements].sort((a, b) => {
         if (a.columnId !== b.columnId) {
@@ -96,11 +96,11 @@ export default function ColumnList({
     const { source, target } = dragEvent.operation;
 
     console.log("DRAG END", {
-  initialGroup: source.initialGroup,
-  group: source.group,
-  initialIndex: source.initialIndex,
-  index: source.index,
-});
+      initialGroup: source.initialGroup,
+      group: source.group,
+      initialIndex: source.initialIndex,
+      index: source.index,
+    });
 
     if (!isSortable(source)) {
       return;
@@ -119,7 +119,10 @@ export default function ColumnList({
     }
 
     const sourceColumnId = String(initialGroup);
-    const targetColumnId = target?.data?.type === "column" ? String(target.data.columnId) : String(group);
+    const targetColumnId =
+      target?.data?.type === "column"
+        ? String(target.data.columnId)
+        : String(group);
 
     if (sourceColumnId === targetColumnId && initialIndex === index) {
       return;
@@ -133,13 +136,15 @@ export default function ColumnList({
       (placement) => placement.entityId !== sourceData.entityId,
     );
 
-    const targetIndex = target?.data?.type === "column"
-    ? 0
-    : index;
+    const targetIndex =
+      target?.data?.type === "column" && otherPlacements.length === 0
+        ? 0
+        : index;
 
     const itemAfter = otherPlacements[targetIndex];
 
-    const itemBefore = targetIndex > 0 ? otherPlacements[index - 1] : undefined;
+    const itemBefore =
+      targetIndex > 0 ? otherPlacements[targetIndex - 1] : undefined;
 
     flushSync(() => {
       setDragPlacements((currentPlacements) => {
