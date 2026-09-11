@@ -1,5 +1,5 @@
 export type EntityType = {
-  id: string;
-  parentId: string | null;
-  title: string;
+  Id: string;
+  ParentId: string | null;
+  Title: string;
 };

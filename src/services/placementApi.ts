@@ -1,7 +1,6 @@
 import { apiRequest } from "./api";
 import type { PlacementType } from "../types/placement";
 import type { EntityType } from "../types/entity";
-import Column from "../components/Column/Column";
 import type { ColumnType } from "../types/column";
 
 export type CreatePlacementRequest = {
@@ -44,9 +43,11 @@ export async function getPlacementsByColumn(
   boardId: string,
 ): Promise<PlacementType[]> {
   try {
-    return await apiRequest<PlacementType[]>(
+    const placements = await apiRequest<PlacementType[] | undefined>(
       `/api/placements/column/${columnId}?boardId=${boardId}`,
     );
+
+    return placements ?? [];
   } catch (error) {
     console.log(
       `Something went wrong while getting placements in the column: ${columnId}`,
@@ -80,8 +81,8 @@ export async function createMissingPlacements(
   );
 
   const missingEntityIds = entities
-    .filter((entity) => !placedEntityIds.has(entity.id))
-    .map((entity) => entity.id);
+    .filter((entity) => !placedEntityIds.has(entity.Id))
+    .map((entity) => entity.Id);
 
   if (missingEntityIds.length === 0) {
     return;

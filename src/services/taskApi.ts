@@ -1,23 +1,28 @@
-import { apiRequest, TOJ_API_URL } from "./api";
+import { apiRequestToj } from "./api";
+import { taskIds } from "../../data/taskIds.json";
+import type { NodeType } from "../types/node";
 import type { EntityType } from "../types/entity";
-import type { taskIds } from "../../data/taskIds.json"
 
 export async function getTasksByEntityId(
   projectIds: string,
-  taskIds: string,
 ): Promise<EntityType[]> {
-  return apiRequest<EntityType[]>(
-    `/api/nodeitemservice/getnodeitems/${projectIds}?taskIds=${taskIds}`,
+  const nodes = await apiRequestToj<NodeType[]>(
+    "/toj-api/api/nodeitemservice/getnodeitems",
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        projectIds,
+        projectIds: [projectIds],
         taskIds,
       }),
     },
-    TOJ_API_URL,
   );
+
+  return nodes.map((node) => ({
+    Id: node.Id,
+    ParentId: node.ParentId,
+    Title: node.Title,
+  }));
 }

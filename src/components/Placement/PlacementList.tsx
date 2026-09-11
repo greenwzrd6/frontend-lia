@@ -1,9 +1,4 @@
-import { useDroppable } from "@dnd-kit/core";
-
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/react";
 
 import type { EntityType } from "../../types/entity";
 import type { ColumnType } from "../../types/column";
@@ -22,26 +17,14 @@ export default function PlacementList({
   placements,
   entities,
 }: Readonly<Props>) {
-  /*
-   * The backend uses sortKey to determine the actual order.
-   *
-   * We continue sorting by it when displaying the list.
-   */
-  const sortedPlacements = placements
-    ? [...placements].sort((a, b) => {
-        if (a.sortKey < b.sortKey) return -1;
-        if (a.sortKey > b.sortKey) return 1;
-        return 0;
-      })
-    : [];
 
-  /*
-   * The whole column is also a droppable area.
-   *
-   * This is especially important for empty columns.
-   */
-  const { setNodeRef } = useDroppable({
-    id: `column-${column.id}`,
+  const visiblePlacements = placements 
+  ? placements.filter((placement) => 
+    entities.some((entity) => entity.Id === placement.entityId),
+) : [];
+
+  const { ref } = useDroppable({
+    id: `${column.id}`,
     data: {
       type: "column",
       columnId: column.id,
@@ -49,18 +32,10 @@ export default function PlacementList({
   });
 
   return (
-    <SortableContext
-      /*
-       * These IDs tell dnd-kit which entities belong
-       * to this sortable list.
-       */
-      items={sortedPlacements.map((placement) => placement.entityId)}
-      strategy={verticalListSortingStrategy}
-    >
-      <div ref={setNodeRef} className="min-h-32 p-2">
-        {sortedPlacements.map((placement) => {
+      <div ref={ref} className="min-h-32 p-2">
+        {visiblePlacements.map((placement, index) => {
           const entity = entities.find(
-            (entity) => entity.id === placement.entityId,
+            (entity) => entity.Id === placement.entityId,
           );
 
           if (!entity) {
@@ -72,10 +47,10 @@ export default function PlacementList({
               key={placement.entityId}
               entity={entity}
               placement={placement}
+              index={index}
             />
           );
         })}
       </div>
-    </SortableContext>
   );
 }

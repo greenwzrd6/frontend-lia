@@ -1,56 +1,48 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-
 import type { EntityType } from "../../types/entity";
 import type { PlacementType } from "../../types/placement";
+import { useSortable } from "@dnd-kit/react/sortable";
 
 type Props = {
   entity: EntityType;
   placement: PlacementType | null | undefined;
-  isOverlay?: boolean;
+  index: number;
 };
 
 export default function PlacementCard({
   entity,
   placement,
-  isOverlay = false,
+  index
 }: Readonly<Props>) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useSortable({
-      id: entity.id,
-      data: {
-        entityId: entity.id,
-        columnId: placement?.columnId,
-      },
-      disabled: isOverlay,
-    });
 
-  const style = {
-    transform: isOverlay ? undefined : CSS.Transform.toString(transform),
-  };
+const { ref } = useSortable({
+  id: entity.Id,
+  index,
+  group: placement?.columnId,
+  type: "card",
+  accept: "card",
+
+  transition: {
+  duration: 250,
+  easing: "ease",
+  idle: false,
+},
+
+  data: {
+    type: "card",
+    entityId: entity.Id,
+    columnId: placement?.columnId,
+  },
+});
 
   return (
     <article
-      ref={isOverlay ? undefined : setNodeRef}
-      style={style}
-      {...(isOverlay ? {} : attributes)}
-      {...(isOverlay ? {} : listeners)}
-      className={`
-        outline my-3 py-1 px-1
-        flex flex-col items-left justify-center
-        select-none
-        ${
-          isOverlay
-            ? "shadow-2xl cursor-grabbing bg-white opacity-95"
-            : "cursor-grab"
-        }
-        ${isDragging && !isOverlay ? "opacity-25" : ""}
-      `}
+      ref={ref}
+      className="bg-white rounded-2xl p-5 m-1 border border-gray-200"
     >
-      <h3>{entity.title}</h3>
-      <small>Entity: {entity.id.slice(30)}</small>
+      <h3>{entity.Title}</h3>
+      {/* <small>Entity: {entity.Id}</small> */}
       <small>sortKey: {placement?.sortKey}</small>
-      <small>Parent: {entity?.parentId?.slice(30)}</small>
+      {/* <small>Parent: {entity?.ParentId}</small> */}
     </article>
   );
 }

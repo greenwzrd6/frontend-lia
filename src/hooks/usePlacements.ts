@@ -11,11 +11,11 @@ import type { ColumnType } from "../types/column";
 
 export function usePlacements(entities: EntityType[], boardId: string, column: ColumnType[]) {
 
-  const entityIds = entities.map((entity) => entity.id);
+  const entityIds = entities.map((entity) => entity.Id);
   const qc = useQueryClient();
 
   return useQuery<PlacementType[]>({
-    queryKey: ["placements", boardId, ...entityIds],
+    queryKey: placementKeys.byBoard(boardId, entityIds),
     queryFn: async () => {
       const res = await getPlacements(entityIds, boardId);
 
