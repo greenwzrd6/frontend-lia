@@ -19,28 +19,28 @@ export function useBoardHub(
       .withAutomaticReconnect()
       .build();
 
-      const handlePlacementCreated = (event: PlacementCreatedEvent) => {
-          console.log("HUB RECEIVED PlacementCreated:", event);
+    const handlePlacementCreated = (event: PlacementCreatedEvent) => {
+      console.log("HUB RECEIVED PlacementCreated:", event);
 
-        callbackRef.current(event);
-      };
+      callbackRef.current(event);
+    };
 
-    connection.on("PlacementChanged", handlePlacementCreated);
+    connection.on("PlacementCreated", handlePlacementCreated);
 
     let cancelled = false;
 
     async function startConnection() {
       try {
-        console.log("SignalR: starting")
+        console.log("SignalR: starting");
 
         await connection.start();
 
         if (!cancelled) {
-          console.log("SignalR connected")
+          console.log("SignalR connected");
         }
       } catch (e) {
         if (!cancelled) {
-          console.error("SignalR connection failed:", e)
+          console.error("SignalR connection failed:", e);
         }
       }
     }
@@ -48,18 +48,13 @@ export function useBoardHub(
     startConnection();
 
     return () => {
-      console.log("SignalR: cleanup")
+      console.log("SignalR: cleanup");
       cancelled = true;
 
-      connection.off(
-        "PlacementCreated",
-        handlePlacementCreated,
-      );
+      connection.off("PlacementCreated", handlePlacementCreated);
 
-      if (
-        connection.state !== HubConnectionState.Disconnected
-      ) {
-        void connection.stop(); 
+      if (connection.state !== HubConnectionState.Disconnected) {
+        void connection.stop();
       }
     };
   }, []);

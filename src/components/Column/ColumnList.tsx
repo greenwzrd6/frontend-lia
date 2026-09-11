@@ -55,12 +55,17 @@ export default function ColumnList({
   }, [placements]);
 
   useBoardHub((event) => {
-    console.log("SIGNALR EVENT:", event);
-    const entityIds = entities.map((entity) => entity.Id);
+    const columnIds = new Set(
+      [event.sourceColumnId, event.targetColumnId].filter(
+        (id): id is string => id !== null,
+      ),
+    );
 
-    queryClient.invalidateQueries({
-      queryKey: placementKeys.byBoard(boardId, entityIds),
-      exact: true,
+    columnIds.forEach((columnId) => {
+      queryClient.invalidateQueries({
+        queryKey: placementKeys.byColumnId(columnId),
+        exact: true,
+      });
     });
   });
 
