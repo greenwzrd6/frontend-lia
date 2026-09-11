@@ -20,6 +20,13 @@ const { ref } = useSortable({
   group: placement?.columnId,
   type: "card",
   accept: "card",
+
+  transition: {
+  duration: 250,
+  easing: "ease",
+  idle: false,
+},
+
   data: {
     type: "card",
     entityId: entity.Id,

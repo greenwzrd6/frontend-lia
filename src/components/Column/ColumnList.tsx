@@ -223,7 +223,6 @@ useBoardHub((event) => {
               column={column}
               boardId={boardId}
               entities={entities}
-              placements={columnPlacements}
             />
           );
         })}
