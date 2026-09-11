@@ -4,7 +4,6 @@ import type { PlacementType } from "../../types/placement";
 import PlacementList from "../Placement/PlacementList";
 import ColumnHeader from "./ColumnHeader";
 import { useDroppable } from "@dnd-kit/react";
-import { CollisionPriority } from "@dnd-kit/abstract";
 
 type Props = {
   column: ColumnType;
@@ -23,7 +22,6 @@ export default function Column({
   const { ref } = useDroppable({
   id: column.id,
   accept: "card",
-  collisionPriority: CollisionPriority.Low,
   data: {
     type: "column",
     columnId: column.id,

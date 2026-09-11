@@ -141,11 +141,15 @@ export default function ColumnList({
       (placement) => placement.entityId !== sourceData.entityId,
     );
 
-    const targetIndex = target?.data?.type === "column" ? 0 : index;
+    const targetIndex =
+      target?.data?.type === "column" && otherPlacements.length === 0
+        ? 0
+        : index;
 
     const itemAfter = otherPlacements[targetIndex];
 
-    const itemBefore = targetIndex > 0 ? otherPlacements[index - 1] : undefined;
+    const itemBefore =
+      targetIndex > 0 ? otherPlacements[targetIndex - 1] : undefined;
 
     flushSync(() => {
       setDragPlacements((currentPlacements) => {

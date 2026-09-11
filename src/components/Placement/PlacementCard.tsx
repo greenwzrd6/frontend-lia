@@ -34,7 +34,7 @@ const { ref } = useSortable({
       className="bg-white rounded-2xl p-5 m-1 border border-gray-200"
     >
       <h3>{entity.Title}</h3>
-      <small>Entity: {entity.Id}</small>
+      {/* <small>Entity: {entity.Id}</small> */}
       <small>sortKey: {placement?.sortKey}</small>
       {/* <small>Parent: {entity?.ParentId}</small> */}
     </article>
