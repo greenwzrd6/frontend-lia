@@ -13,15 +13,15 @@ export function usePlacement(columnId: string, boardId: string) {
   });
 }
 
-export const invalidateColumnPlacements = (
-  queryClient: QueryClient,
-  columnIds: string[],
-) => {
-  columnIds.forEach((id) => {
-    const key = placementKeys.byColumnId(id);
+// export const invalidateColumnPlacements = (
+//   queryClient: QueryClient,
+//   columnIds: string[],
+// ) => {
+//   columnIds.forEach((id) => {
+//     const key = placementKeys.byColumnId(id);
 
-    queryClient.invalidateQueries({
-      queryKey: key,
-    });
-  });
-};
+//     queryClient.invalidateQueries({
+//       queryKey: key,
+//     });
+//   });
+// };

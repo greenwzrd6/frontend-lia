@@ -38,7 +38,7 @@ export default function ColumnList({
 
   useEffect(() => {
     console.log("NEW PLACEMENTS FROM QUERY:", placements);
-    
+
     if (!isDragging.current) {
       const sorted = [...placements].sort((a, b) => {
         if (a.columnId !== b.columnId) {
@@ -54,26 +54,20 @@ export default function ColumnList({
     }
   }, [placements]);
 
-useBoardHub((event) => {
-  if (
-    !event.sourceColumnId ||
-    event.sourceColumnId === event.targetColumnId
-  ) {
-    queryClient.invalidateQueries({
-      queryKey: placementKeys.byColumnId(event.targetColumnId),
+  useBoardHub((event) => {
+    const columnIds = new Set(
+      [event.sourceColumnId, event.targetColumnId].filter(
+        (id): id is string => id !== null,
+      ),
+    );
+
+    columnIds.forEach((columnId) => {
+      queryClient.invalidateQueries({
+        queryKey: placementKeys.byColumnId(columnId),
+        exact: true,
+      });
     });
-
-    return;
-  }
-
-  queryClient.invalidateQueries({
-    queryKey: placementKeys.byColumnId(event.sourceColumnId),
   });
-
-  queryClient.invalidateQueries({
-    queryKey: placementKeys.byColumnId(event.targetColumnId),
-  });
-});
 
   function handleDragStart(event: any) {
     isDragging.current = true;
@@ -107,11 +101,11 @@ useBoardHub((event) => {
     const { source, target } = dragEvent.operation;
 
     console.log("DRAG END", {
-  initialGroup: source.initialGroup,
-  group: source.group,
-  initialIndex: source.initialIndex,
-  index: source.index,
-});
+      initialGroup: source.initialGroup,
+      group: source.group,
+      initialIndex: source.initialIndex,
+      index: source.index,
+    });
 
     if (!isSortable(source)) {
       return;
@@ -130,7 +124,10 @@ useBoardHub((event) => {
     }
 
     const sourceColumnId = String(initialGroup);
-    const targetColumnId = target?.data?.type === "column" ? String(target.data.columnId) : String(group);
+    const targetColumnId =
+      target?.data?.type === "column"
+        ? String(target.data.columnId)
+        : String(group);
 
     if (sourceColumnId === targetColumnId && initialIndex === index) {
       return;
@@ -144,9 +141,7 @@ useBoardHub((event) => {
       (placement) => placement.entityId !== sourceData.entityId,
     );
 
-    const targetIndex = target?.data?.type === "column"
-    ? 0
-    : index;
+    const targetIndex = target?.data?.type === "column" ? 0 : index;
 
     const itemAfter = otherPlacements[targetIndex];
 
@@ -234,12 +229,17 @@ useBoardHub((event) => {
     <DragDropProvider onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="flex justify-evenly">
         {sortedColumns.map((column) => {
+          const columnPlacements = dragPlacements.filter(
+            (placement) => placement.columnId === column.id,
+          );
+
           return (
             <Column
               key={column.id}
               column={column}
               boardId={boardId}
               entities={entities}
+              placements={columnPlacements}
             />
           );
         })}

@@ -9,7 +9,7 @@ export type PlacementType = {
 };
 
 export type PlacementCreatedEvent = {
-  entityId: string;
+  entityIds: string[];
   sourceColumnId: string | null;
   targetColumnId: string;
 };
