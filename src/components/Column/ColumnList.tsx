@@ -93,7 +93,14 @@ export default function ColumnList({
       return;
     }
 
-    const { source } = dragEvent.operation;
+    const { source, target } = dragEvent.operation;
+
+    console.log("DRAG END", {
+  initialGroup: source.initialGroup,
+  group: source.group,
+  initialIndex: source.initialIndex,
+  index: source.index,
+});
 
     if (!isSortable(source)) {
       return;
@@ -107,12 +114,12 @@ export default function ColumnList({
       group,
     } = source;
 
-    if (initialGroup == null || group == null) {
+    if (initialGroup == null) {
       return;
     }
 
     const sourceColumnId = String(initialGroup);
-    const targetColumnId = String(group);
+    const targetColumnId = target?.data?.type === "column" ? String(target.data.columnId) : String(group);
 
     if (sourceColumnId === targetColumnId && initialIndex === index) {
       return;
@@ -126,9 +133,13 @@ export default function ColumnList({
       (placement) => placement.entityId !== sourceData.entityId,
     );
 
-    const itemAfter = otherPlacements[index];
+    const targetIndex = target?.data?.type === "column"
+    ? 0
+    : index;
 
-    const itemBefore = index > 0 ? otherPlacements[index - 1] : undefined;
+    const itemAfter = otherPlacements[targetIndex];
+
+    const itemBefore = targetIndex > 0 ? otherPlacements[index - 1] : undefined;
 
     flushSync(() => {
       setDragPlacements((currentPlacements) => {
@@ -143,7 +154,9 @@ export default function ColumnList({
                 (placement) => placement.columnId === targetColumnId,
               );
 
-        const movedPlacement = sourcePlacements[initialIndex];
+        const movedPlacement = sourcePlacements.find(
+          (placement) => placement.entityId === sourceData.entityId,
+        );
 
         if (!movedPlacement) {
           return currentPlacements;
@@ -168,7 +181,7 @@ export default function ColumnList({
 
         const newTargetPlacements = [...targetPlacements];
 
-        newTargetPlacements.splice(index, 0, {
+        newTargetPlacements.splice(targetIndex, 0, {
           ...movedPlacement,
           columnId: targetColumnId,
         });
