@@ -37,6 +37,8 @@ export default function ColumnList({
     useState<PlacementType[]>(placements);
 
   useEffect(() => {
+    console.log("NEW PLACEMENTS FROM QUERY:", placements);
+    
     if (!isDragging.current) {
       const sorted = [...placements].sort((a, b) => {
         if (a.columnId !== b.columnId) {
@@ -52,9 +54,8 @@ export default function ColumnList({
     }
   }, [placements]);
 
-  useBoardHub(() => {
-
-      console.log("SIGNALR EVENT:", event);
+  useBoardHub((event) => {
+    console.log("SIGNALR EVENT:", event);
     const entityIds = entities.map((entity) => entity.Id);
 
     queryClient.invalidateQueries({
@@ -135,57 +136,66 @@ export default function ColumnList({
           (placement) => placement.columnId === sourceColumnId,
         );
 
-        
         const targetPlacements =
-        sourceColumnId === targetColumnId
-        ? sourcePlacements
-        : currentPlacements.filter(
-          (placement) => placement.columnId === targetColumnId,
-        );
-        
+          sourceColumnId === targetColumnId
+            ? sourcePlacements
+            : currentPlacements.filter(
+                (placement) => placement.columnId === targetColumnId,
+              );
+
         const movedPlacement = sourcePlacements[initialIndex];
-        
+
         if (!movedPlacement) {
           return currentPlacements;
         }
-        
+
         if (sourceColumnId === targetColumnId) {
           const reordered = [...sourcePlacements];
-          
+
           const [removed] = reordered.splice(initialIndex, 1);
           reordered.splice(index, 0, removed);
-          
+
           const unaffectedPlacements = currentPlacements.filter(
             (placement) => placement.columnId !== sourceColumnId,
           );
-          
+
           return [...unaffectedPlacements, ...reordered];
         }
-        
+
         const newSourcePlacements = sourcePlacements.filter(
           (placement) => placement.entityId !== movedPlacement.entityId,
         );
-        
+
         const newTargetPlacements = [...targetPlacements];
-        
+
         newTargetPlacements.splice(index, 0, {
           ...movedPlacement,
           columnId: targetColumnId,
         });
-        
+
         const unaffectedPlacements = currentPlacements.filter(
           (placement) =>
             placement.columnId !== sourceColumnId &&
-          placement.columnId !== targetColumnId,
+            placement.columnId !== targetColumnId,
         );
-        
+
         return [
           ...unaffectedPlacements,
           ...newSourcePlacements,
           ...newTargetPlacements,
         ];
       });
-    })
+    });
+
+    console.log("CREATE PLACEMENT:", {
+      entityId: sourceData.entityId,
+      sourceColumnId,
+      targetColumnId,
+      initialIndex,
+      index,
+      beforeEntityId: itemAfter?.entityId ?? null,
+      afterEntityId: itemAfter ? null : (itemBefore?.entityId ?? null),
+    });
     await createPlacement({
       entityIds: [sourceData.entityId],
       boardId,
@@ -197,10 +207,7 @@ export default function ColumnList({
   }
 
   return (
-    <DragDropProvider
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
+    <DragDropProvider onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="flex justify-evenly">
         {sortedColumns.map((column) => {
           const columnPlacements = dragPlacements.filter(

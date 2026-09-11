@@ -20,10 +20,12 @@ export function useBoardHub(
       .build();
 
       const handlePlacementCreated = (event: PlacementCreatedEvent) => {
+          console.log("HUB RECEIVED PlacementCreated:", event);
+
         callbackRef.current(event);
       };
 
-    connection.on("PlacementCreated", handlePlacementCreated);
+    connection.on("PlacementChanged", handlePlacementCreated);
 
     let cancelled = false;
 
@@ -33,7 +35,7 @@ export function useBoardHub(
 
         await connection.start();
 
-        if (cancelled!) {
+        if (!cancelled) {
           console.log("SignalR connected")
         }
       } catch (e) {
