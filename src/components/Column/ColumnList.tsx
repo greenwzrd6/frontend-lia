@@ -38,7 +38,7 @@ export default function ColumnList({
 
   useEffect(() => {
     console.log("NEW PLACEMENTS FROM QUERY:", placements);
-    
+
     if (!isDragging.current) {
       const sorted = [...placements].sort((a, b) => {
         if (a.columnId !== b.columnId) {
@@ -55,12 +55,17 @@ export default function ColumnList({
   }, [placements]);
 
   useBoardHub((event) => {
-    console.log("SIGNALR EVENT:", event);
-    const entityIds = entities.map((entity) => entity.Id);
+    const columnIds = new Set(
+      [event.sourceColumnId, event.targetColumnId].filter(
+        (id): id is string => id !== null,
+      ),
+    );
 
-    queryClient.invalidateQueries({
-      queryKey: placementKeys.byBoard(boardId, entityIds),
-      exact: true,
+    columnIds.forEach((columnId) => {
+      queryClient.invalidateQueries({
+        queryKey: placementKeys.byColumnId(columnId),
+        exact: true,
+      });
     });
   });
 
@@ -96,11 +101,11 @@ export default function ColumnList({
     const { source, target } = dragEvent.operation;
 
     console.log("DRAG END", {
-  initialGroup: source.initialGroup,
-  group: source.group,
-  initialIndex: source.initialIndex,
-  index: source.index,
-});
+      initialGroup: source.initialGroup,
+      group: source.group,
+      initialIndex: source.initialIndex,
+      index: source.index,
+    });
 
     if (!isSortable(source)) {
       return;
@@ -119,7 +124,10 @@ export default function ColumnList({
     }
 
     const sourceColumnId = String(initialGroup);
-    const targetColumnId = target?.data?.type === "column" ? String(target.data.columnId) : String(group);
+    const targetColumnId =
+      target?.data?.type === "column"
+        ? String(target.data.columnId)
+        : String(group);
 
     if (sourceColumnId === targetColumnId && initialIndex === index) {
       return;
@@ -133,9 +141,7 @@ export default function ColumnList({
       (placement) => placement.entityId !== sourceData.entityId,
     );
 
-    const targetIndex = target?.data?.type === "column"
-    ? 0
-    : index;
+    const targetIndex = target?.data?.type === "column" ? 0 : index;
 
     const itemAfter = otherPlacements[targetIndex];
 

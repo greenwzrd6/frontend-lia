@@ -2,31 +2,30 @@ import { useParams } from "react-router-dom";
 
 import BoardHeader from "../components/Board/BoardHeader";
 import ColumnList from "../components/Column/ColumnList";
+
 import { useBoard } from "../hooks/useBoard";
 import { useColumns } from "../hooks/useColumns";
-import { usePlacements } from "../hooks/usePlacements";
 import { getDescendants } from "../utils/entityTree";
 import { useEntities } from "../hooks/useEntities";
+import { usePlacementsByColumns } from "../hooks/usePlacementsByColumns";
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
+
   const { data: columns = [] } = useColumns();
   const boardQuery = useBoard();
-  const {
-    data: entities = [],
-//    isLoading: entitiesLoading,
-//    isError: entitiesError,
-  } = useEntities();
+
+  const { data: entities = [] } = useEntities();
 
   const boardEntities = boardQuery.data
     ? getDescendants(entities, boardQuery.data.roots)
     : [];
 
   const {
-    data: placements = [],
+    placements,
     isLoading: placementsLoading,
     isError: placementsError,
-  } = usePlacements(boardEntities, id ?? "", columns);
+  } = usePlacementsByColumns(columns, id ?? "");
 
   if (!id) {
     return <p>Board ID is missing.</p>;
