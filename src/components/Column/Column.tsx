@@ -2,7 +2,8 @@ import type { EntityType } from "../../types/entity";
 import type { ColumnType } from "../../types/column";
 import PlacementList from "../Placement/PlacementList";
 import ColumnHeader from "./ColumnHeader";
-import { usePlacement } from "../../hooks/usePlacement";
+import { useDroppable } from "@dnd-kit/react";
+import { CollisionPriority } from "@dnd-kit/abstract";
 
 type Props = {
   column: ColumnType;
@@ -15,11 +16,19 @@ export default function Column({
   boardId,
   entities,
 }: Readonly<Props>) {
-  const { data: placements = [] } =
-    usePlacement(column.id, boardId);
+  
+  const { ref } = useDroppable({
+  id: column.id,
+  accept: "card",
+  collisionPriority: CollisionPriority.Low,
+  data: {
+    type: "column",
+    columnId: column.id,
+  },
+});
 
   return (
-    <section className="outline flex flex-col w-75">
+    <section ref={ref} className="flex flex-col w-75 hover:bg-gray-100" >
       <ColumnHeader column={column} />
 
       <PlacementList

@@ -1,5 +1,3 @@
-import { useDroppable } from "@dnd-kit/react";
-
 import type { EntityType } from "../../types/entity";
 import type { ColumnType } from "../../types/column";
 import type { PlacementType } from "../../types/placement";
@@ -13,7 +11,6 @@ type Props = {
 };
 
 export default function PlacementList({
-  column,
   placements,
   entities,
 }: Readonly<Props>) {
@@ -23,16 +20,9 @@ export default function PlacementList({
     entities.some((entity) => entity.Id === placement.entityId),
 ) : [];
 
-  const { ref } = useDroppable({
-    id: `${column.id}`,
-    data: {
-      type: "column",
-      columnId: column.id,
-    },
-  });
 
   return (
-      <div ref={ref} className="min-h-32 p-2">
+      <div className="min-h-32 p-2">
         {visiblePlacements.map((placement, index) => {
           const entity = entities.find(
             (entity) => entity.Id === placement.entityId,
