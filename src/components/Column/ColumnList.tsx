@@ -45,6 +45,10 @@ export default function ColumnList({
         exact: true,
       });
 
+      if (!isDragging.current) {
+        setDragPlacements(null);
+      }
+
       return;
     }
 
@@ -61,6 +65,10 @@ export default function ColumnList({
       queryKey: placementKeys.byColumnId(targetColumnId),
       exact: true,
     });
+
+    if (!isDragging.current) {
+      setDragPlacements(null);
+    }
   });
 
   function handleDragStart(event: any) {
@@ -155,7 +163,6 @@ export default function ColumnList({
     const itemBefore =
       targetIndex > 0 ? otherPlacements[targetIndex - 1] : undefined;
 
-    // optimistic update of tanstack cache.
     flushSync(() => {
       setDragPlacements((currentPlacements) => {
         if (!currentPlacements) {
