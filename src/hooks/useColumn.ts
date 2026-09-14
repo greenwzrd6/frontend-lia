@@ -20,7 +20,6 @@ export function useColumn(
         if (a.sortKey > b.sortKey) return 1;
         return 0;
       });
-       
     },
     enabled: options?.enabled ?? true,
     staleTime: options?.staleTime ?? Infinity,
