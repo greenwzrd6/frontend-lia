@@ -1,30 +1,34 @@
 import type { EntityType } from "../../types/entity";
 import type { ColumnType } from "../../types/column";
-import type { PlacementType } from "../../types/placement";
 import PlacementList from "../Placement/PlacementList";
 import ColumnHeader from "./ColumnHeader";
 import { useDroppable } from "@dnd-kit/react";
 import { useColumn } from "../../hooks/useColumn";
+import type { PlacementType } from "../../types/placement";
 
 type Props = {
   column: ColumnType;
   boardId: string;
   entities: EntityType[];
+  dragPlacements?: PlacementType[];
 };
 
 export default function Column({
   column,
   boardId,
   entities,
+  dragPlacements,
 }: Readonly<Props>) {
 
-  const { data: columnData = [], isLoading, isError } = useColumn(
+  const { data: columnData = [] } = useColumn(
     column,
     boardId,
     {
       enabled: !!column && !!boardId,
     },
   );
+
+  const placements = dragPlacements ?? columnData;
 
   const { ref } = useDroppable({
     id: column.id,
@@ -41,7 +45,7 @@ export default function Column({
 
       <PlacementList
         column={column}
-        placements={columnData}
+        placements={placements}
         entities={entities}
         boardId={boardId}
       />

@@ -15,12 +15,12 @@ export function useColumn(
     queryKey: placementKeys.byColumnId(column.id),
     queryFn: async () => {
       const result = await getPlacementsByColumn(column.id, boardId);
-      const sorted = result.sort((a, b) => {
+      return [...result].sort((a, b) => {
         if (a.sortKey < b.sortKey) return -1;
         if (a.sortKey > b.sortKey) return 1;
         return 0;
       });
-      return sorted;
+       
     },
     enabled: options?.enabled ?? true,
     staleTime: options?.staleTime ?? Infinity,
