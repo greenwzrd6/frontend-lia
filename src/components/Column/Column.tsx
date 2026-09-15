@@ -19,14 +19,9 @@ export default function Column({
   entities,
   dragPlacements,
 }: Readonly<Props>) {
-
-  const { data: columnData = [] } = useColumn(
-    column,
-    boardId,
-    {
-      enabled: !!column && !!boardId,
-    },
-  );
+  const { data: columnData = [] } = useColumn(column, boardId, entities, {
+    enabled: !!column && !!boardId && entities.length > 0,
+  });
 
   const placements = dragPlacements ?? columnData;
 

@@ -14,33 +14,32 @@ export default function PlacementList({
   placements,
   entities,
 }: Readonly<Props>) {
-
-  const visiblePlacements = placements 
-  ? placements.filter((placement) => 
-    entities.some((entity) => entity.Id === placement.entityId),
-) : [];
-
+  const visiblePlacements = placements
+    ? placements.filter((placement) =>
+        entities.some((entity) => entity.Id === placement.entityId),
+      )
+    : [];
 
   return (
-      <div className="min-h-32 p-2">
-        {visiblePlacements.map((placement, index) => {
-          const entity = entities.find(
-            (entity) => entity.Id === placement.entityId,
-          );
+    <div className="min-h-32 p-2">
+      {visiblePlacements.map((placement, index) => {
+        const entity = entities.find(
+          (entity) => entity.Id === placement.entityId,
+        );
 
-          if (!entity) {
-            return null;
-          }
+        if (!entity) {
+          return null;
+        }
 
-          return (
-            <PlacementCard
-              key={placement.entityId}
-              entity={entity}
-              placement={placement}
-              index={index}
-            />
-          );
-        })}
-      </div>
+        return (
+          <PlacementCard
+            key={`${placement.entityId}-${placement.timeStamp}`}
+            entity={entity}
+            placement={placement}
+            index={index}
+          />
+        );
+      })}
+    </div>
   );
 }

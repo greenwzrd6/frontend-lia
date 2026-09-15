@@ -32,22 +32,32 @@ export default function ColumnList({
 
   const sourceParentRef = useRef<Element | null>(null);
 
-  const [dragPlacements, setDragPlacements] = useState<PlacementType[] | null>(
-    null,
-  );
+  const [dragPlacements, setDragPlacements] = useState<
+    Record<string, PlacementType[]>
+  >({});
+
+  const placementsSnapshot = useRef<Record<string, PlacementType[]>>({});
 
   useBoardHub(async (event) => {
     const { sourceColumnId, targetColumnId } = event;
 
+    console.log("SIGNALR PlacementCreated:", {
+      sourceColumnId,
+      targetColumnId,
+    });
+
     if (sourceColumnId === targetColumnId) {
+      console.log("SAME COLUMN - invalidating:", sourceColumnId);
+
       await queryClient.invalidateQueries({
         queryKey: placementKeys.byColumnId(targetColumnId),
         exact: true,
       });
 
-      if (!isDragging.current) {
-        setDragPlacements(null);
-      }
+      console.log("SAME COLUMN - invalidate/refetch finished:", targetColumnId);
+      // if (!isDragging.current) {
+      //   setDragPlacements({});
+      // }
 
       return;
     }
@@ -66,9 +76,9 @@ export default function ColumnList({
       exact: true,
     });
 
-    if (!isDragging.current) {
-      setDragPlacements(null);
-    }
+    // if (!isDragging.current) {
+    //   setDragPlacements({});
+    // }
   });
 
   function handleDragStart(event: any) {
@@ -77,18 +87,18 @@ export default function ColumnList({
     sourceParentRef.current =
       event.operation.source?.element?.parentElement ?? null;
 
-    const placements = columns.flatMap((column) => {
-      const columnPlacements =
-        queryClient.getQueryData<PlacementType[]>(
-          placementKeys.byColumnId(column.id),
-        ) ?? [];
-
-      return columnPlacements.filter((placement) =>
-        entities.some((entity) => entity.Id === placement.entityId),
-      );
+    const columnPlacements: Record<string, PlacementType[]> = {};
+    columns.forEach((column) => {
+      queryClient
+        .getQueryData<PlacementType[]>(placementKeys.byColumnId(column.id))
+        ?.forEach((p) => {
+          if (columnPlacements[column.id]) columnPlacements[column.id].push(p);
+          else columnPlacements[column.id] = [p];
+        });
     });
 
-    setDragPlacements(placements);
+    placementsSnapshot.current = structuredClone(columnPlacements);
+    setDragPlacements(columnPlacements);
   }
 
   async function handleDragEnd(dragEvent: any) {
@@ -98,18 +108,18 @@ export default function ColumnList({
 
     sourceParentRef.current = null;
 
-    if (
-      sourceElement &&
-      previousParent &&
-      sourceElement.parentElement !== previousParent
-    ) {
-      previousParent.appendChild(sourceElement);
-    }
+    // if (
+    //   sourceElement &&
+    //   previousParent &&
+    //   sourceElement.parentElement !== previousParent
+    // ) {
+    //   previousParent.appendChild(sourceElement);
+    // }
 
     isDragging.current = false;
 
     if (dragEvent.canceled) {
-      setDragPlacements(null);
+      setDragPlacements(placementsSnapshot.current);
       return;
     }
 
@@ -143,13 +153,11 @@ export default function ColumnList({
         : String(group);
 
     if (sourceColumnId === targetColumnId && initialIndex === index) {
-      setDragPlacements(null);
+      setDragPlacements(placementsSnapshot.current);
       return;
     }
 
-    const targetColumnPlacements = dragPlacements.filter(
-      (placement) => placement.columnId === targetColumnId,
-    );
+    const targetColumnPlacements = dragPlacements[targetColumnId];
 
     const otherPlacements = targetColumnPlacements.filter(
       (placement) => placement.entityId !== sourceData.entityId,
@@ -169,14 +177,14 @@ export default function ColumnList({
           return currentPlacements;
         }
 
-        const sourcePlacements = currentPlacements.filter(
+        const sourcePlacements = currentPlacements[sourceColumnId].filter(
           (placement) => placement.columnId === sourceColumnId,
         );
 
         const targetPlacements =
           sourceColumnId === targetColumnId
             ? sourcePlacements
-            : currentPlacements.filter(
+            : currentPlacements[targetColumnId].filter(
                 (placement) => placement.columnId === targetColumnId,
               );
 
@@ -195,11 +203,13 @@ export default function ColumnList({
 
           reordered.splice(index, 0, removed);
 
-          const unaffectedPlacements = currentPlacements.filter(
-            (placement) => placement.columnId !== sourceColumnId,
-          );
+          // const unaffectedPlacements = currentPlacements.filter(
+          //   (placement) => placement.columnId !== sourceColumnId,
+          // );
 
-          return [...unaffectedPlacements, ...reordered];
+          currentPlacements[sourceColumnId] = reordered;
+
+          return currentPlacements;
         }
 
         const newSourcePlacements = sourcePlacements.filter(
@@ -213,17 +223,16 @@ export default function ColumnList({
           columnId: targetColumnId,
         });
 
-        const unaffectedPlacements = currentPlacements.filter(
-          (placement) =>
-            placement.columnId !== sourceColumnId &&
-            placement.columnId !== targetColumnId,
-        );
+        // const unaffectedPlacements = currentPlacements.filter(
+        //   (placement) =>
+        //     placement.columnId !== sourceColumnId &&
+        //     placement.columnId !== targetColumnId,
+        // );
 
-        return [
-          ...unaffectedPlacements,
-          ...newSourcePlacements,
-          ...newTargetPlacements,
-        ];
+        currentPlacements[sourceColumnId] = newSourcePlacements;
+        currentPlacements[targetColumnId] = newTargetPlacements;
+
+        return currentPlacements;
       });
     });
 
@@ -235,22 +244,20 @@ export default function ColumnList({
       beforeEntityId: itemAfter?.entityId ?? null,
       afterEntityId: itemAfter ? null : (itemBefore?.entityId ?? null),
     });
+    // setDragPlacements({});
   }
 
   return (
     <DragDropProvider onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="flex justify-evenly">
         {sortedColumns.map((column) => {
-          const columnDragPlacements = dragPlacements?.filter(
-            (placement) => placement.columnId === column.id,
-          );
           return (
             <Column
               key={column.id}
               column={column}
               boardId={boardId}
               entities={entities}
-              dragPlacements={columnDragPlacements}
+              dragPlacements={dragPlacements[column.id]}
             />
           );
         })}

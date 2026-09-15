@@ -20,11 +20,7 @@ export default function BoardPage() {
     ? getDescendants(entities, boardQuery.data.roots)
     : [];
 
-    usePlacements(
-      boardEntities,
-      id ?? "",
-      columns,
-    );
+  usePlacements(boardEntities, id ?? "", columns);
 
   if (!id) {
     return <p>Board ID is missing.</p>;
@@ -42,16 +38,11 @@ export default function BoardPage() {
     return <p>Board not found.</p>;
   }
 
-
   return (
     <>
       <BoardHeader board={boardQuery.data} />
 
-      <ColumnList
-        columns={columns}
-        boardId={id}
-        entities={boardEntities}
-      />
+      <ColumnList columns={columns} boardId={id} entities={boardEntities} />
     </>
   );
 }
