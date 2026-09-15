@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { memo, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   DragDropProvider,
@@ -166,16 +166,31 @@ export default function BoardDnd({
       onDragEnd={handleDragEnd}
     >
       <div className="flex justify-evenly">
-        {sortedColumns.map((column) => (
-          <DndColumn
-            key={column.id}
-            column={column}
-            boardId={boardId}
-            entitiesById={entitiesById}
-            enabled={bootstrap.isSuccess}
-            orderedIds={dragItems ? dragItems[column.id] : undefined}
-          />
-        ))}
+        {sortedColumns.map((column) => {
+          // Only hand a column its live drag order if that order has actually
+          // diverged from the pre-drag snapshot. `move()` preserves the array
+          // reference for every group it didn't touch, so an untouched column
+          // compares === here and keeps rendering from its own cache — it never
+          // re-renders during the drag. Memoized DndColumn does the rest: only
+          // the source/target column(s) re-render per pointer frame, regardless
+          // of how many columns or cards the board holds.
+          const liveOrder = dragItems?.[column.id];
+          const orderedIds =
+            liveOrder && liveOrder !== dragStart.current[column.id]
+              ? liveOrder
+              : undefined;
+
+          return (
+            <DndColumn
+              key={column.id}
+              column={column}
+              boardId={boardId}
+              entitiesById={entitiesById}
+              enabled={bootstrap.isSuccess}
+              orderedIds={orderedIds}
+            />
+          );
+        })}
       </div>
     </DragDropProvider>
   );
@@ -190,7 +205,7 @@ type DndColumnProps = {
   orderedIds: string[] | undefined;
 };
 
-function DndColumn({
+const DndColumn = memo(function DndColumn({
   column,
   boardId,
   entitiesById,
@@ -241,7 +256,7 @@ function DndColumn({
       </div>
     </section>
   );
-}
+});
 
 function locate(
   items: Items,

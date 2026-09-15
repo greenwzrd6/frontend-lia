@@ -1,13 +1,12 @@
 import { useParams } from "react-router-dom";
 
 import BoardHeader from "../components/Board/BoardHeader";
-import ColumnList from "../components/Column/ColumnList";
+import BoardDnd from "../components/Board/BoardDnd";
 
 import { useBoard } from "../hooks/useBoard";
 import { useColumns } from "../hooks/useColumns";
 import { getDescendants } from "../utils/entityTree";
 import { useEntities } from "../hooks/useEntities";
-import { usePlacements } from "../hooks/usePlacements";
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
@@ -19,8 +18,6 @@ export default function BoardPage() {
   const boardEntities = boardQuery.data
     ? getDescendants(entities, boardQuery.data.roots)
     : [];
-
-  usePlacements(boardEntities, id ?? "", columns);
 
   if (!id) {
     return <p>Board ID is missing.</p>;
@@ -42,7 +39,7 @@ export default function BoardPage() {
     <>
       <BoardHeader board={boardQuery.data} />
 
-      <ColumnList columns={columns} boardId={id} entities={boardEntities} />
+      <BoardDnd columns={columns} boardId={id} entities={boardEntities} />
     </>
   );
 }

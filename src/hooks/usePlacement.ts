@@ -1,4 +1,4 @@
-import { type QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import type { PlacementType } from "../types/placement";
 import { getPlacementsByColumn } from "../services/placementApi";
 import { placementKeys } from "../utils/queryKeys";
