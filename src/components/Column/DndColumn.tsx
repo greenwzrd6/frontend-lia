@@ -54,10 +54,10 @@ const DndColumn = memo(function DndColumn({
   const ids = orderedIds ?? placements.map((placement) => placement.entityId);
 
   return (
-    <section ref={ref} className="flex flex-col w-75 hover:bg-gray-100">
+    <section className="flex flex-col w-75 hover:bg-gray-100">
       <ColumnHeader column={column} />
 
-      <div className="min-h-32 p-2">
+      <div ref={ref} className="min-h-32 p-2">
         {ids.map((entityId, index) => {
           const entity = entitiesById.get(entityId);
 
