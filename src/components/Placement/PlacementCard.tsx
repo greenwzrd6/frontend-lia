@@ -16,7 +16,7 @@ export default function PlacementCard({
   columnId,
   index,
 }: Readonly<Props>) {
-  const { ref } = useSortable({
+  const { ref, isDropTarget } = useSortable({
     id: entity.Id,
     index,
     group: columnId,
@@ -33,7 +33,7 @@ export default function PlacementCard({
   return (
     <article
       ref={ref}
-      className="bg-white rounded-2xl p-5 m-1 border border-gray-200"
+      className={`bg-white rounded-2xl p-5 m-1 border border-gray-200 ${isDropTarget ? "dnd-over" : ""}`}
     >
       <h3>{entity.Title}</h3>
       <small>sortKey: {placement?.sortKey}</small>
