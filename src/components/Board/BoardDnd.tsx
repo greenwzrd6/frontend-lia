@@ -88,9 +88,9 @@ export default function BoardDnd({
     setDragItems(items);
   }
 
-  function handleDragOver(event: DragOverEvent) {
-    setDragItems((prev) => (prev ? move(prev, event) : null));
-  }
+  // function handleDragOver(event: DragOverEvent) {
+  //   setDragItems((prev) => (prev ? move(prev, event) : null));
+  // }
 
   async function handleDragEnd(event: DragEndEvent) {
     const items = dragItems;
@@ -155,7 +155,9 @@ export default function BoardDnd({
   return (
     <DragDropProvider
       onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
+      onDragOver={(event) =>
+        setDragItems((prev) => (prev ? move(prev, event) : prev))
+      }
       onDragEnd={handleDragEnd}
     >
       <div className="flex justify-evenly">
