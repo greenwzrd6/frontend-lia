@@ -1,5 +1,6 @@
 import { memo, useMemo } from "react";
 import { useDroppable } from "@dnd-kit/react";
+import { CollisionPriority } from "@dnd-kit/abstract";
 
 import ColumnHeader from "./ColumnHeader";
 import PlacementCard from "../Placement/PlacementCard";
@@ -25,8 +26,9 @@ const DndColumn = memo(function DndColumn({
 }: Readonly<Props>) {
   const { ref } = useDroppable({
     id: column.id,
-    accept: "card",
     type: "column",
+    accept: "card",
+    collisionPriority: CollisionPriority.Low,
     data: {
       type: "column",
       columnId: column.id,

@@ -89,45 +89,7 @@ export default function BoardDnd({
   }
 
   function handleDragOver(event: DragOverEvent) {
-    setDragItems((prev) => {
-      if (!prev) {
-        return prev;
-      }
-
-      const { source, target } = event.operation;
-
-      if (!source || !target) {
-        return prev;
-      }
-
-      if (target.data?.type !== "column") {
-        return move(prev, event);
-      }
-
-      const entityId = String(source.id);
-      const targetColumnId = String(target.data.columnId);
-
-      const current = locate(prev, entityId);
-
-      if (!current) {
-        return prev;
-      }
-
-      const next = { ...prev };
-
-      // Ta bort kortet från kolumnen där det ligger just nu
-      next[current.columnId] = prev[current.columnId].filter(
-        (id) => id !== entityId,
-      );
-
-      // Lägg kortet SIST i target-kolumnen
-      next[targetColumnId] = [
-        ...next[targetColumnId].filter((id) => id !== entityId),
-        entityId,
-      ];
-
-      return next;
-    });
+    setDragItems((prev) => (prev ? move(prev, event) : null));
   }
 
   async function handleDragEnd(event: DragEndEvent) {
@@ -152,10 +114,7 @@ export default function BoardDnd({
     // cross-column move remounts the sortable and resets source.initialGroup.
     const from = locate(dragStart.current, entityId);
     const to = locate(items, entityId);
-    if (
-      !to ||
-      (from?.columnId === to.columnId && from.index === to.index)
-    ) {
+    if (!to || (from?.columnId === to.columnId && from.index === to.index)) {
       setDragItems(null);
       return;
     }
