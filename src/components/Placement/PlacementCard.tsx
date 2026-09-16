@@ -5,28 +5,30 @@ import { useSortable } from "@dnd-kit/react/sortable";
 type Props = {
   entity: EntityType;
   placement: PlacementType | null | undefined;
+  /** The column this card is currently rendered in (its dnd-kit group). */
+  columnId: string;
   index: number;
 };
 
 export default function PlacementCard({
   entity,
   placement,
-  index
-}: Readonly<Props>) {
-
-const { ref } = useSortable({
-  id: entity.Id,
+  columnId,
   index,
-  group: placement?.columnId,
-  type: "card",
-  accept: "card",
-
-  data: {
+}: Readonly<Props>) {
+  const { ref } = useSortable({
+    id: entity.Id,
+    index,
+    group: columnId,
     type: "card",
-    entityId: entity.Id,
-    columnId: placement?.columnId,
-  },
-});
+    accept: "card",
+
+    data: {
+      type: "card",
+      entityId: entity.Id,
+      columnId,
+    },
+  });
 
   return (
     <article
@@ -34,9 +36,7 @@ const { ref } = useSortable({
       className="bg-white rounded-2xl p-5 m-1 border border-gray-200"
     >
       <h3>{entity.Title}</h3>
-      {/* <small>Entity: {entity.Id}</small> */}
       <small>sortKey: {placement?.sortKey}</small>
-      {/* <small>Parent: {entity?.ParentId}</small> */}
     </article>
   );
 }
