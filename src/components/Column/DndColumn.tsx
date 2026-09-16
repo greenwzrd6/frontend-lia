@@ -56,7 +56,7 @@ const DndColumn = memo(function DndColumn({
   return (
     <section
      
-      className="flex flex-col w-75 hover:bg-gray-100 has-[.dnd-over]:bg-gray-100"
+      className="flex flex-col w-75 rounded-xl hover:bg-gray-100 has-[.dnd-over]:bg-gray-100"
     >
       <ColumnHeader column={column} />
 
