@@ -1,24 +1,21 @@
-import { memo, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   DragDropProvider,
-  useDroppable,
   type DragEndEvent,
   type DragOverEvent,
 } from "@dnd-kit/react";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { move } from "@dnd-kit/helpers";
 
-import ColumnHeader from "../Column/ColumnHeader";
-import PlacementCard from "../Placement/PlacementCard";
 import { useBoardHub } from "../../hooks/useBoardHub";
 import { useMovePlacement } from "../../hooks/useMovePlacement";
 import { usePlacements } from "../../hooks/usePlacements";
-import { usePlacementsByColumn } from "../../hooks/usePlacementsByColumn";
 import { placementKeys } from "../../utils/queryKeys";
 import type { ColumnType } from "../../types/column";
 import type { EntityType } from "../../types/entity";
 import type { PlacementType } from "../../types/placement";
+import DndColumn from "../Column/DndColumn";
 
 type Items = Record<string, string[]>;
 
@@ -157,7 +154,7 @@ export default function BoardDnd({
     const to = locate(items, entityId);
     if (
       !to ||
-      (from && from.columnId === to.columnId && from.index === to.index)
+      (from?.columnId === to.columnId && from.index === to.index)
     ) {
       setDragItems(null);
       return;
@@ -232,69 +229,6 @@ export default function BoardDnd({
     </DragDropProvider>
   );
 }
-
-type DndColumnProps = {
-  column: ColumnType;
-  boardId: string;
-  entitiesById: Map<string, EntityType>;
-  enabled: boolean;
-  /** Live drag order; when undefined the column renders from its own cache. */
-  orderedIds: string[] | undefined;
-};
-
-const DndColumn = memo(function DndColumn({
-  column,
-  boardId,
-  entitiesById,
-  enabled,
-  orderedIds,
-}: Readonly<DndColumnProps>) {
-  console.log("[col-render]", column.position);
-  const { ref } = useDroppable({
-    id: column.id,
-    accept: "card",
-    type: "column",
-    data: { type: "column", columnId: column.id },
-  });
-
-  const { data: placements = [] } = usePlacementsByColumn(
-    column.id,
-    boardId,
-    enabled,
-  );
-
-  const placementById = useMemo(() => {
-    const map = new Map<string, PlacementType>();
-    for (const placement of placements) map.set(placement.entityId, placement);
-    return map;
-  }, [placements]);
-
-  // During a drag the order comes from local state; otherwise from the cache.
-  const ids = orderedIds ?? placements.map((placement) => placement.entityId);
-
-  return (
-    <section ref={ref} className="flex flex-col w-75 hover:bg-gray-100">
-      <ColumnHeader column={column} />
-
-      <div className="min-h-32 p-2">
-        {ids.map((entityId, index) => {
-          const entity = entitiesById.get(entityId);
-          if (!entity) return null;
-
-          return (
-            <PlacementCard
-              key={entityId}
-              entity={entity}
-              placement={placementById.get(entityId) ?? null}
-              columnId={column.id}
-              index={index}
-            />
-          );
-        })}
-      </div>
-    </section>
-  );
-});
 
 function locate(
   items: Items,
