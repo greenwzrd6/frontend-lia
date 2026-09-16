@@ -1,5 +1,6 @@
 import { memo, useMemo } from "react";
 import { useDroppable } from "@dnd-kit/react";
+import { CollisionPriority } from "@dnd-kit/abstract";
 
 import ColumnHeader from "./ColumnHeader";
 import PlacementCard from "../Placement/PlacementCard";
@@ -25,8 +26,9 @@ const DndColumn = memo(function DndColumn({
 }: Readonly<Props>) {
   const { ref } = useDroppable({
     id: column.id,
-    accept: "card",
     type: "column",
+    accept: "card",
+    collisionPriority: CollisionPriority.Low,
     data: {
       type: "column",
       columnId: column.id,
@@ -52,10 +54,13 @@ const DndColumn = memo(function DndColumn({
   const ids = orderedIds ?? placements.map((placement) => placement.entityId);
 
   return (
-    <section ref={ref} className="flex flex-col w-75 hover:bg-gray-100">
+    <section
+     
+      className="flex flex-col w-75 rounded-xl hover:bg-gray-100 has-[.dnd-over]:bg-gray-100"
+    >
       <ColumnHeader column={column} />
 
-      <div className="min-h-32 p-2">
+      <div ref={ref} className="min-h-32 p-2">
         {ids.map((entityId, index) => {
           const entity = entitiesById.get(entityId);
 

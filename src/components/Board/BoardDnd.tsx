@@ -1,10 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  DragDropProvider,
-  type DragEndEvent,
-  type DragOverEvent,
-} from "@dnd-kit/react";
+import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { move } from "@dnd-kit/helpers";
 
@@ -88,47 +84,9 @@ export default function BoardDnd({
     setDragItems(items);
   }
 
-  function handleDragOver(event: DragOverEvent) {
-    setDragItems((prev) => {
-      if (!prev) {
-        return prev;
-      }
-
-      const { source, target } = event.operation;
-
-      if (!source || !target) {
-        return prev;
-      }
-
-      if (target.data?.type !== "column") {
-        return move(prev, event);
-      }
-
-      const entityId = String(source.id);
-      const targetColumnId = String(target.data.columnId);
-
-      const current = locate(prev, entityId);
-
-      if (!current) {
-        return prev;
-      }
-
-      const next = { ...prev };
-
-      // Ta bort kortet från kolumnen där det ligger just nu
-      next[current.columnId] = prev[current.columnId].filter(
-        (id) => id !== entityId,
-      );
-
-      // Lägg kortet SIST i target-kolumnen
-      next[targetColumnId] = [
-        ...next[targetColumnId].filter((id) => id !== entityId),
-        entityId,
-      ];
-
-      return next;
-    });
-  }
+  // function handleDragOver(event: DragOverEvent) {
+  //   setDragItems((prev) => (prev ? move(prev, event) : null));
+  // }
 
   async function handleDragEnd(event: DragEndEvent) {
     const items = dragItems;
@@ -140,8 +98,13 @@ export default function BoardDnd({
       return;
     }
 
-    const { source } = event.operation;
+    const { source, target } = event.operation;
     if (!isSortable(source)) {
+      setDragItems(null);
+      return;
+    }
+
+    if (!target) {
       setDragItems(null);
       return;
     }
@@ -152,10 +115,7 @@ export default function BoardDnd({
     // cross-column move remounts the sortable and resets source.initialGroup.
     const from = locate(dragStart.current, entityId);
     const to = locate(items, entityId);
-    if (
-      !to ||
-      (from?.columnId === to.columnId && from.index === to.index)
-    ) {
+    if (!to || (from?.columnId === to.columnId && from.index === to.index)) {
       setDragItems(null);
       return;
     }
@@ -196,10 +156,12 @@ export default function BoardDnd({
   return (
     <DragDropProvider
       onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
+      onDragOver={(event) =>
+        setDragItems((prev) => (prev ? move(prev, event) : prev))
+      }
       onDragEnd={handleDragEnd}
     >
-      <div className="flex justify-evenly">
+      <div className="flex items-start justify-evenly">
         {sortedColumns.map((column) => {
           // Only hand a column its live drag order if that order has actually
           // diverged from the pre-drag snapshot. `move()` preserves the array
