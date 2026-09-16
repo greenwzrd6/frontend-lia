@@ -36,10 +36,12 @@ export default function BoardPage() {
   }
 
   return (
-    <>
+    <div className="h-screen flex flex-col overflow-hidden">
       <BoardHeader board={boardQuery.data} />
 
-      <BoardDnd columns={columns} boardId={id} entities={boardEntities} />
-    </>
+      <main className="flex-1 min-h-0">
+        <BoardDnd columns={columns} boardId={id} entities={boardEntities} />
+      </main>
+    </div>
   );
 }
