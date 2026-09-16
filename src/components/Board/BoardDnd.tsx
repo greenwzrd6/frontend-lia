@@ -98,8 +98,13 @@ export default function BoardDnd({
       return;
     }
 
-    const { source } = event.operation;
+    const { source, target } = event.operation;
     if (!isSortable(source)) {
+      setDragItems(null);
+      return;
+    }
+
+    if (!target) {
       setDragItems(null);
       return;
     }
