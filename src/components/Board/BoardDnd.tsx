@@ -66,8 +66,10 @@ export default function BoardDnd({
     if (dragItems) return; // don't fight an in-flight local drag
 
     const affected = new Set(
-      [event.sourceColumnId, event.targetColumnId].filter(
-        (id): id is string => !!id,
+      event.changes.flatMap((change) =>
+        [change.sourceColumnId, change.targetColumnId].filter(
+          (id): id is string => !!id,
+        ),
       ),
     );
     for (const columnId of affected) {
