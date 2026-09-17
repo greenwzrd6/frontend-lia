@@ -163,7 +163,7 @@ export default function BoardDnd({
       }
       onDragEnd={handleDragEnd}
     >
-      <div className="flex h-full min-h-0 overflow-hidden justify-evenly">
+      <div className="flex h-full min-h-0 items-start overflow-hidden justify-evenly">
         {sortedColumns.map((column) => {
           // Only hand a column its live drag order if that order has actually
           // diverged from the pre-drag snapshot. `move()` preserves the array
