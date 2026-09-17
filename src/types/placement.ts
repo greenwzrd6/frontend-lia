@@ -8,8 +8,12 @@ export type PlacementType = {
   targetColumnId: string;
 };
 
-export type PlacementCreatedEvent = {
-  entityIds: string[];
+export type PlacementChange = {
   sourceColumnId: string | null;
   targetColumnId: string;
+};
+
+export type PlacementCreatedEvent = {
+  entityIds: string[];
+  changes: PlacementChange[];
 };
