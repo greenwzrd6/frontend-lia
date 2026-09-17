@@ -12,7 +12,7 @@ export default function BoardHeader({ board }: Readonly<Props>) {
         <Link to="/boards/11111111-1111-1111-1111-111111111111">
           Board 1
         </Link>
-        <Link to="/boards/22222222-2222-2222-2222-222222222222">
+        <Link to="/boards/11111111-1111-1111-1111-111111111112">
           Board 2
         </Link>
       </nav>
