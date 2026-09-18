@@ -22,5 +22,6 @@ export function usePlacementsByColumn(
     },
     enabled: enabled && !!boardId,
     staleTime: Infinity,
+    gcTime: 0,
   });
 }
