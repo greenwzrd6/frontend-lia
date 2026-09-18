@@ -1,5 +1,5 @@
 export type BoardType = {
   id: string;
-  title: string[];
+  title: string;
   roots: string[];
 };

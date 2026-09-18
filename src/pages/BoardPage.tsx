@@ -7,13 +7,28 @@ import { useBoard } from "../hooks/useBoard";
 import { useColumns } from "../hooks/useColumns";
 import { getDescendants } from "../utils/entityTree";
 import { useEntities } from "../hooks/useEntities";
+import { useEffect } from "react";
+import { placementKeys } from "../utils/queryKeys";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
 
   const { data: columns = [] } = useColumns();
-  const boardQuery = useBoard();
   const { data: entities = [] } = useEntities();
+
+  const boardQuery = useBoard();
+
+  const qc = useQueryClient();
+
+  //refetch when switching boards, might be bad
+  useEffect(() => {
+    if (!id) return;
+
+    qc.invalidateQueries({
+      queryKey: placementKeys.all,
+    });
+  }, [id, qc]);
 
   const boardEntities = boardQuery.data
     ? getDescendants(entities, boardQuery.data.roots)
