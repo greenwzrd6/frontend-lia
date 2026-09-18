@@ -7,6 +7,8 @@ import { useBoard } from "../hooks/useBoard";
 import { useColumns } from "../hooks/useColumns";
 import { getDescendants } from "../utils/entityTree";
 import { useEntities } from "../hooks/useEntities";
+import ColumnEdgeCreator from "../components/Column/ColumnEdgeCreator";
+import { useState } from "react";
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +21,8 @@ export default function BoardPage() {
   const boardEntities = boardQuery.data
     ? getDescendants(entities, boardQuery.data.roots)
     : [];
+
+  const [showConnections, setShowConnections] = useState(false);
 
   if (!id) {
     return <p>Board ID is missing.</p>;
@@ -38,10 +42,19 @@ export default function BoardPage() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <BoardHeader board={boardQuery.data} />
+      <BoardHeader
+        board={boardQuery.data}
+        onClick={() => setShowConnections(!showConnections)}
+      />
 
-      <main className="flex-1 min-h-0">
+      <main className="relative flex-1 min-h-0">
         <BoardDnd columns={columns} boardId={id} entities={boardEntities} />
+
+        {showConnections && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
+            <ColumnEdgeCreator />
+          </div>
+        )}
       </main>
     </div>
   );
