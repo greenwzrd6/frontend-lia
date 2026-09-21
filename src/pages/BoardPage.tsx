@@ -7,13 +7,13 @@ import { useBoard } from "../hooks/useBoard";
 import { useColumns } from "../hooks/useColumns";
 import { getDescendants } from "../utils/entityTree";
 import { useEntities } from "../hooks/useEntities";
-import ColumnEdgeCreator from "../components/Column/ColumnEdgeCreator";
+import ColumnEdgeFlow from "../components/Column/Flow/ColumnEdgeFlow";
 import { useState } from "react";
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
 
-  const { data: columns = [] } = useColumns();
+  const { data: columns = [] } = useColumns(id ?? "");
   const { data: entities = [] } = useEntities();
 
   const boardQuery = useBoard();
@@ -60,7 +60,7 @@ export default function BoardPage() {
 
         {showConnections && (
           <div className="absolute inset-0 z-10 flex items-center justify-center">
-            <ColumnEdgeCreator />
+            <ColumnEdgeFlow />
           </div>
         )}
       </main>
