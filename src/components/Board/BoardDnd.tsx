@@ -123,15 +123,17 @@ export default function BoardDnd({
     }
 
     const targetIds = items[to.columnId] ?? [];
-    const itemAfter = targetIds[to.index + 1];
-    const itemBefore = targetIds[to.index - 1];
 
-    const itemsBefore = itemAfter ? [itemAfter] : [];
+    const entitiesBefore = targetIds.slice(0, to.index);
+    const entitiesAfter = targetIds.slice(to.index + 1);
 
-    let itemsAfter: string[] = [];
+    let beforeEntityIds: string[] = [];
+    let afterEntityIds: string[] = [];
 
-    if (!itemAfter && itemBefore) {
-      itemsAfter = [itemBefore];
+    if (entitiesAfter.length > 0) {
+      beforeEntityIds = entitiesAfter;
+    } else {
+      afterEntityIds = entitiesBefore;
     }
 
     // Only the columns that actually changed need an optimistic write.
@@ -150,8 +152,8 @@ export default function BoardDnd({
           boardId,
           columnId: to.columnId,
           sourceColumnId: from ? from.columnId : null,
-          beforeEntityIds: itemsBefore,
-          afterEntityIds: itemsAfter,
+          beforeEntityIds,
+          afterEntityIds,
         },
         order,
       });
