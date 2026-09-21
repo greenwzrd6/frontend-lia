@@ -37,6 +37,8 @@ export default function PlacementCard({
     >
       <h3>{entity.Title}</h3>
       <small>sortKey: {placement?.sortKey}</small>
+      <br></br>
+      <small>entityId: {placement?.entityId}</small>
     </article>
   );
 }
