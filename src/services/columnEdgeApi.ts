@@ -6,6 +6,11 @@ export type CreateColumnEdgeRequest = {
   toColumnId: string;
 };
 
+export type DeleteColumnEdgeRequest = {
+  fromColumnId: string;
+  toColumnId: string;
+};
+
 export async function createColumnEdge(
   request: CreateColumnEdgeRequest,
 ): Promise<void> {
@@ -22,4 +27,16 @@ export async function getColumnEdgesByBoardId(
   boardId: string,
 ): Promise<ColumnEdgeType[]> {
   return apiRequest<ColumnEdgeType[]>(`/api/columnedges/boardid/${boardId}`);
+}
+
+export async function deleteColumnEdge(
+  request: DeleteColumnEdgeRequest,
+): Promise<void> {
+  await apiRequest<void>("/api/columnedges/delete", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
 }
