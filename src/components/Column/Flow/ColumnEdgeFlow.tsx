@@ -1,7 +1,5 @@
 import {
   ReactFlow,
-  Background,
-  Controls,
   addEdge,
   useEdgesState,
   type Connection,
@@ -11,13 +9,18 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import ColumnEdge from "./ColumnEdge";
-import { useColumns } from "../../hooks/useColumns";
-import { useColumnEdges } from "../../hooks/useColumnEdges";
-import { useCreateColumnEdge } from "../../hooks/useCreateColumnEdge";
-import { useDeleteColumnEdge } from "../../hooks/useDeleteColumnEdge";
+import { useColumns } from "../../../hooks/useColumns";
+import { useColumnEdges } from "../../../hooks/useColumnEdges";
+import { useCreateColumnEdge } from "../../../hooks/useCreateColumnEdge";
+import { useDeleteColumnEdge } from "../../../hooks/useDeleteColumnEdge";
+import BoardGroup from "./BoardGroup";
 
 const edgeTypes = {
   columnEdge: ColumnEdge,
+};
+
+const nodeTypes = {
+  boardGroup: BoardGroup,
 };
 
 export default function ColumnEdgeFlow() {
@@ -31,11 +34,48 @@ export default function ColumnEdgeFlow() {
   const { mutate: createColumnEdge } = useCreateColumnEdge();
   const { mutate: deleteColumnEdge } = useDeleteColumnEdge();
 
+  const defaultEdgeOptions = {
+    zIndex: 0,
+  };
+
+  const board1: Node = {
+    id: "board1",
+    type: "boardGroup",
+    position: {
+      x: 0,
+      y: 100,
+    },
+    style: {
+      width: 1000,
+      height: 200,
+    },
+    data: {
+      label: "Board 1",
+    },
+  };
+
+  const board2: Node = {
+    id: "board2",
+    type: "boardGroup",
+    position: {
+      x: 0,
+      y: 400,
+    },
+    style: {
+      width: 1000,
+      height: 200,
+    },
+    data: {
+      label: "Board 2",
+    },
+  };
+
   const board1Nodes: Node[] = board1Columns.map((column, index) => ({
     id: column.id,
+    parentId: "board1",
     position: {
-      x: 100 + index * 250,
-      y: 100,
+      x: 50 + index * 250,
+      y: 80,
     },
     data: {
       label: column.title,
@@ -44,16 +84,17 @@ export default function ColumnEdgeFlow() {
 
   const board2Nodes: Node[] = board2Columns.map((column, index) => ({
     id: column.id,
+    parentId: "board2",
     position: {
-      x: 100 + index * 250,
-      y: 300,
+      x: 50 + index * 250,
+      y: 80,
     },
     data: {
       label: column.title,
     },
   }));
 
-  const nodes = [...board1Nodes, ...board2Nodes];
+  const nodes = [board1, ...board1Nodes, board2, ...board2Nodes];
 
   const initialEdges: Edge[] = board1Edges.map((edge) => ({
     id: `${edge.fromColumnId}-${edge.toColumnId}`,
@@ -99,15 +140,14 @@ export default function ColumnEdgeFlow() {
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onEdgesChange={onEdgesChange}
         onEdgesDelete={onEdgesDelete}
         onConnect={onConnect}
+        defaultEdgeOptions={defaultEdgeOptions}
         fitView
-      >
-        <Background />
-        <Controls />
-      </ReactFlow>
+      ></ReactFlow>
     </div>
   );
 }

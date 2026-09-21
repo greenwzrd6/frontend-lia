@@ -28,7 +28,7 @@ export default function ColumnEdge({
 
       <EdgeLabelRenderer>
         <button
-          className="nodrag nopan cursor-pointer px-2 border rounded-sm bg-white"
+          className="nodrag nopan cursor-pointer px-1 border rounded-sm bg-white z-1 text-xs"
           style={{
             position: "absolute",
             transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
@@ -36,7 +36,7 @@ export default function ColumnEdge({
           }}
           onClick={() => deleteElements({ edges: [{ id }] })}
         >
-          <small>Delete</small>
+          Delete
         </button>
       </EdgeLabelRenderer>
     </>

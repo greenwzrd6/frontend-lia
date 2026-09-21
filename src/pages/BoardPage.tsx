@@ -7,7 +7,7 @@ import { useBoard } from "../hooks/useBoard";
 import { useColumns } from "../hooks/useColumns";
 import { getDescendants } from "../utils/entityTree";
 import { useEntities } from "../hooks/useEntities";
-import ColumnEdgeFlow from "../components/Column/ColumnEdgeFlow";
+import ColumnEdgeFlow from "../components/Column/Flow/ColumnEdgeFlow";
 import { useState } from "react";
 
 export default function BoardPage() {
