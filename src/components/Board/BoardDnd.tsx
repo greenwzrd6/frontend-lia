@@ -126,6 +126,14 @@ export default function BoardDnd({
     const itemAfter = targetIds[to.index + 1];
     const itemBefore = targetIds[to.index - 1];
 
+    const beforeEntityIds = itemAfter ? [itemAfter] : [];
+
+    let afterEntityIds: string[] = [];
+
+    if (!itemAfter && itemBefore) {
+      afterEntityIds = [itemBefore];
+    }
+
     // Only the columns that actually changed need an optimistic write.
     const order: Items = { [to.columnId]: targetIds };
     if (from && from.columnId !== to.columnId) {
@@ -142,8 +150,8 @@ export default function BoardDnd({
           boardId,
           columnId: to.columnId,
           sourceColumnId: from ? from.columnId : null,
-          beforeEntityId: itemAfter ?? null,
-          afterEntityId: itemAfter ? null : (itemBefore ?? null),
+          beforeEntityId: beforeEntityIds,
+          afterEntityId: afterEntityIds,
         },
         order,
       });
