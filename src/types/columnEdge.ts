@@ -1,4 +1,4 @@
-// export type ColumnEdgeType = {
-//     fromColumnId: string;
-//     toColumnId: string;
-// }
+export type ColumnEdgeType = {
+  fromColumnId: string;
+  toColumnId: string;
+};
