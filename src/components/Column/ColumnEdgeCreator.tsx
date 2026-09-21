@@ -5,7 +5,7 @@ export default function ColumnEdgeCreator() {
   return (
     <div
       className="border rounded-2xl bg-white"
-      style={{ height: "50%", width: "50%" }}
+      style={{ height: "80%", width: "80%" }}
     >
       <ReactFlow>
         <Background />
