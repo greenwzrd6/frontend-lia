@@ -2,75 +2,69 @@ import {
   ReactFlow,
   Background,
   Controls,
-  applyNodeChanges,
-  applyEdgeChanges,
+  addEdge,
+  useEdgesState,
+  type Connection,
   type Node,
   type Edge,
-  addEdge,
 } from "@xyflow/react";
+
 import "@xyflow/react/dist/style.css";
-import { useCallback, useState } from "react";
 
-type ColumnNode = Node<{ label: string }>;
-
-const initialNodes: ColumnNode[] = [
-  {
-    id: "n1",
-    position: { x: 0, y: 0 },
-    data: { label: "Node 1" },
-    type: "input",
-  },
-  {
-    id: "n2",
-    position: { x: 100, y: 100 },
-    data: { label: "Node 2" },
-    type: "output",
-  },
-  {
-    id: "n3",
-    position: { x: 200, y: 200 },
-    data: { label: "Node 3" },
-    type: "output",
-  },
-];
-
-const initialEdges: Edge[] = [
-  {
-    id: "n1-n2",
-    source: "n1",
-    target: "n2",
-  },
-];
+import { useColumns } from "../../hooks/useColumns";
+import { useColumnEdges } from "../../hooks/useColumnEdges";
 
 export default function ColumnEdgeCreator() {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
+  const { data: board1Columns = [] } = useColumns(
+    "11111111-1111-1111-1111-111111111111",
+  );
+  const { data: board2Columns = [] } = useColumns(
+    "11111111-1111-1111-1111-111111111112",
+  );
+  const { data: board1Edges = [] } = useColumnEdges(
+    "11111111-1111-1111-1111-111111111111",
+  );
 
-  const onNodesChange = useCallback(
-    (changes: any) =>
-      setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-    [],
-  );
-  const onEdgesChange = useCallback(
-    (changes: any) =>
-      setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
-    [],
-  );
-  const onConnect = useCallback(
-    (params: any) =>
-      setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
-    [],
-  );
+  const board1Nodes: Node[] = board1Columns.map((column, index) => ({
+    id: column.id,
+    position: {
+      x: 100 + index * 250,
+      y: 100,
+    },
+    data: {
+      label: column.title,
+    },
+  }));
+  const board2Nodes: Node[] = board2Columns.map((column, index) => ({
+    id: column.id,
+    position: {
+      x: 100 + index * 250,
+      y: 300,
+    },
+    data: {
+      label: column.title,
+    },
+  }));
+
+  const nodes = [...board1Nodes, ...board2Nodes];
+
+  const initialEdges: Edge[] = board1Edges.map((edge) => ({
+    id: `${edge.fromColumnId}-${edge.toColumnId}`,
+    source: edge.fromColumnId,
+    target: edge.toColumnId,
+  }));
+
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const onConnect = (connection: Connection) => {
+    setEdges((currentEdges) => addEdge(connection, currentEdges));
+  };
 
   return (
-    <div
-      className="border rounded-2xl bg-white"
-      style={{ height: "80%", width: "80%" }}
-    >
+    <div className="w-[80%] h-[80%] border rounded-2xl bg-white">
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         fitView

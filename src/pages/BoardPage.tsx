@@ -13,7 +13,7 @@ import { useState } from "react";
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
 
-  const { data: columns = [] } = useColumns();
+  const { data: columns = [] } = useColumns(id ?? "");
   const { data: entities = [] } = useEntities();
 
   const boardQuery = useBoard();
