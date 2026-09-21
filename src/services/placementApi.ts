@@ -7,8 +7,8 @@ export type CreatePlacementRequest = {
   entityIds: string[];
   boardId: string;
   columnId: string;
-  afterEntityId: string | null;
-  beforeEntityId: string | null;
+  afterEntityIds: string[];
+  beforeEntityIds: string[];
   sourceColumnId: string | null;
 };
 
@@ -88,7 +88,7 @@ export async function createMissingPlacements(
     return;
   }
 
-  let afterEntityId: string | null = null;
+  let afterEntityIds: string[]= [];
 
   const inboxColumn = columns.find(
     (column) => column.position === 0
@@ -97,17 +97,12 @@ export async function createMissingPlacements(
     if (!inboxColumn) {
     return;
   }
-
-  for (const entityId of missingEntityIds) {
     await createPlacement({
-      entityIds: [entityId],
+      entityIds: missingEntityIds,
       boardId,
       columnId: inboxColumn.id,
-      afterEntityId,
-      beforeEntityId: null,
+      afterEntityIds,
+      beforeEntityIds: [],
       sourceColumnId: null,
     });
-
-    afterEntityId = entityId;
-  }
 }

@@ -23,6 +23,11 @@ export default function BoardPage() {
     : [];
 
   const [showConnections, setShowConnections] = useState(false);
+  const [hiddenColumnIds, setHiddenColumnIds] = useState<Set<string>>(new Set());
+
+  const visibleColumns = columns.filter(
+    (column) => !hiddenColumnIds.has(column.id),
+  );
 
   if (!id) {
     return <p>Board ID is missing.</p>;
@@ -45,10 +50,13 @@ export default function BoardPage() {
       <BoardHeader
         board={boardQuery.data}
         onClick={() => setShowConnections(!showConnections)}
+        columns={columns}
+        hiddenColumnIds={hiddenColumnIds}
+        onHiddenColumnIdsChange={setHiddenColumnIds}
       />
 
       <main className="relative flex-1 min-h-0">
-        <BoardDnd columns={columns} boardId={id} entities={boardEntities} />
+        <BoardDnd columns={visibleColumns} boardId={id} entities={boardEntities} />
 
         {showConnections && (
           <div className="absolute inset-0 z-10 flex items-center justify-center">
