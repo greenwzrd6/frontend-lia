@@ -7,7 +7,7 @@ import { useBoard } from "../hooks/useBoard";
 import { useColumns } from "../hooks/useColumns";
 import { getDescendants } from "../utils/entityTree";
 import { useEntities } from "../hooks/useEntities";
-import ColumnEdgeCreator from "../components/Column/ColumnEdgeCreator";
+import ColumnEdgeFlow from "../components/Column/ColumnEdgeFlow";
 import { useState } from "react";
 
 export default function BoardPage() {
@@ -52,7 +52,7 @@ export default function BoardPage() {
 
         {showConnections && (
           <div className="absolute inset-0 z-10 flex items-center justify-center">
-            <ColumnEdgeCreator />
+            <ColumnEdgeFlow />
           </div>
         )}
       </main>

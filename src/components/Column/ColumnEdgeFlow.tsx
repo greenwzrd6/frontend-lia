@@ -20,7 +20,7 @@ const edgeTypes = {
   columnEdge: ColumnEdge,
 };
 
-export default function ColumnEdgeCreator() {
+export default function ColumnEdgeFlow() {
   const board1Id = "11111111-1111-1111-1111-111111111111";
   const board2Id = "11111111-1111-1111-1111-111111111112";
 

@@ -18,7 +18,7 @@ export default function BoardHeader({ board, onClick }: Readonly<Props>) {
       </header>
       <button
         onClick={onClick}
-        className="bg-black opacity-50 hover:opacity-60 text-white font-semibold py-2 px-4 rounded-2xl"
+        className="cursor-pointer bg-black opacity-50 hover:opacity-60 text-white font-semibold py-2 px-4 rounded-2xl"
       >
         Connections
       </button>
