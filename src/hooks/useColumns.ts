@@ -5,7 +5,7 @@ import { columnKeys } from "../utils/queryKeys";
 
 export function useColumns(boardId: string) {
   return useQuery({
-    queryKey: ["columns", boardId],
+    queryKey: columnKeys.byBoardId(boardId),
     queryFn: () => getColumnsByBoardId(boardId),
     enabled: !!boardId,
   });
