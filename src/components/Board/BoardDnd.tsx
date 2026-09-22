@@ -122,6 +122,13 @@ export default function BoardDnd({
       return;
     }
 
+    const targetColumn = columns.find((column) => column.id === to.columnId);
+
+    if (!targetColumn?.requestWritable) {
+      setDragItems(null);
+      return;
+    }
+
     const targetIds = items[to.columnId] ?? [];
 
     const entitiesBefore = targetIds.slice(0, to.index);
