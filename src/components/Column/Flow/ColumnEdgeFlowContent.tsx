@@ -14,6 +14,7 @@ import { useCreateColumnEdge } from "../../../hooks/useCreateColumnEdge";
 import { useDeleteColumnEdge } from "../../../hooks/useDeleteColumnEdge";
 import ColumnEdge from "./ColumnEdge";
 import BoardGroup from "./BoardGroup";
+import { ColumnNode } from "./ColumnNode";
 
 const edgeTypes = {
   columnEdge: ColumnEdge,
@@ -21,6 +22,7 @@ const edgeTypes = {
 
 const nodeTypes = {
   boardGroup: BoardGroup,
+  columnNode: ColumnNode,
 };
 
 type Props = {
@@ -75,6 +77,7 @@ export default function ColumnEdgeFlowContent({
 
   const board1Nodes: Node[] = board1Columns.map((column, index) => ({
     id: column.id,
+    type: "columnNode",
     parentId: "board1",
     position: {
       x: 40 + index * 200,
@@ -87,6 +90,7 @@ export default function ColumnEdgeFlowContent({
 
   const board2Nodes: Node[] = board2Columns.map((column, index) => ({
     id: column.id,
+    type: "columnNode",
     parentId: "board2",
     position: {
       x: 40 + index * 200,

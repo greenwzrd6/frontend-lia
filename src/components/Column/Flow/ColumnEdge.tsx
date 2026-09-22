@@ -1,9 +1,9 @@
 import {
   BaseEdge,
   EdgeLabelRenderer,
-  getStraightPath,
   type EdgeProps,
   useReactFlow,
+  getBezierPath,
 } from "@xyflow/react";
 
 export default function ColumnEdge({
@@ -15,7 +15,7 @@ export default function ColumnEdge({
 }: EdgeProps) {
   const { deleteElements } = useReactFlow();
 
-  const [edgePath, labelX, labelY] = getStraightPath({
+  const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
     targetX,
