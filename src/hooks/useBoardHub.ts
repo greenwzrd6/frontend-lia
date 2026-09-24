@@ -1,5 +1,5 @@
 import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { PlacementCreatedEvent } from "../types/placement";
 import { API_URL } from "../services/api";
@@ -7,6 +7,11 @@ import { API_URL } from "../services/api";
 export function useBoardHub(
   onPlacementCreated: (event: PlacementCreatedEvent) => void,
 ) {
+  const [randomWord, setRandomWord] = useState<{
+    word: string;
+    definition: string;
+  } | null>(null);
+
   const callbackRef = useRef(onPlacementCreated);
 
   useEffect(() => {
@@ -25,7 +30,14 @@ export function useBoardHub(
       callbackRef.current(event);
     };
 
+    const handleRandomWord = (result: { word: string; definition: string }) => {
+      console.log("HUB RECEIVED RandomWordReceived:", result);
+      setRandomWord(result);
+    };
+
     connection.on("PlacementCreated", handlePlacementCreated);
+
+    connection.on("RandomWordReceived", handleRandomWord);
 
     let cancelled = false;
 
@@ -52,10 +64,13 @@ export function useBoardHub(
       cancelled = true;
 
       connection.off("PlacementCreated", handlePlacementCreated);
+      connection.off("RandomWordReceived", handleRandomWord);
 
       if (connection.state !== HubConnectionState.Disconnected) {
         void connection.stop();
       }
     };
   }, []);
+
+  return randomWord;
 }

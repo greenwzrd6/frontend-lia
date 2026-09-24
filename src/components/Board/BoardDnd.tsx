@@ -62,7 +62,7 @@ export default function BoardDnd({
     return items;
   };
 
-  useBoardHub((event) => {
+  const randomWord = useBoardHub((event) => {
     if (dragItems) return; // don't fight an in-flight local drag
 
     const affected = new Set(
@@ -181,6 +181,12 @@ export default function BoardDnd({
       onDragEnd={handleDragEnd}
     >
       <div className="flex h-full min-h-0 items-start overflow-hidden justify-evenly">
+        {randomWord && (
+          <div>
+            <h2>{randomWord.word}</h2>
+            <p>{randomWord.definition}</p>
+          </div>
+        )}
         {sortedColumns.map((column) => {
           // Only hand a column its live drag order if that order has actually
           // diverged from the pre-drag snapshot. `move()` preserves the array
