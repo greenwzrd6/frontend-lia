@@ -18,7 +18,7 @@ export default function BoardHeader({
   onHiddenColumnIdsChange,
 }: Readonly<Props>) {
   return (
-    <div className="flex flex-row items-center justify-evenly bg-gray-100">
+    <div className="flex flex-row items-center justify-between bg-gray-100 pl-20 pr-20">
       <header className="flex flex-row justify-center items-center">
         <nav className="flex flex-row  justify-between p-4 gap-4">
           <Link to="/boards/11111111-1111-1111-1111-111111111111">
