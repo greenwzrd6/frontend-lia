@@ -6,13 +6,13 @@ export function ColumnNode({ data }: NodeProps) {
       {String(data.label)}
 
       <Handle
-        position={Position.Top}
+        position={Position.Bottom}
         type="source"
         className="!w-2.5 !h-2.5 !border !border-gray-500 !bg-white"
       />
 
       <Handle
-        position={Position.Bottom}
+        position={Position.Top}
         type="target"
         className="!w-2.5 !h-2.5 !border !border-gray-500 !bg-white"
       />
