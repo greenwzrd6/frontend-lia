@@ -15,6 +15,7 @@ import { useDeleteColumnEdge } from "../../../hooks/useDeleteColumnEdge";
 import ColumnEdge from "./ColumnEdge";
 import BoardGroup from "./BoardGroup";
 import { ColumnNode } from "./ColumnNode";
+import type { BoardType } from "../../../types/board";
 
 const edgeTypes = {
   columnEdge: ColumnEdge,
@@ -26,12 +27,16 @@ const nodeTypes = {
 };
 
 type Props = {
+  board1: BoardType;
+  board2: BoardType;
   board1Columns: ColumnType[];
   board2Columns: ColumnType[];
   board1Edges: ColumnEdgeType[];
 };
 
 export default function ColumnEdgeFlowContent({
+  board1,
+  board2,
   board1Columns,
   board2Columns,
   board1Edges,
@@ -43,7 +48,7 @@ export default function ColumnEdgeFlowContent({
     zIndex: 0,
   };
 
-  const board1: Node = {
+  const board1Node: Node = {
     id: "board1",
     type: "boardGroup",
     position: {
@@ -55,11 +60,11 @@ export default function ColumnEdgeFlowContent({
       height: 200,
     },
     data: {
-      label: "Development",
+      label: board1.title,
     },
   };
 
-  const board2: Node = {
+  const board2Node: Node = {
     id: "board2",
     type: "boardGroup",
     position: {
@@ -71,7 +76,7 @@ export default function ColumnEdgeFlowContent({
       height: 200,
     },
     data: {
-      label: "Testing",
+      label: board2.title,
     },
   };
 
@@ -101,7 +106,7 @@ export default function ColumnEdgeFlowContent({
     },
   }));
 
-  const nodes = [board1, ...board1Nodes, board2, ...board2Nodes];
+  const nodes = [board1Node, ...board1Nodes, board2Node, ...board2Nodes];
 
   const initialEdges: Edge[] = board1Edges.map((edge) => ({
     id: `${edge.fromColumnId}-${edge.toColumnId}`,
