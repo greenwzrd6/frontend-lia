@@ -19,18 +19,20 @@ export default function BoardHeader({
 }: Readonly<Props>) {
   return (
     <div className="flex flex-row items-center justify-between bg-[#0b98d6] text-white pl-77 pr-85">
-      <img src="/toj.PNG" alt="tojclock" />
+      <a href="https://www.tojsystem.se/">
+        <img src="/toj.PNG" alt="tojclock" />
+      </a>
       <header className="flex flex-row items-center">
         <nav className="flex flex-row gap-6">
           <Link
             to="/boards/11111111-1111-1111-1111-111111111111"
-            className="hover:underline underline-offset-8 decoration-3"
+            className="relative after:absolute after:left-0 after:top-[calc(100%+8px)] after:h-0 after:w-full after:bg-current after:transition-all after:duration-200 hover:after:h-[3px]"
           >
             Development
           </Link>
           <Link
             to="/boards/11111111-1111-1111-1111-111111111112"
-            className="hover:underline underline-offset-8 decoration-3"
+            className="relative after:absolute after:left-0 after:top-[calc(100%+8px)] after:h-0 after:w-full after:bg-current after:transition-all after:duration-200 hover:after:h-[3px]"
           >
             Testing
           </Link>
@@ -40,7 +42,7 @@ export default function BoardHeader({
         <div className="flex flex-row items-center gap-6">
           <button
             onClick={onClick}
-            className="cursor-pointer bg-[#bad80a] hover:text-[#009e49] font-semibold py-2 px-4 rounded-xs"
+            className="cursor-pointer bg-[#bad80a] transition duration-200 hover:text-[#009e49] font-semibold py-2 px-4 rounded-xs"
           >
             Connections
           </button>
