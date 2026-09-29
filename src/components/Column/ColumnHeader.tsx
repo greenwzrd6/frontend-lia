@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ColumnType } from "../../types/column";
 import { useRenameColumn } from "../../hooks/useRenameColumn";
 import { useDeleteColumn } from "../../hooks/useDeleteColumn";
-import trashBin from "../../assets/trash-bin.svg"
+import trashBin from "../../assets/trash-bin.svg";
 
 type Props = {
   column: ColumnType;
@@ -48,7 +48,8 @@ export default function ColumnHeader({
 
   if (isEditMode) {
     return (
-      <header className="flex flex-col items-center mt-10">
+      <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-10">
+        <div />
         <AutoFocusInput
           value={columnTitle}
           onChange={setColumnTitle}
@@ -59,9 +60,9 @@ export default function ColumnHeader({
         <button
           type="button"
           onClick={() => remove(column.id)}
-          className="text-sm text-white font-bold bg-red-600 hover:bg-red-800 rounded my-1 px-2 py-1 cursor-pointer"
+          className="text-sm text-white font-bold bg-red-600 hover:bg-red-800 rounded my-1 px-2 py-1 cursor-pointer justify-self-start"
         >
-          <img src={trashBin} alt="Trash bin" className="w-6 filter invert"/>
+          <img src={trashBin} alt="Trash bin" className="w-5 filter invert" />
         </button>
       </header>
     );
@@ -69,7 +70,7 @@ export default function ColumnHeader({
 
   return (
     <header>
-      <h2 className="text-xl flex flex-row justify-center mt-10">
+      <h2 className="text-xl text-center mt-10">
         {column.title}
       </h2>
     </header>
@@ -106,6 +107,7 @@ function AutoFocusInput({
       onChange={(e) => onChange(e.target.value)}
       onBlur={onBlur}
       onKeyDown={onKeyDown}
+      size={Math.max(value.length, 1)}
       className="text-xl text-center border-b-2 border-[#0b98d6] outline-none bg-transparent"
     />
   );

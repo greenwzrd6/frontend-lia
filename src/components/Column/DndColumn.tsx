@@ -58,7 +58,7 @@ const DndColumn = memo(function DndColumn({
   const ids = orderedIds ?? placements.map((placement) => placement.entityId);
 
   return (
-    <section className="flex flex-col max-h-full w-75 rounded-xl has-[.dnd-over]:bg-gray-100">
+    <section className="flex flex-col content-center max-h-full w-75 rounded-xl has-[.dnd-over]:bg-gray-100">
       <ColumnHeader column={column} isEditMode={isEditMode} autoFocus={autoFocus} />
 
       <div
