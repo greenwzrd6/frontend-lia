@@ -19,12 +19,14 @@ type Props = {
   columns: ColumnType[];
   boardId: string;
   entities: EntityType[];
+  isEditMode?: boolean;
 };
 
 export default function BoardDnd({
   columns,
   boardId,
   entities,
+  isEditMode = false,
 }: Readonly<Props>) {
   const queryClient = useQueryClient();
   const { mutateAsync: movePlacement } = useMovePlacement();
@@ -181,7 +183,7 @@ export default function BoardDnd({
       onDragEnd={handleDragEnd}
     >
       <div className="flex h-full min-h-0 items-start overflow-hidden justify-evenly">
-        {sortedColumns.map((column) => {
+        {sortedColumns.map((column, index) => {
           // Only hand a column its live drag order if that order has actually
           // diverged from the pre-drag snapshot. `move()` preserves the array
           // reference for every group it didn't touch, so an untouched column
@@ -203,6 +205,8 @@ export default function BoardDnd({
               entitiesById={entitiesById}
               enabled={bootstrap.isSuccess}
               orderedIds={orderedIds}
+              isEditMode={isEditMode}
+              autoFocus={index === 0}
             />
           );
         })}

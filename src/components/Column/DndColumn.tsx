@@ -15,6 +15,8 @@ type Props = {
   entitiesById: Map<string, EntityType>;
   enabled: boolean;
   orderedIds?: string[];
+  isEditMode?: boolean;
+  autoFocus?: boolean;
 };
 
 const DndColumn = memo(function DndColumn({
@@ -23,6 +25,8 @@ const DndColumn = memo(function DndColumn({
   entitiesById,
   enabled,
   orderedIds,
+  isEditMode,
+  autoFocus = false,
 }: Readonly<Props>) {
   const { ref } = useDroppable({
     id: column.id,
@@ -55,9 +59,12 @@ const DndColumn = memo(function DndColumn({
 
   return (
     <section className="flex flex-col max-h-full w-75 rounded-xl has-[.dnd-over]:bg-gray-100">
-      <ColumnHeader column={column} />
+      <ColumnHeader column={column} isEditMode={isEditMode} autoFocus={autoFocus} />
 
-      <div ref={ref} className="min-h-0 overflow-y-auto p-2 scrollbar-thin scrollbar-gutter-stable scrollbar-thumb-gray-200">
+      <div
+        ref={ref}
+        className="min-h-0 overflow-y-auto p-2 scrollbar-thin scrollbar-gutter-stable scrollbar-thumb-gray-200"
+      >
         {ids.map((entityId, index) => {
           const entity = entitiesById.get(entityId);
 

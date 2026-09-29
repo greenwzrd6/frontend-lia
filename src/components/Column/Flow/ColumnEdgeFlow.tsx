@@ -40,6 +40,7 @@ export default function ColumnEdgeFlow() {
       board1Columns={board1Columns}
       board2Columns={board2Columns}
       board1Edges={board1Edges}
+      boardId={board1Id}
     />
   );
 }
