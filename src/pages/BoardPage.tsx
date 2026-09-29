@@ -23,7 +23,10 @@ export default function BoardPage() {
     : [];
 
   const [showConnections, setShowConnections] = useState(false);
-  const [hiddenColumnIds, setHiddenColumnIds] = useState<Set<string>>(new Set());
+  const [hiddenColumnIds, setHiddenColumnIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const visibleColumns = columns.filter(
     (column) => !hiddenColumnIds.has(column.id),
@@ -53,10 +56,17 @@ export default function BoardPage() {
         columns={columns}
         hiddenColumnIds={hiddenColumnIds}
         onHiddenColumnIdsChange={setHiddenColumnIds}
+        isEditMode={isEditMode}
+        onEditModeChange={setIsEditMode}
       />
 
       <main className="relative flex-1 min-h-0">
-        <BoardDnd columns={visibleColumns} boardId={id} entities={boardEntities} />
+        <BoardDnd
+          columns={visibleColumns}
+          boardId={id}
+          entities={boardEntities}
+          isEditMode={isEditMode}
+        />
 
         {showConnections && (
           <div className="absolute inset-0 z-10 flex items-center justify-center">

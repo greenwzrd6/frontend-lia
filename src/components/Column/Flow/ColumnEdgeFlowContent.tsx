@@ -32,6 +32,7 @@ type Props = {
   board1Columns: ColumnType[];
   board2Columns: ColumnType[];
   board1Edges: ColumnEdgeType[];
+  boardId: string;
 };
 
 export default function ColumnEdgeFlowContent({
@@ -40,9 +41,10 @@ export default function ColumnEdgeFlowContent({
   board1Columns,
   board2Columns,
   board1Edges,
+  boardId,
 }: Props) {
-  const { mutate: createColumnEdge } = useCreateColumnEdge();
-  const { mutate: deleteColumnEdge } = useDeleteColumnEdge();
+  const { mutate: createColumnEdge } = useCreateColumnEdge(boardId);
+  const { mutate: deleteColumnEdge } = useDeleteColumnEdge(boardId);
 
   const defaultEdgeOptions = {
     zIndex: 0,
