@@ -4,6 +4,7 @@ import type { ColumnType } from "../../types/column";
 import { useEffect, useState } from "react";
 import { useCreateColumn } from "../../hooks/useCreateColumn";
 import { useRenameBoard } from "../../hooks/useRenameBoard";
+import HeaderButton from "./HeaderButton";
 
 type Props = {
   board: BoardType;
@@ -108,36 +109,6 @@ export default function BoardHeader({
           <h1 className="text-xl font-bold px-6">{board.title}</h1>
         )}
         <div className="flex flex-row items-center gap-6">
-          {isEditMode && (
-            <form onSubmit={handleAddColumn} className="flex gap-2">
-              <input
-                type="text"
-                value={newColumnTitle}
-                onChange={(e) => setNewColumnTitle(e.target.value)}
-                placeholder="New column title"
-                className="text-black px-2 py-1 rounded-xs bg-white"
-              />
-              <button
-                type="submit"
-                className="cursor-pointer bg-[#bad80a] hover:text-[#009e49] font-semibold py-2 px-4 rounded-xs"
-              >
-                Add
-              </button>
-            </form>
-          )}
-
-          <button
-            type="button"
-            onClick={toggleEditMode}
-            className={`cursor-pointer font-semibold py-2 px-4 rounded-xs transition duration-200 ${
-              isEditMode
-                ? "bg-white text-[#0b98d6]"
-                : "bg-[#bad80a] hover:text-[#009e49]"
-            }`}
-          >
-            {isEditMode ? "Done" : "Edit board"}
-          </button>
-
           <fieldset className="flex flex-col gap-1 text-sm max-h-16 overflow-y-auto px-3 bg-white text-black">
             {columns.map((column) => (
               <label
@@ -162,12 +133,34 @@ export default function BoardHeader({
             ))}
           </fieldset>
 
-          <button
-            onClick={onClick}
-            className="cursor-pointer bg-[#bad80a] transition duration-200 hover:text-[#009e49] font-semibold py-2 px-4 rounded-xs"
+          {isEditMode && (
+            <form onSubmit={handleAddColumn} className="flex gap-2">
+              <input
+                type="text"
+                value={newColumnTitle}
+                onChange={(e) => setNewColumnTitle(e.target.value)}
+                placeholder="New column title"
+                className="text-black px-2 py-1 rounded-xs bg-white"
+              />
+              <HeaderButton buttonType="submit">Add</HeaderButton>
+            </form>
+          )}
+
+          <HeaderButton
+            buttonType="button"
+            styling={`cursor-pointer font-semibold py-2 px-4 rounded-xs transition duration-200 ${
+              isEditMode
+                ? "bg-white text-[#0b98d6]"
+                : "bg-[#bad80a] hover:text-[#009e49]"
+            }`}
+            onClick={toggleEditMode}
           >
+            {isEditMode ? "Done" : "Edit board"}
+          </HeaderButton>
+
+          <HeaderButton buttonType="button" onClick={onClick}>
             Connections
-          </button>
+          </HeaderButton>
         </div>
       </header>
     </div>
