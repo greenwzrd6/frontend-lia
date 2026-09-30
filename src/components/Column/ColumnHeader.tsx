@@ -48,7 +48,7 @@ export default function ColumnHeader({
 
   if (isEditMode) {
     return (
-      <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-10">
+      <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-10 mr-4">
         <div />
         <AutoFocusInput
           value={columnTitle}
@@ -70,9 +70,7 @@ export default function ColumnHeader({
 
   return (
     <header>
-      <h2 className="text-xl text-center mt-10">
-        {column.title}
-      </h2>
+      <h2 className="text-xl text-center mt-10 mr-4">{column.title}</h2>
     </header>
   );
 }
