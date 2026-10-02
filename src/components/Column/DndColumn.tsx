@@ -3,7 +3,7 @@ import { useDroppable } from "@dnd-kit/react";
 import { CollisionPriority } from "@dnd-kit/abstract";
 
 import ColumnHeader from "./ColumnHeader";
-import PlacementCard from "../Placement/PlacementCard";
+import DndPlacementCard from "../Placement/DndPlacementCard";
 import { usePlacementsByColumn } from "../../hooks/usePlacementsByColumn";
 import type { ColumnType } from "../../types/column";
 import type { EntityType } from "../../types/entity";
@@ -59,7 +59,11 @@ const DndColumn = memo(function DndColumn({
 
   return (
     <section className="flex flex-col content-center max-h-full w-75 rounded-xl has-[.dnd-over]:bg-gray-100">
-      <ColumnHeader column={column} isEditMode={isEditMode} autoFocus={autoFocus} />
+      <ColumnHeader
+        column={column}
+        isEditMode={isEditMode}
+        autoFocus={autoFocus}
+      />
 
       <div
         ref={ref}
@@ -73,7 +77,7 @@ const DndColumn = memo(function DndColumn({
           }
 
           return (
-            <PlacementCard
+            <DndPlacementCard
               key={entityId}
               entity={entity}
               placement={placementById.get(entityId) ?? null}

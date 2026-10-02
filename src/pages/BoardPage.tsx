@@ -1,14 +1,13 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 import BoardHeader from "../components/Board/BoardHeader";
-import BoardDnd from "../components/Board/BoardDnd";
-
+import DndBoard from "../components/Board/DndBoard";
 import { useBoard } from "../hooks/useBoard";
 import { useColumns } from "../hooks/useColumns";
 import { getDescendants } from "../utils/entityTree";
 import { useEntities } from "../hooks/useEntities";
 import ColumnEdgeFlow from "../components/Column/Flow/ColumnEdgeFlow";
-import { useState } from "react";
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
@@ -61,7 +60,7 @@ export default function BoardPage() {
       />
 
       <main className="relative flex-1 min-h-0">
-        <BoardDnd
+        <DndBoard
           columns={visibleColumns}
           boardId={id}
           entities={boardEntities}

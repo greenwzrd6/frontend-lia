@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import type { BoardType } from "../../types/board";
 import type { ColumnType } from "../../types/column";
-import { useEffect, useState } from "react";
 import { useCreateColumn } from "../../hooks/useCreateColumn";
 import { useRenameBoard } from "../../hooks/useRenameBoard";
 import HeaderButton from "./HeaderButton";
