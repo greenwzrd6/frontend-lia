@@ -10,7 +10,7 @@ type Props = {
   index: number;
 };
 
-export default function PlacementCard({
+export default function DndPlacementCard({
   entity,
   placement,
   columnId,

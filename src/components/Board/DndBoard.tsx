@@ -22,7 +22,7 @@ type Props = {
   isEditMode?: boolean;
 };
 
-export default function BoardDnd({
+export default function DndBoard({
   columns,
   boardId,
   entities,
@@ -42,13 +42,8 @@ export default function BoardDnd({
     return map;
   }, [entities]);
 
-  // Seeds the per-column caches and creates any missing placements once.
   const bootstrap = usePlacements(entities, boardId, columns);
 
-  // --- Interaction state ---------------------------------------------------
-  // Non-null only while a drag is in flight. This is the ONLY place the live
-  // drag order lives; the query cache is never touched until the drop. No
-  // per-frame cache churn, no "which cache is authoritative mid-drag" bugs.
   const [dragItems, setDragItems] = useState<Items | null>(null);
   const dragStart = useRef<Items>({});
 
@@ -65,7 +60,7 @@ export default function BoardDnd({
   };
 
   useBoardHub((event) => {
-    if (dragItems) return; // don't fight an in-flight local drag
+    if (dragItems) return;
 
     const affected = new Set(
       event.changes.flatMap((change) =>
@@ -88,15 +83,9 @@ export default function BoardDnd({
     setDragItems(items);
   }
 
-  // function handleDragOver(event: DragOverEvent) {
-  //   setDragItems((prev) => (prev ? move(prev, event) : null));
-  // }
-
   async function handleDragEnd(event: DragEndEvent) {
     const items = dragItems;
 
-    // A no-op drop (canceled, or dropped where it started) can release the
-    // override immediately — nothing to persist, cache is already correct.
     if (event.canceled || !items) {
       setDragItems(null);
       return;
@@ -115,10 +104,9 @@ export default function BoardDnd({
 
     const entityId = String(source.id);
 
-    // Derive origin from our own pre-drag snapshot, not from the library — a
-    // cross-column move remounts the sortable and resets source.initialGroup.
     const from = locate(dragStart.current, entityId);
     const to = locate(items, entityId);
+
     if (!to || (from?.columnId === to.columnId && from.index === to.index)) {
       setDragItems(null);
       return;
@@ -145,16 +133,12 @@ export default function BoardDnd({
       afterEntityIds = entitiesBefore;
     }
 
-    // Only the columns that actually changed need an optimistic write.
     const order: Items = { [to.columnId]: targetIds };
     if (from && from.columnId !== to.columnId) {
       order[from.columnId] = items[from.columnId];
     }
 
     try {
-      // Pin the local order until the mutation settles. onMutate writes the
-      // cache, so by the time we release the override the query data already
-      // agrees — no frame ever renders the pre-move order (the revert flash).
       await movePlacement({
         request: {
           entityIds: [entityId],
@@ -166,10 +150,7 @@ export default function BoardDnd({
         },
         order,
       });
-    } catch {
-      // onError already rolled the caches back to the pre-drag snapshot.
     } finally {
-      // Always release, even on failure, so the (rolled-back) cache shows.
       setDragItems(null);
     }
   }
@@ -184,13 +165,6 @@ export default function BoardDnd({
     >
       <div className="flex h-full min-h-0 items-start overflow-hidden justify-evenly">
         {sortedColumns.map((column, index) => {
-          // Only hand a column its live drag order if that order has actually
-          // diverged from the pre-drag snapshot. `move()` preserves the array
-          // reference for every group it didn't touch, so an untouched column
-          // compares === here and keeps rendering from its own cache — it never
-          // re-renders during the drag. Memoized DndColumn does the rest: only
-          // the source/target column(s) re-render per pointer frame, regardless
-          // of how many columns or cards the board holds.
           const liveOrder = dragItems?.[column.id];
           const orderedIds =
             liveOrder && liveOrder !== dragStart.current[column.id]
