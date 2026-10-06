@@ -36,8 +36,6 @@ export default function DndBoard({
     [columns],
   );
 
-  const [lockedCards, setLockedCards] = useState<Set<string>>(new Set());
-
   const entitiesById = useMemo(() => {
     const map = new Map<string, EntityType>();
     for (const entity of entities) map.set(entity.Id, entity);
@@ -61,9 +59,12 @@ export default function DndBoard({
     return items;
   };
 
+  const [lockedCards, setLockedCards] = useState<Set<string>>(new Set());
+
   useBoardHub((event) => {
     const entityIds = event.entityIds;
 
+    //lock cards
     setLockedCards((prev) => {
       const next = new Set(prev);
 
@@ -74,6 +75,19 @@ export default function DndBoard({
       return next;
     });
 
+    //unlock cards
+    setTimeout(() => {
+      setLockedCards((prev) => {
+        const next = new Set(prev);
+
+        for (const entityId of entityIds) {
+          next.delete(entityId);
+        }
+
+        return next;
+      });
+    }, 1000);
+
     const affected = new Set(
       event.changes.flatMap((change) =>
         [change.sourceColumnId, change.targetColumnId].filter(
@@ -81,6 +95,7 @@ export default function DndBoard({
         ),
       ),
     );
+
     for (const columnId of affected) {
       queryClient.invalidateQueries({
         queryKey: placementKeys.byColumnId(columnId),
