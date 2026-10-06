@@ -36,6 +36,8 @@ export default function DndBoard({
     [columns],
   );
 
+  const [lockedCards, setLockedCards] = useState<Set<string>>(new Set());
+
   const entitiesById = useMemo(() => {
     const map = new Map<string, EntityType>();
     for (const entity of entities) map.set(entity.Id, entity);
@@ -60,7 +62,17 @@ export default function DndBoard({
   };
 
   useBoardHub((event) => {
-    if (dragItems) return;
+    const entityIds = event.entityIds;
+
+    setLockedCards((prev) => {
+      const next = new Set(prev);
+
+      for (const entityId of entityIds) {
+        next.add(entityId);
+      }
+
+      return next;
+    });
 
     const affected = new Set(
       event.changes.flatMap((change) =>
@@ -180,6 +192,7 @@ export default function DndBoard({
               enabled={bootstrap.isSuccess}
               orderedIds={orderedIds}
               isEditMode={isEditMode}
+              lockedCards={lockedCards}
               autoFocus={index === 0}
             />
           );
