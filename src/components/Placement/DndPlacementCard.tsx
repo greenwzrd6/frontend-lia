@@ -38,7 +38,7 @@ export default function DndPlacementCard({
       <h3>{entity.Title}</h3>
       <small>sortKey: {placement?.sortKey}</small>
       <br></br>
-      <small>entityId: {placement?.entityId}</small>
+      <small>Status: {entity.Status}</small>
     </article>
   );
 }

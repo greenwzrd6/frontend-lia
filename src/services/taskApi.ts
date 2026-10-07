@@ -20,9 +20,15 @@ export async function getTasksByEntityId(
     },
   );
 
+  console.log(
+    "RAW NODES:",
+    nodes.find((node) => node.Id === "6c192844-ef29-4e31-9b30-dcbc28d455f9"),
+  );
+
   return nodes.map((node) => ({
     Id: node.Id,
     ParentId: node.ParentId,
     Title: node.Title,
+    Status: node.Status,
   }));
 }
