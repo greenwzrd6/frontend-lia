@@ -86,7 +86,7 @@ export default function DndBoard({
 
         return next;
       });
-    }, 1000);
+    }, 800);
 
     const affected = new Set(
       event.changes.flatMap((change) =>
