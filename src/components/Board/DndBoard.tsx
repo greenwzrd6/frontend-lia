@@ -1,6 +1,10 @@
 import { useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
+import {
+  DragDropProvider,
+  DragOverlay,
+  type DragEndEvent,
+} from "@dnd-kit/react";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { move } from "@dnd-kit/helpers";
 
@@ -59,8 +63,34 @@ export default function DndBoard({
     return items;
   };
 
+  const [lockedCards, setLockedCards] = useState<Set<string>>(new Set());
+
   useBoardHub((event) => {
-    if (dragItems) return;
+    const entityIds = event.entityIds;
+
+    //lock cards
+    setLockedCards((prev) => {
+      const next = new Set(prev);
+
+      for (const entityId of entityIds) {
+        next.add(entityId);
+      }
+
+      return next;
+    });
+
+    //unlock cards
+    setTimeout(() => {
+      setLockedCards((prev) => {
+        const next = new Set(prev);
+
+        for (const entityId of entityIds) {
+          next.delete(entityId);
+        }
+
+        return next;
+      });
+    }, 800);
 
     const affected = new Set(
       event.changes.flatMap((change) =>
@@ -69,6 +99,7 @@ export default function DndBoard({
         ),
       ),
     );
+
     for (const columnId of affected) {
       queryClient.invalidateQueries({
         queryKey: placementKeys.byColumnId(columnId),
@@ -180,11 +211,26 @@ export default function DndBoard({
               enabled={bootstrap.isSuccess}
               orderedIds={orderedIds}
               isEditMode={isEditMode}
+              lockedCards={lockedCards}
               autoFocus={index === 0}
             />
           );
         })}
       </div>
+
+      <DragOverlay className="z-50" dropAnimation={null}>
+        {(source) => {
+          const entity = entitiesById.get(String(source.id));
+
+          if (!entity) return null;
+
+          return (
+            <article className="flex flex-row items-center justify-center h-30 bg-white rounded-2xl p-5 m-1 border border-gray-200 shadow-lg">
+              <h3>{entity.Title}</h3>
+            </article>
+          );
+        }}
+      </DragOverlay>
     </DragDropProvider>
   );
 }
