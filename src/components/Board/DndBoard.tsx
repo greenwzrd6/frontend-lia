@@ -225,7 +225,7 @@ export default function DndBoard({
           if (!entity) return null;
 
           return (
-            <article className="flex flex-row items-center justify-center h-30 bg-white rounded-2xl p-5 m-1 border border-gray-200 shadow-lg">
+            <article className="flex flex-row items-center justify-center bg-white rounded-2xl p-5 border border-gray-200 shadow-lg">
               <h3>{entity.Title}</h3>
             </article>
           );

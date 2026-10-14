@@ -65,7 +65,9 @@ const DndColumn = memo(function DndColumn({
   const virtualizer = useVirtualizer({
     count: ids.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 125,
+    estimateSize: () => 74,
+    getItemKey: (index) => ids[index] ?? index,
+    measureElement: (element) => (element as HTMLElement).offsetHeight,
     overscan: 5,
   });
 
@@ -100,12 +102,15 @@ const DndColumn = memo(function DndColumn({
             return (
               <div
                 key={entityId}
+                data-index={virtualItem.index}
+                ref={virtualizer.measureElement}
                 style={{
                   position: "absolute",
                   top: 0,
                   left: 0,
                   width: "100%",
-                  height: `${virtualItem.size}px`,
+                  paddingBlock: "4px",
+                  boxSizing: "border-box",
                   transform: `translateY(${virtualItem.start}px)`,
                 }}
               >
