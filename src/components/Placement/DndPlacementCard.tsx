@@ -34,14 +34,14 @@ export default function DndPlacementCard({
   return (
     <article
       ref={ref}
-      className={`bg-white rounded-2xl p-5 m-1 border border-gray-200
+      className={`flex flex-row items-center justify-center bg-white rounded-2xl h-30 p-5 m-1 border border-gray-200
         ${disabled ? "opacity-25 cursor-not-allowed" : "cursor-grab"}
         ${isDropTarget ? "dnd-over" : ""}`}
     >
       <h3>{entity.Title}</h3>
-      <small>sortKey: {placement?.sortKey}</small>
+      {/* <small>sortKey: {placement?.sortKey}</small>
       <br></br>
-      <small>entityId: {placement?.entityId}</small>
+      <small>entityId: {placement?.entityId}</small> */}
     </article>
   );
 }
