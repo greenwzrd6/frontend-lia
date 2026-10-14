@@ -65,7 +65,7 @@ const DndColumn = memo(function DndColumn({
   const virtualizer = useVirtualizer({
     count: ids.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 125,
+    estimateSize: () => 128,
     overscan: 5,
   });
 
