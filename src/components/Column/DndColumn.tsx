@@ -1,6 +1,7 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useRef } from "react";
 import { useDroppable } from "@dnd-kit/react";
 import { CollisionPriority } from "@dnd-kit/abstract";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 import ColumnHeader from "./ColumnHeader";
 import DndPlacementCard from "../Placement/DndPlacementCard";
@@ -59,6 +60,15 @@ const DndColumn = memo(function DndColumn({
 
   const ids = orderedIds ?? placements.map((placement) => placement.entityId);
 
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: ids.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 125,
+    overscan: 5,
+  });
+
   return (
     <section className="flex flex-col content-center max-h-full w-75 rounded-xl has-[.dnd-over]:bg-gray-100">
       <ColumnHeader
@@ -68,27 +78,48 @@ const DndColumn = memo(function DndColumn({
       />
 
       <div
-        ref={ref}
+        ref={(node) => {
+          parentRef.current = node;
+          ref(node);
+        }}
         className="min-h-0 overflow-y-auto p-2 scrollbar-thin scrollbar-gutter-stable scrollbar-thumb-gray-200"
       >
-        {ids.map((entityId, index) => {
-          const entity = entitiesById.get(entityId);
+        <div
+          style={{
+            height: `${virtualizer.getTotalSize()}px`,
+            width: "100%",
+            position: "relative",
+          }}
+        >
+          {virtualizer.getVirtualItems().map((virtualItem) => {
+            const entityId = ids[virtualItem.index];
+            const entity = entitiesById.get(entityId);
 
-          if (!entity) {
-            return null;
-          }
+            if (!entity) return null;
 
-          return (
-            <DndPlacementCard
-              key={entityId}
-              entity={entity}
-              placement={placementById.get(entityId) ?? null}
-              columnId={column.id}
-              index={index}
-              disabled={lockedCards.has(entityId)}
-            />
-          );
-        })}
+            return (
+              <div
+                key={entityId}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: `${virtualItem.size}px`,
+                  transform: `translateY(${virtualItem.start}px)`,
+                }}
+              >
+                <DndPlacementCard
+                  entity={entity}
+                  placement={placementById.get(entityId) ?? null}
+                  columnId={column.id}
+                  index={virtualItem.index}
+                  disabled={lockedCards.has(entityId)}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

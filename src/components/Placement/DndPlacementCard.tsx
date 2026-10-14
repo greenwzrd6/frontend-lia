@@ -12,12 +12,12 @@ type Props = {
 
 export default function DndPlacementCard({
   entity,
-  placement,
   columnId,
   index,
+  // placement,
   disabled,
 }: Readonly<Props>) {
-  const { ref, isDropTarget } = useSortable({
+  const { ref, isDropTarget, isDragging } = useSortable({
     id: entity.Id,
     index,
     group: columnId,
@@ -34,7 +34,8 @@ export default function DndPlacementCard({
   return (
     <article
       ref={ref}
-      className={`flex flex-row items-center justify-center bg-white rounded-2xl h-30 p-5 m-1 border border-gray-200
+      className={`flex flex-row items-center justify-center h-30 bg-white rounded-2xl p-5 m-1 border border-gray-200
+        ${isDragging ? "opacity-0" : ""}
         ${disabled ? "opacity-25 cursor-not-allowed" : "cursor-grab"}
         ${isDropTarget ? "dnd-over" : ""}`}
     >

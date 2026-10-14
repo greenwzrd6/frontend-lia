@@ -1,6 +1,10 @@
 import { useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
+import {
+  DragDropProvider,
+  DragOverlay,
+  type DragEndEvent,
+} from "@dnd-kit/react";
 import { isSortable } from "@dnd-kit/react/sortable";
 import { move } from "@dnd-kit/helpers";
 
@@ -213,6 +217,20 @@ export default function DndBoard({
           );
         })}
       </div>
+
+      <DragOverlay className="z-50" dropAnimation={null}>
+        {(source) => {
+          const entity = entitiesById.get(String(source.id));
+
+          if (!entity) return null;
+
+          return (
+            <article className="flex flex-row items-center justify-center h-30 bg-white rounded-2xl p-5 m-1 border border-gray-200 shadow-lg">
+              <h3>{entity.Title}</h3>
+            </article>
+          );
+        }}
+      </DragOverlay>
     </DragDropProvider>
   );
 }
