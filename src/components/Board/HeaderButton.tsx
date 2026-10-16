@@ -16,7 +16,7 @@ export default function HeaderButton({
       type={buttonType}
       className={
         styling ??
-        "cursor-pointer bg-[#bad80a] transition duration-200 hover:text-[#009e49] font-semibold py-2 px-4 rounded-xs"
+        "cursor-pointer transition duration-200 font-semibold py-2 px-4 rounded-xs border"
       }
       onClick={onClick}
     >
