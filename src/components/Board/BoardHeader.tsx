@@ -6,6 +6,7 @@ import type { ColumnType } from "../../types/column";
 import { useCreateColumn } from "../../hooks/useCreateColumn";
 import { useRenameBoard } from "../../hooks/useRenameBoard";
 import HeaderButton from "./HeaderButton";
+import HeaderButtonRound from "./HeaderButtonRound";
 
 type Props = {
   board: BoardType;
@@ -28,6 +29,7 @@ export default function BoardHeader({
 }: Readonly<Props>) {
   const [newColumnTitle, setNewColumnTitle] = useState("");
   const [boardTitle, setBoardTitle] = useState(board.title);
+  const [showColumns, setShowColumns] = useState(false);
   const { mutate: createColumn } = useCreateColumn(board.id);
   const { mutate: renameBoard } = useRenameBoard(board.id);
 
@@ -109,31 +111,8 @@ export default function BoardHeader({
         ) : (
           <h1 className="text-xl font-bold px-6">{board.title}</h1>
         )}
-        <div className="flex flex-row items-center gap-6">
-          <fieldset className="flex flex-col gap-1 text-sm max-h-16 overflow-y-auto px-3 bg-white text-black">
-            {columns.map((column) => (
-              <label
-                key={column.id}
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={hiddenColumnIds.has(column.id)}
-                  onChange={() => {
-                    const next = new Set(hiddenColumnIds);
-                    if (next.has(column.id)) {
-                      next.delete(column.id);
-                    } else {
-                      next.add(column.id);
-                    }
-                    onHiddenColumnIdsChange(next);
-                  }}
-                />
-                <span>{column.title}</span>
-              </label>
-            ))}
-          </fieldset>
 
+        <div className="flex flex-row items-center gap-6">
           {isEditMode && (
             <form onSubmit={handleAddColumn} className="flex gap-2">
               <input
@@ -162,6 +141,41 @@ export default function BoardHeader({
           <HeaderButton buttonType="button" onClick={onClick}>
             Connections
           </HeaderButton>
+          <HeaderButtonRound
+            buttonType="button"
+            onClick={() => setShowColumns(!showColumns)}
+          >
+            C
+          </HeaderButtonRound>
+
+          {showColumns && (
+            <fieldset
+              className="absolute top-2 right-83 z-25 flex max-h-46 min-w-55 flex-col gap-1 
+            overflow-y-auto rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-black shadow-lg"
+            >
+              {columns.map((column) => (
+                <label
+                  key={column.id}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={hiddenColumnIds.has(column.id)}
+                    onChange={() => {
+                      const next = new Set(hiddenColumnIds);
+                      if (next.has(column.id)) {
+                        next.delete(column.id);
+                      } else {
+                        next.add(column.id);
+                      }
+                      onHiddenColumnIdsChange(next);
+                    }}
+                  />
+                  <span>{column.title}</span>
+                </label>
+              ))}
+            </fieldset>
+          )}
         </div>
       </header>
     </div>
