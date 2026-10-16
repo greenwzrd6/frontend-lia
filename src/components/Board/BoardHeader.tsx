@@ -150,7 +150,7 @@ export default function BoardHeader({
 
           {showColumns && (
             <fieldset
-              className="absolute top-0 right-80 z-25 flex max-h-46 min-w-55 flex-col gap-1 
+              className="absolute top-2 right-83 z-25 flex max-h-46 min-w-55 flex-col gap-1 
             overflow-y-auto rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-black shadow-lg"
             >
               {columns.map((column) => (
