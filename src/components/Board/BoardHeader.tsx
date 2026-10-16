@@ -129,9 +129,7 @@ export default function BoardHeader({
           <HeaderButton
             buttonType="button"
             styling={`cursor-pointer font-semibold py-2 px-4 rounded-xs transition duration-200 ${
-              isEditMode
-                ? "bg-white text-[#0b98d6]"
-                : "bg-[#bad80a] hover:text-[#009e49]"
+              isEditMode ? "bg-white text-[#0b98d6]" : "border"
             }`}
             onClick={toggleEditMode}
           >
@@ -141,8 +139,12 @@ export default function BoardHeader({
           <HeaderButton buttonType="button" onClick={onClick}>
             Connections
           </HeaderButton>
+
           <HeaderButtonRound
             buttonType="button"
+            styling={`cursor-pointer font-semibold py-2 px-4 rounded-full z-50 ${
+              showColumns ? "bg-[#0b98d6] border border-white" : "border"
+            }`}
             onClick={() => setShowColumns(!showColumns)}
           >
             C

@@ -1,11 +1,13 @@
 interface Props {
   buttonType: "submit" | "reset" | "button" | undefined;
+  styling?: string;
   onClick?: () => void;
   children: string;
 }
 
 export default function HeaderButtonRound({
   buttonType,
+  styling,
   onClick,
   children,
 }: Props) {
@@ -13,7 +15,8 @@ export default function HeaderButtonRound({
     <button
       type={buttonType}
       className={
-        "cursor-pointer bg-[#bad80a] transition duration-200 hover:text-[#009e49] font-semibold py-2 px-4 rounded-full z-50"
+        styling ??
+        "cursor-pointer transition duration-200 font-semibold py-2 px-4 rounded-full z-50 border"
       }
       onClick={onClick}
     >
