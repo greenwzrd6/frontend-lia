@@ -5,6 +5,7 @@ import type { PlacementCreatedEvent } from "../types/placement";
 import { API_URL } from "../services/api";
 
 export function useBoardHub(
+  boardId: string,
   onPlacementCreated: (event: PlacementCreatedEvent) => void,
 ) {
   const callbackRef = useRef(onPlacementCreated);
@@ -15,7 +16,7 @@ export function useBoardHub(
 
   useEffect(() => {
     const connection = new HubConnectionBuilder()
-      .withUrl(`${API_URL}/hubs/board`)
+      .withUrl(`${API_URL}/hubs/board?boardId=${boardId}`)
       .withAutomaticReconnect()
       .build();
 
@@ -45,7 +46,7 @@ export function useBoardHub(
       }
     }
 
-    startConnection();
+    void startConnection();
 
     return () => {
       console.log("SignalR: cleanup");
@@ -57,5 +58,5 @@ export function useBoardHub(
         void connection.stop();
       }
     };
-  }, []);
+  }, [boardId]);
 }

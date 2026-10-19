@@ -65,7 +65,7 @@ export default function DndBoard({
 
   const [lockedCards, setLockedCards] = useState<Set<string>>(new Set());
 
-  useBoardHub((event) => {
+  useBoardHub(boardId, (event) => {
     const entityIds = event.entityIds;
 
     //lock cards
