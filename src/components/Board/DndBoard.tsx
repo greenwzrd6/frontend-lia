@@ -65,7 +65,7 @@ export default function DndBoard({
 
   const [lockedCards, setLockedCards] = useState<Set<string>>(new Set());
 
-  useBoardHub((event) => {
+  useBoardHub(boardId, (event) => {
     const entityIds = event.entityIds;
 
     //lock cards
@@ -101,7 +101,7 @@ export default function DndBoard({
     );
 
     for (const columnId of affected) {
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: placementKeys.byColumnId(columnId),
         exact: true,
       });
