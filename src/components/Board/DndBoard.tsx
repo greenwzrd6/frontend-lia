@@ -101,7 +101,7 @@ export default function DndBoard({
     );
 
     for (const columnId of affected) {
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: placementKeys.byColumnId(columnId),
         exact: true,
       });
