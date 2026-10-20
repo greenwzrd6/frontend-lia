@@ -19,6 +19,14 @@ export function useCreateColumnEdge(boardId: string) {
         columnEdgeKeys.byBoardId(boardId),
         (oldEdges) => {
           if (!oldEdges) return [newEdge];
+          const exists = oldEdges.some(
+            (edge) =>
+              (edge.fromColumnId === variables.fromColumnId &&
+                edge.toColumnId === variables.toColumnId) ||
+              (edge.fromColumnId === variables.toColumnId &&
+                edge.toColumnId === variables.fromColumnId),
+          );
+          if (exists) return oldEdges;
           return [...oldEdges, newEdge];
         },
       );

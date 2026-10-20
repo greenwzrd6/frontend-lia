@@ -15,10 +15,12 @@ export function useDeleteColumnEdge(boardId: string) {
         (oldEdges) => {
           if (!oldEdges) return [];
           return oldEdges.filter(
-            (edge) =>
-              edge.fromColumnId !== variables.fromColumnId ||
-              edge.toColumnId !== variables.toColumnId,
-          );
+              (edge) =>
+                (edge.fromColumnId !== variables.fromColumnId ||
+                  edge.toColumnId !== variables.toColumnId) &&
+                (edge.fromColumnId !== variables.toColumnId ||
+                  edge.toColumnId !== variables.fromColumnId),
+            );
         },
       );
     },
