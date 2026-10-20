@@ -42,7 +42,7 @@ export default function ColumnEdgeFlowContent({
   board2Columns,
   board1Edges,
   boardId,
-}: Props) {
+}: Readonly<Props>) {
   const { mutate: createColumnEdge } = useCreateColumnEdge(boardId);
   const { mutate: deleteColumnEdge } = useDeleteColumnEdge(boardId);
 
@@ -120,7 +120,19 @@ export default function ColumnEdgeFlowContent({
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = (connection: Connection) => {
+    const alreadyConnected = edges.some(
+      (edge) =>
+        (edge.source === connection.source &&
+          edge.target === connection.target) ||
+        (edge.source === connection.target &&
+          edge.target === connection.source),
+    );
+
     if (!connection.source || !connection.target) {
+      return;
+    }
+
+    if (alreadyConnected) {
       return;
     }
 
