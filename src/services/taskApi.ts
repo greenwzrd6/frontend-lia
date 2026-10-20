@@ -1,11 +1,11 @@
 import { apiRequestToj } from "./api";
 import { taskIds } from "../../data/taskIds.json";
 import type { NodeType } from "../types/node";
-import type { EntityType } from "../types/entity";
+import type { TaskType } from "../types/task";
 
-export async function getTasksByEntityId(
+export async function getTasksByProjectId(
   projectIds: string,
-): Promise<EntityType[]> {
+): Promise<TaskType[]> {
   const nodes = await apiRequestToj<NodeType[]>(
     "/toj-api/api/nodeitemservice/getnodeitems",
     {
@@ -21,8 +21,8 @@ export async function getTasksByEntityId(
   );
 
   return nodes.map((node) => ({
-    Id: node.Id,
-    ParentId: node.ParentId,
-    Title: node.Title,
+    id: node.Id,
+    parentId: node.ParentId,
+    title: node.Title,
   }));
 }

@@ -1,9 +1,9 @@
-import type { EntityType } from "../../types/entity";
+import type { TaskType } from "../../types/task";
 import type { PlacementType } from "../../types/placement";
 import { useSortable } from "@dnd-kit/react/sortable";
 
 type Props = {
-  entity: EntityType;
+  entity: TaskType;
   placement: PlacementType | null | undefined;
   columnId: string;
   index: number;
