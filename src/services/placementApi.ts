@@ -81,8 +81,8 @@ export async function createMissingPlacements(
   );
 
   const missingEntityIds = entities
-    .filter((entity) => !placedEntityIds.has(entity.Id))
-    .map((entity) => entity.Id);
+    .filter((entity) => !placedEntityIds.has(entity.id))
+    .map((entity) => entity.id);
 
   if (missingEntityIds.length === 0) {
     return;

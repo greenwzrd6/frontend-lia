@@ -42,7 +42,7 @@ export default function DndBoard({
 
   const entitiesById = useMemo(() => {
     const map = new Map<string, TaskType>();
-    for (const entity of entities) map.set(entity.Id, entity);
+    for (const entity of entities) map.set(entity.id, entity);
     return map;
   }, [entities]);
 
@@ -226,7 +226,7 @@ export default function DndBoard({
 
           return (
             <article className="flex flex-row items-center justify-center bg-white rounded-2xl p-5 border border-gray-200 shadow-lg">
-              <h3>{entity.Title}</h3>
+              <h3>{entity.title}</h3>
             </article>
           );
         }}

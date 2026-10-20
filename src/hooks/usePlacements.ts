@@ -16,7 +16,7 @@ export function usePlacements(
 ) {
   const queryClient = useQueryClient();
 
-  const entityIds = entities.map((entity) => entity.Id);
+  const entityIds = entities.map((entity) => entity.id);
 
   const inboxColumn = columns.find((column) => column.position === 0);
 
