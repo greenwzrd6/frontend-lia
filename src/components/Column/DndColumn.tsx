@@ -7,13 +7,13 @@ import ColumnHeader from "./ColumnHeader";
 import DndPlacementCard from "../Placement/DndPlacementCard";
 import { usePlacementsByColumn } from "../../hooks/usePlacementsByColumn";
 import type { ColumnType } from "../../types/column";
-import type { EntityType } from "../../types/entity";
+import type { TaskType } from "../../types/task";
 import type { PlacementType } from "../../types/placement";
 
 type Props = {
   column: ColumnType;
   boardId: string;
-  entitiesById: Map<string, EntityType>;
+  entitiesById: Map<string, TaskType>;
   enabled: boolean;
   orderedIds?: string[];
   isEditMode?: boolean;

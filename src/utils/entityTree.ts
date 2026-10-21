@@ -1,19 +1,17 @@
-import type { EntityType } from "../types/entity";
+import type { TaskType } from "../types/task";
 
 export function getDescendants(
-  entities: EntityType[],
+  entities: TaskType[],
   rootIds: string[],
-): EntityType[] {
-  const result: EntityType[] = [];
+): TaskType[] {
+  const result: TaskType[] = [];
 
   function collectChildren(parentId: string) {
-    const children = entities.filter(
-        (entity) => entity.ParentId === parentId
-    );
+    const children = entities.filter((entity) => entity.parentId === parentId);
 
     for (const child of children) {
       result.push(child);
-      collectChildren(child.Id);
+      collectChildren(child.id);
     }
   }
 

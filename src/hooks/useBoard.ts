@@ -12,6 +12,6 @@ export function useBoard(boardId?: string) {
   return useQuery({
     queryKey: boardKeys.byId(idForFlow),
     queryFn: () => getBoard(idForFlow!),
-    enabled: !!id,
+    enabled: !!idForFlow,
   });
 }

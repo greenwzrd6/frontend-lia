@@ -1,6 +1,6 @@
 import { apiRequest } from "./api";
 import type { PlacementType } from "../types/placement";
-import type { EntityType } from "../types/entity";
+import type { TaskType } from "../types/task";
 import type { ColumnType } from "../types/column";
 
 export type CreatePlacementRequest = {
@@ -71,38 +71,36 @@ export async function createPlacement(
 }
 
 export async function createMissingPlacements(
-  entities: EntityType[],
+  entities: TaskType[],
   placements: PlacementType[],
   boardId: string,
-  columns: ColumnType[]
+  columns: ColumnType[],
 ) {
   const placedEntityIds = new Set(
     placements.map((placement) => placement.entityId),
   );
 
   const missingEntityIds = entities
-    .filter((entity) => !placedEntityIds.has(entity.Id))
-    .map((entity) => entity.Id);
+    .filter((entity) => !placedEntityIds.has(entity.id))
+    .map((entity) => entity.id);
 
   if (missingEntityIds.length === 0) {
     return;
   }
 
-  let afterEntityIds: string[]= [];
+  let afterEntityIds: string[] = [];
 
-  const inboxColumn = columns.find(
-    (column) => column.position === 0
-  );
+  const inboxColumn = columns.find((column) => column.position === 0);
 
-    if (!inboxColumn) {
+  if (!inboxColumn) {
     return;
   }
-    await createPlacement({
-      entityIds: missingEntityIds,
-      boardId,
-      columnId: inboxColumn.id,
-      afterEntityIds,
-      beforeEntityIds: [],
-      sourceColumnId: null,
-    });
+  await createPlacement({
+    entityIds: missingEntityIds,
+    boardId,
+    columnId: inboxColumn.id,
+    afterEntityIds,
+    beforeEntityIds: [],
+    sourceColumnId: null,
+  });
 }

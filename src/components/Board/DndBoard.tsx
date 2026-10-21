@@ -13,7 +13,7 @@ import { useMovePlacement } from "../../hooks/useMovePlacement";
 import { usePlacements } from "../../hooks/usePlacements";
 import { placementKeys } from "../../utils/queryKeys";
 import type { ColumnType } from "../../types/column";
-import type { EntityType } from "../../types/entity";
+import type { TaskType } from "../../types/task";
 import type { PlacementType } from "../../types/placement";
 import DndColumn from "../Column/DndColumn";
 
@@ -22,7 +22,7 @@ type Items = Record<string, string[]>;
 type Props = {
   columns: ColumnType[];
   boardId: string;
-  entities: EntityType[];
+  entities: TaskType[];
   isEditMode?: boolean;
 };
 
@@ -41,8 +41,8 @@ export default function DndBoard({
   );
 
   const entitiesById = useMemo(() => {
-    const map = new Map<string, EntityType>();
-    for (const entity of entities) map.set(entity.Id, entity);
+    const map = new Map<string, TaskType>();
+    for (const entity of entities) map.set(entity.id, entity);
     return map;
   }, [entities]);
 
@@ -226,7 +226,7 @@ export default function DndBoard({
 
           return (
             <article className="flex flex-row items-center justify-center bg-white rounded-2xl p-5 border border-gray-200 shadow-lg">
-              <h3>{entity.Title}</h3>
+              <h3>{entity.title}</h3>
             </article>
           );
         }}
