@@ -7,11 +7,11 @@ export function getDescendants(
   const result: TaskType[] = [];
 
   function collectChildren(parentId: string) {
-    const children = entities.filter((entity) => entity.ParentId === parentId);
+    const children = entities.filter((entity) => entity.parentId === parentId);
 
     for (const child of children) {
       result.push(child);
-      collectChildren(child.Id);
+      collectChildren(child.id);
     }
   }
 
