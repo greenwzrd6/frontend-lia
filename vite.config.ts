@@ -7,15 +7,4 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-
-  server: {
-    proxy: {
-      "/toj-api": {
-        target: "https://localhost:44301",
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/toj-api/, ""),
-      },
-    },
-  },
 });

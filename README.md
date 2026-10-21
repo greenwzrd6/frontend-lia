@@ -2,6 +2,13 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+## Working without the TOJ system
+
+The board no longer connects to the TOJ system - tasks come from the local mock
+data in `src/mocks/mockTasks.ts`. The board, columns and placements still come
+from your own backend (`VITE_API_URL`, `https://localhost:7265`), so start that
+as usual (SQL Server via docker compose in kanban-lia, then `dotnet run`).
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)

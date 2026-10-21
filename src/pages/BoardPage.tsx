@@ -6,14 +6,14 @@ import DndBoard from "../components/Board/DndBoard";
 import { useBoard } from "../hooks/useBoard";
 import { useColumns } from "../hooks/useColumns";
 import { getDescendants } from "../utils/entityTree";
-import { useTasks } from "../hooks/useTasks";
+import { mockTasks } from "../mocks/mockTasks";
 import ColumnEdgeFlow from "../components/Column/Flow/ColumnEdgeFlow";
 
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
 
   const { data: columns = [] } = useColumns(id ?? "");
-  const { data: entities = [] } = useTasks();
+  const entities = mockTasks;
 
   const boardQuery = useBoard();
 

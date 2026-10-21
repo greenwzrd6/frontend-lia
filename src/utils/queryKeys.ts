@@ -19,12 +19,6 @@ export const columnKeys = {
   byBoardId: (boardId: string | undefined) => ["columns", boardId] as const,
 };
 
-export const entityKeys = {
-  all: ["entities"] as const,
-
-  byProjectId: (projectId: string) => ["entities", projectId] as const
-}
-
 export const columnEdgeKeys = {
   all: ["columnEdges"] as const,
 
