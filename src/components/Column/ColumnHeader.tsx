@@ -5,12 +5,26 @@ import { useRenameColumn } from "../../hooks/useRenameColumn";
 import { useDeleteColumn } from "../../hooks/useDeleteColumn";
 import trashBin from "../../assets/trash-bin.svg";
 
-type Props = {
+/** Props for the ColumnHeader component. */
+export type Props = {
+  /** The column whose title is displayed and renamed. */
   column: ColumnType;
+  /** Whether to render the editable title input and delete button instead of a heading. Defaults to `false`. */
   isEditMode?: boolean;
+  /** Whether to focus the rename input on mount. Defaults to `false`. */
   autoFocus?: boolean;
 };
 
+/**
+ * Title area for a column. In normal mode it renders a centered `<h2>`; in
+ * edit mode it renders an editable title input (Enter saves via
+ * `useRenameColumn`, Escape reverts, blur saves) next to a red trash-bin
+ * button that deletes the column via `useDeleteColumn`. Syncs local state
+ * when the `column.title` prop changes externally.
+ *
+ * @param props - `column`, optional `isEditMode`, and optional `autoFocus`
+ * which focuses the rename input on mount.
+ */
 export default function ColumnHeader({
   column,
   isEditMode = false,
@@ -85,6 +99,10 @@ type InputProps = {
   autoFocus?: boolean;
 };
 
+/**
+ * Sized text input that focuses itself on mount (and whenever `autoFocus`
+ * becomes true). Used for the inline column-title rename field.
+ */
 function AutoFocusInput({
   value,
   onChange,

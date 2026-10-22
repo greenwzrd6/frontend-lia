@@ -3,15 +3,25 @@ import type { PlacementType } from "../types/placement";
 import type { TaskType } from "../types/task";
 import type { ColumnType } from "../types/column";
 
+/** Payload for creating placements that position entities within a column. */
 export type CreatePlacementRequest = {
   entityIds: string[];
   boardId: string;
   columnId: string;
+  /** Existing entity ids the new entities should be placed after. */
   afterEntityIds: string[];
+  /** Existing entity ids the new entities should be placed before. */
   beforeEntityIds: string[];
+  /** Column the entities moved from, or null when placed for the first time. */
   sourceColumnId: string | null;
 };
 
+/**
+ * Fetches placements for the given entities on a board
+ * (GET /api/placements/get?EntityIds=...&boardId=...).
+ *
+ * Returns an empty array instead of throwing if the request fails.
+ */
 export async function getPlacements(
   entityIds: string[],
   boardId: string,
@@ -38,6 +48,12 @@ export async function getPlacements(
   }
 }
 
+/**
+ * Fetches the placements currently in a column on a board
+ * (GET /api/placements/column/{columnId}?boardId=...).
+ *
+ * Returns an empty array instead of throwing if the request fails.
+ */
 export async function getPlacementsByColumn(
   columnId: string,
   boardId: string,
@@ -57,6 +73,10 @@ export async function getPlacementsByColumn(
   }
 }
 
+/**
+ * Creates placements for the given entities (POST /api/placements/create),
+ * inserting them relative to the before/after neighbours in the request.
+ */
 export async function createPlacement(
   request: CreatePlacementRequest,
 ): Promise<void> {
@@ -70,6 +90,13 @@ export async function createPlacement(
   });
 }
 
+/**
+ * Places any of `entities` that have no placement yet into the board's inbox
+ * column (the column at position 0) via {@link createPlacement}.
+ *
+ * Does nothing when every entity is already placed or when the board has no
+ * inbox column.
+ */
 export async function createMissingPlacements(
   entities: TaskType[],
   placements: PlacementType[],

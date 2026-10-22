@@ -4,6 +4,12 @@ import { renameBoard } from "../services/boardApi";
 import { boardKeys } from "../utils/queryKeys";
 import type { BoardType } from "../types/board";
 
+/**
+ * Mutation that renames a board (PUT /api/boards/rename).
+ *
+ * Applies the new title optimistically to the {@link boardKeys.byId} cache
+ * for `boardId` and restores the snapshot if the request fails.
+ */
 export function useRenameBoard(boardId: string) {
   const queryClient = useQueryClient();
 

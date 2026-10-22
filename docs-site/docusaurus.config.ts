@@ -21,6 +21,13 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
 
+  // Parse .md as CommonMark and .mdx as MDX, so literal braces/tags in
+  // generated TypeDoc output (e.g. GET /api/boards/{id}) are not treated
+  // as JSX expressions.
+  markdown: {
+    format: 'detect',
+  },
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
@@ -51,6 +58,8 @@ const config: Config = {
         entryPoints: ['../src'],
         entryPointStrategy: 'expand',
         tsconfig: '../tsconfig.app.json',
+        // Renames "default" exports to their file name (see the plugin file).
+        plugin: ['./typedoc-plugins/rename-defaults.cjs'],
         exclude: ['**/tests/**', '**/test/**', '**/*.test.*'],
         excludePrivate: true,
         excludeInternal: true,

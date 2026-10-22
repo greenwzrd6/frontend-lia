@@ -19,15 +19,36 @@ import DndColumn from "../Column/DndColumn";
 
 type Items = Record<string, string[]>;
 
+/** How long a locally-initiated drop is remembered (used to distinguish own drops from remote ones). */
 const RECENT_DROP_TTL_MS = 3000;
 
-type Props = {
+/** Props for the DndBoard component. */
+export type Props = {
+  /** The board's columns (sorted by position before rendering). */
   columns: ColumnType[];
+  /** Id of the board the columns belong to (placement target and hub subscription). */
   boardId: string;
+  /** All tasks on the board, looked up by id to resolve placement entity ids. */
   entities: TaskType[];
+  /** Whether columns render in edit mode (rename/delete affordances). Defaults to `false`. */
   isEditMode?: boolean;
 };
 
+/**
+ * Drag-and-drop Kanban board built on `@dnd-kit/react`.
+ *
+ * Wraps the columns in a `DragDropProvider`, keeps optimistic per-column
+ * item order in state during a drag (`dragItems`/`dragStart`), and shows a
+ * floating card preview in a `DragOverlay`. On drag end it persists the new
+ * position via `useCreatePlacement` (only into writable columns), sending
+ * `beforeEntityIds`/`afterEntityIds` as ordering context. Bootstraps the
+ * placement query cache with `usePlacements` and subscribes to realtime
+ * updates with `useBoardHub`, invalidating per-column placement queries for
+ * columns affected by hub events.
+ *
+ * @param props - `columns` sorted by position, `boardId`, the full `entities`
+ * task list (looked up by id), and optional `isEditMode` passed to each column.
+ */
 export default function DndBoard({
   columns,
   boardId,
@@ -226,6 +247,10 @@ export default function DndBoard({
   );
 }
 
+/**
+ * Finds which column (and index within it) currently contains `entityId`,
+ * or `null` if it is not present in `items`.
+ */
 function locate(
   items: Items,
   entityId: string,

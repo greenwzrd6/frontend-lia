@@ -4,6 +4,13 @@ import { createColumnEdge } from "../services/columnEdgeApi";
 import { columnEdgeKeys } from "../utils/queryKeys";
 import type { ColumnEdgeType } from "../types/columnEdge";
 
+/**
+ * Mutation that creates a directed column edge (POST /api/columnedges/create).
+ *
+ * On success it adds the edge to the cache under
+ * {@link columnEdgeKeys.byBoardId}, skipping the write when an edge already
+ * exists in either direction.
+ */
 export function useCreateColumnEdge(boardId: string) {
   const queryClient = useQueryClient();
 

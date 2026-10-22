@@ -4,6 +4,19 @@ import { useEffect, useRef } from "react";
 import type { PlacementCreatedEvent } from "../types/placement";
 import { API_URL } from "../services/api";
 
+/**
+ * Opens a SignalR connection to `${API_URL}/hubs/board?boardId=...` and
+ * invokes `onPlacementCreated` for every `PlacementCreated` event.
+ *
+ * The connection reconnects automatically and is torn down when `boardId`
+ * changes or the component unmounts. The hook touches no query cache itself —
+ * the callback decides how to react (typically invalidating
+ * `placementKeys.byColumnId` for the affected columns).
+ *
+ * @param boardId Board whose realtime events should be received.
+ * @param onPlacementCreated Handler for `PlacementCreated`; always the latest
+ *                           render's closure, kept in a ref.
+ */
 export function useBoardHub(
   boardId: string,
   onPlacementCreated: (event: PlacementCreatedEvent) => void,

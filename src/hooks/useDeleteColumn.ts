@@ -5,6 +5,13 @@ import { columnKeys, columnEdgeKeys } from "../utils/queryKeys";
 import type { ColumnType } from "../types/column";
 import type { ColumnEdgeType } from "../types/columnEdge";
 
+/**
+ * Mutation that deletes a column (DELETE /api/columns/delete/{id}).
+ *
+ * Optimistically removes the column from {@link columnKeys.byBoardId} and any
+ * edge touching it from {@link columnEdgeKeys.byBoardId}; both caches are
+ * restored from snapshots if the request fails.
+ */
 export function useDeleteColumn(boardId: string) {
   const queryClient = useQueryClient();
 

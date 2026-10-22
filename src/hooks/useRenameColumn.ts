@@ -10,6 +10,13 @@ type RenameVariables = {
   boardId: string;
 };
 
+/**
+ * Mutation that renames a column (PUT /api/columns/rename).
+ *
+ * Applies the new title optimistically to the matching column in the
+ * {@link columnKeys.byBoardId} cache for the variables' `boardId` and
+ * restores the snapshot if the request fails.
+ */
 export function useRenameColumn() {
   const queryClient = useQueryClient();
 

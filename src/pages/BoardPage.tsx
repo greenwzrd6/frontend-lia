@@ -9,6 +9,15 @@ import { getDescendants } from "../utils/entityTree";
 import { useTasks } from "../hooks/useTasks";
 import ColumnEdgeFlow from "../components/Column/Flow/ColumnEdgeFlow";
 
+/**
+ * Route page for a single Kanban board. Reads the board id from the URL via
+ * `useParams`, fetches columns (`useColumns`), tasks (`useTasks`) and board
+ * data (`useBoard`), and narrows the task list to the board's tree with
+ * `getDescendants`. Renders {@link BoardHeader} above a {@link DndBoard} of
+ * visible columns, and overlays {@link ColumnEdgeFlow} when the "Connections"
+ * panel is toggled. Local state controls the connections overlay, hidden
+ * columns, and edit mode.
+ */
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
 

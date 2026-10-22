@@ -4,6 +4,13 @@ import { useColumnEdges } from "../../../hooks/useColumnEdges";
 import ColumnEdgeFlowContent from "./ColumnEdgeFlowContent";
 import { useBoard } from "../../../hooks/useBoard";
 
+/**
+ * Container that loads the data for the column-connections view: the two
+ * hardcoded boards (Development/Testing), their columns via `useColumns`,
+ * and board 1's column edges via `useColumnEdges`. Returns `null` while any
+ * query is loading, otherwise delegates rendering to
+ * {@link ColumnEdgeFlowContent}.
+ */
 export default function ColumnEdgeFlow() {
   const board1Id = "11111111-1111-1111-1111-111111111111";
   const board2Id = "11111111-1111-1111-1111-111111111112";

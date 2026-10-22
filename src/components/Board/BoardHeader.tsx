@@ -8,16 +8,36 @@ import { useRenameBoard } from "../../hooks/useRenameBoard";
 import HeaderButton from "./HeaderButton";
 import HeaderButtonRound from "./HeaderButtonRound";
 
-type Props = {
+/** Props for the BoardHeader component. */
+export type Props = {
+  /** The board whose title is displayed and renamed. */
   board: BoardType;
+  /** Called when the "Connections" button is clicked. */
   onClick: () => void;
+  /** All columns on the board, used for the add-column form and the hide-columns fieldset. */
   columns: ColumnType[];
+  /** Ids of the columns currently hidden from the board view. */
   hiddenColumnIds: Set<string>;
+  /** Receives the updated set of hidden column ids when a checkbox is toggled. */
   onHiddenColumnIdsChange: (hiddenColumnIds: Set<string>) => void;
+  /** Whether the board is in edit mode (enables rename input and add-column form). */
   isEditMode: boolean;
+  /** Receives the new edit-mode value when the Edit/Done button is toggled. */
   onEditModeChange: (value: boolean) => void;
 };
 
+/**
+ * Top navigation/header for a board. Shows the tojsystem logo, React Router
+ * `Link`s to the Development and Testing boards, an editable board title
+ * (inline input in edit mode, saved via `useRenameBoard` on blur; Enter
+ * saves, Escape reverts), and action buttons: an add-column form and "Done"
+ * toggle in edit mode, a "Connections" button, and a round "C" button that
+ * opens a fieldset of checkboxes controlling which columns are hidden.
+ *
+ * @param props - `board`, `columns`, `hiddenColumnIds` with its change
+ * handler, `isEditMode` with its change handler, and `onClick` for the
+ * Connections button.
+ */
 export default function BoardHeader({
   board,
   onClick,
