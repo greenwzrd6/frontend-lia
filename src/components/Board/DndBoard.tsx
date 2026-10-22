@@ -9,7 +9,7 @@ import { isSortable } from "@dnd-kit/react/sortable";
 import { move } from "@dnd-kit/helpers";
 
 import { useBoardHub } from "../../hooks/useBoardHub";
-import { useMovePlacement } from "../../hooks/useMovePlacement";
+import { useCreatePlacement } from "../../hooks/useCreatePlacement";
 import { usePlacements } from "../../hooks/usePlacements";
 import { placementKeys } from "../../utils/queryKeys";
 import type { ColumnType } from "../../types/column";
@@ -18,6 +18,8 @@ import type { PlacementType } from "../../types/placement";
 import DndColumn from "../Column/DndColumn";
 
 type Items = Record<string, string[]>;
+
+const RECENT_DROP_TTL_MS = 3000;
 
 type Props = {
   columns: ColumnType[];
@@ -33,7 +35,8 @@ export default function DndBoard({
   isEditMode = false,
 }: Readonly<Props>) {
   const queryClient = useQueryClient();
-  const { mutateAsync: movePlacement } = useMovePlacement();
+  const { mutateAsync: createPlacement } = useCreatePlacement();
+  const recentDropsRef = useRef<Map<string, number>>(new Map());
 
   const sortedColumns = useMemo(
     () => [...columns].sort((a, b) => a.position - b.position),
@@ -100,11 +103,18 @@ export default function DndBoard({
       ),
     );
 
-    for (const columnId of affected) {
-      void queryClient.invalidateQueries({
-        queryKey: placementKeys.byColumnId(columnId),
-        exact: true,
-      });
+    const now = Date.now();
+    const isOwnDrop = event.entityIds.some(
+      (entityId) => (recentDropsRef.current.get(entityId) ?? 0) > now,
+    );
+
+    if (!isOwnDrop) {
+      for (const columnId of affected) {
+        void queryClient.invalidateQueries({
+          queryKey: placementKeys.byColumnId(columnId),
+          exact: true,
+        });
+      }
     }
   });
 
@@ -169,8 +179,14 @@ export default function DndBoard({
       order[from.columnId] = items[from.columnId];
     }
 
+    const expiresAt = Date.now() + RECENT_DROP_TTL_MS;
+    for (const [id, expiry] of recentDropsRef.current) {
+      if (expiry <= Date.now()) recentDropsRef.current.delete(id);
+    }
+    recentDropsRef.current.set(entityId, expiresAt);
+
     try {
-      await movePlacement({
+      await createPlacement({
         request: {
           entityIds: [entityId],
           boardId,
