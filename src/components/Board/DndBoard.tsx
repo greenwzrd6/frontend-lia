@@ -52,7 +52,7 @@ export default function DndBoard({
   const bootstrap = usePlacements(entities, boardId, columns);
 
   const [dragItems, setDragItems] = useState<Items | null>(null);
-  const dragStart = useRef<Items>({});
+  const [dragStart, setDragStart] = useState<Items>({});
 
   const readCacheItems = (): Items => {
     const items: Items = {};
@@ -122,7 +122,7 @@ export default function DndBoard({
 
   function handleDragStart() {
     const items = readCacheItems();
-    dragStart.current = items;
+    setDragStart(items);
     setDragItems(items);
   }
 
@@ -147,7 +147,7 @@ export default function DndBoard({
 
     const entityId = String(source.id);
 
-    const from = locate(dragStart.current, entityId);
+    const from = locate(dragStart, entityId)
     const to = locate(items, entityId);
 
     if (!to || (from?.columnId === to.columnId && from.index === to.index)) {
@@ -210,13 +210,15 @@ export default function DndBoard({
       onDragOver={(event) =>
         setDragItems((prev) => (prev ? move(prev, event) : prev))
       }
-      onDragEnd={handleDragEnd}
+      onDragEnd={(event) => {
+        void handleDragEnd(event);
+      }}
     >
       <div className="flex h-full min-h-0 items-start overflow-hidden justify-evenly">
         {sortedColumns.map((column, index) => {
           const liveOrder = dragItems?.[column.id];
           const orderedIds =
-            liveOrder && liveOrder !== dragStart.current[column.id]
+            liveOrder && liveOrder !== dragStart[column.id]
               ? liveOrder
               : undefined;
 

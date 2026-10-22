@@ -36,7 +36,9 @@ export default function ColumnEdge({
               transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
               pointerEvents: "all",
             }}
-            onClick={() => deleteElements({ edges: [{ id }] })}
+            onClick={() => {
+              void deleteElements({ edges: [{ id }] });
+            }}
           >
             Delete
           </button>
