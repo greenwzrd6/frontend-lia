@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import type { BoardType } from "../../types/board";
@@ -30,12 +30,14 @@ export default function BoardHeader({
   const [newColumnTitle, setNewColumnTitle] = useState("");
   const [boardTitle, setBoardTitle] = useState(board.title);
   const [showColumns, setShowColumns] = useState(false);
+  const [prevBoardTitle, setPrevBoardTitle] = useState(board.title);
   const { mutate: createColumn } = useCreateColumn(board.id);
   const { mutate: renameBoard } = useRenameBoard(board.id);
 
-  useEffect(() => {
+  if (prevBoardTitle !== board.title) {
+    setPrevBoardTitle(board.title);
     setBoardTitle(board.title);
-  }, [board.title]);
+  }
 
   const saveBoardTitle = () => {
     const trimmed = boardTitle.trim();

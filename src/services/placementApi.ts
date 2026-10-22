@@ -32,7 +32,7 @@ export async function getPlacements(
     console.log(
       `Something went wrong while getting placements by BoardId: ${boardId}`,
     );
-    console.log(`Error: ${error}`);
+    console.log("Error:", error);
 
     return [];
   }
@@ -52,7 +52,7 @@ export async function getPlacementsByColumn(
     console.log(
       `Something went wrong while getting placements in the column: ${columnId}`,
     );
-    console.log(`Error: ${error}`);
+    console.log("Error:", error);
     return [];
   }
 }
@@ -88,7 +88,7 @@ export async function createMissingPlacements(
     return;
   }
 
-  let afterEntityIds: string[] = [];
+  const afterEntityIds: string[] = [];
 
   const inboxColumn = columns.find((column) => column.position === 0);
 

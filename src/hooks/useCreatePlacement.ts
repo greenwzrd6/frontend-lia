@@ -7,7 +7,7 @@ import {
 import { placementKeys } from "../utils/queryKeys";
 import type { PlacementType } from "../types/placement";
 
-export type MovePlacementVars = {
+export type CreatePlacementVars = {
   request: CreatePlacementRequest;
   /**
    * Final entityId order for *only* the columns the drop actually changed.
@@ -24,11 +24,11 @@ export type MovePlacementVars = {
  * cache) and interaction state (the drag) cleanly separated instead of writing
  * to the cache on every pointer-move frame.
  */
-export function useMovePlacement() {
+export function useCreatePlacement() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ request }: MovePlacementVars) => createPlacement(request),
+    mutationFn: ({ request }: CreatePlacementVars) => createPlacement(request),
 
     onMutate: ({ order }) => {
       const columnIds = Object.keys(order);

@@ -17,7 +17,6 @@ type Props = {
   enabled: boolean;
   orderedIds?: string[];
   isEditMode?: boolean;
-  lockedCards: Set<string>;
   autoFocus?: boolean;
 };
 
@@ -28,7 +27,6 @@ const DndColumn = memo(function DndColumn({
   enabled,
   orderedIds,
   isEditMode,
-  lockedCards,
   autoFocus = false,
 }: Readonly<Props>) {
   const { ref } = useDroppable({
@@ -58,7 +56,11 @@ const DndColumn = memo(function DndColumn({
     return map;
   }, [placements]);
 
-  const ids = orderedIds ?? placements.map((placement) => placement.entityId);
+  const ids =
+    orderedIds ??
+    placements
+      .map((placement) => placement.entityId)
+      .filter((entityId) => entitiesById.has(entityId));
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -119,7 +121,6 @@ const DndColumn = memo(function DndColumn({
                   placement={placementById.get(entityId) ?? null}
                   columnId={column.id}
                   index={virtualItem.index}
-                  disabled={lockedCards.has(entityId)}
                 />
               </div>
             );
