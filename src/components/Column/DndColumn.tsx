@@ -58,7 +58,11 @@ const DndColumn = memo(function DndColumn({
     return map;
   }, [placements]);
 
-  const ids = orderedIds ?? placements.map((placement) => placement.entityId);
+  const ids =
+    orderedIds ??
+    placements
+      .map((placement) => placement.entityId)
+      .filter((entityId) => entitiesById.has(entityId));
 
   const parentRef = useRef<HTMLDivElement>(null);
 

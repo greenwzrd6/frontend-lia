@@ -61,7 +61,9 @@ export default function DndBoard({
         queryClient.getQueryData<PlacementType[]>(
           placementKeys.byColumnId(column.id),
         ) ?? [];
-      items[column.id] = placements.map((placement) => placement.entityId);
+      items[column.id] = placements
+        .filter((placement) => entitiesById.has(placement.entityId))
+        .map((placement) => placement.entityId);
     }
     return items;
   };
