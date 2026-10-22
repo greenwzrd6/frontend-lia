@@ -1,5 +1,10 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 
+/**
+ * Custom `@xyflow/react` node type (`columnNode`): a default-styled node
+ * showing the column title (`data.label`) with a bottom source handle and a
+ * top target handle so edges can connect between columns.
+ */
 export function ColumnNode({ data }: NodeProps) {
   return (
     <div className="react-flow__node-default cursor-default">

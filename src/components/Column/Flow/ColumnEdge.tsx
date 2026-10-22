@@ -6,6 +6,12 @@ import {
   getBezierPath,
 } from "@xyflow/react";
 
+/**
+ * Custom `@xyflow/react` edge (`columnEdge`): draws a bezier path between
+ * two column nodes with `BaseEdge`/`getBezierPath`. When the edge is
+ * selected, an absolutely positioned "Delete" button is rendered through
+ * `EdgeLabelRenderer` that removes the edge via `useReactFlow().deleteElements`.
+ */
 export default function ColumnEdge({
   id,
   sourceX,

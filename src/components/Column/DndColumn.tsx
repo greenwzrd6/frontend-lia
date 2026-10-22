@@ -10,16 +10,36 @@ import type { ColumnType } from "../../types/column";
 import type { TaskType } from "../../types/task";
 import type { PlacementType } from "../../types/placement";
 
-type Props = {
+/** Props for the DndColumn component. */
+export type Props = {
+  /** The column rendered as a droppable Kanban column. */
   column: ColumnType;
+  /** Id of the board the column belongs to (placement query scope). */
   boardId: string;
+  /** Task lookup by id, used to resolve placement entity ids to cards. */
   entitiesById: Map<string, TaskType>;
+  /** Enables the placements query (set once the board-level bootstrap succeeds). */
   enabled: boolean;
+  /** Optional override of the cached card order during a drag. */
   orderedIds?: string[];
+  /** Whether the column header renders in edit mode. */
   isEditMode?: boolean;
+  /** Whether to focus the header's rename input on mount. Defaults to `false`. */
   autoFocus?: boolean;
 };
 
+/**
+ * A single Kanban column that is a droppable target for cards. Registers a
+ * `useDroppable` region (accepts `"card"`, low collision priority), fetches
+ * this column's placements via `usePlacementsByColumn` (enabled once the
+ * board-level bootstrap succeeds), and renders a memoized, virtually
+ * scrolled list of {@link DndPlacementCard}s using `@tanstack/react-virtual`.
+ *
+ * @param props - `column`, `boardId`, `entitiesById` task lookup, `enabled`
+ * for the placements query, optional `orderedIds` overriding the cached
+ * order during a drag, optional `isEditMode`, and `autoFocus` forwarded to
+ * the column header's rename input (set for the first column).
+ */
 const DndColumn = memo(function DndColumn({
   column,
   boardId,

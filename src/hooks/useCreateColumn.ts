@@ -4,6 +4,13 @@ import { createColumn } from "../services/columnApi";
 import { columnKeys } from "../utils/queryKeys";
 import type { ColumnType } from "../types/column";
 
+/**
+ * Mutation that creates a column (POST /api/columns/create).
+ *
+ * On success it appends the new column to the cached list under
+ * {@link columnKeys.byBoardId} instead of invalidating it, so the board
+ * re-renders with the column immediately.
+ */
 export function useCreateColumn(boardId: string) {
   const queryClient = useQueryClient();
 

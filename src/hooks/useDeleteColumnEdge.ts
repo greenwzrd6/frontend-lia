@@ -4,6 +4,12 @@ import { deleteColumnEdge } from "../services/columnEdgeApi";
 import { columnEdgeKeys } from "../utils/queryKeys";
 import type { ColumnEdgeType } from "../types/columnEdge";
 
+/**
+ * Mutation that deletes a column edge (DELETE /api/columnedges/delete).
+ *
+ * On success it filters the matching edge — in either direction — out of the
+ * cache under {@link columnEdgeKeys.byBoardId}.
+ */
 export function useDeleteColumnEdge(boardId: string) {
   const queryClient = useQueryClient();
 

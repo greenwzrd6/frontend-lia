@@ -3,6 +3,13 @@ import { taskIds } from "../../data/taskIds.json";
 import type { NodeType } from "../types/node";
 import type { TaskType } from "../types/task";
 
+/**
+ * Fetches tasks for a project from the external TOJ API
+ * (POST /toj-api/api/nodeitemservice/getnodeitems) and maps the raw
+ * {@link NodeType} responses to plain {@link TaskType}s.
+ *
+ * @param projectIds The project whose node items should be returned.
+ */
 export async function getTasksByProjectId(
   projectIds: string,
 ): Promise<TaskType[]> {

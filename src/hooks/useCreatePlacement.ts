@@ -7,6 +7,7 @@ import {
 import { placementKeys } from "../utils/queryKeys";
 import type { PlacementType } from "../types/placement";
 
+/** Variables for {@link useCreatePlacement}: the API payload plus the final entity order of every column the drop changed. */
 export type CreatePlacementVars = {
   request: CreatePlacementRequest;
   /**

@@ -26,15 +26,33 @@ const nodeTypes = {
   columnNode: ColumnNode,
 };
 
-type Props = {
+/** Props for the ColumnEdgeFlowContent component. */
+export type Props = {
+  /** The first (source) board shown as the top board group node. */
   board1: BoardType;
+  /** The second (target) board shown as the bottom board group node. */
   board2: BoardType;
+  /** Columns of the first board, rendered as column nodes inside its group. */
   board1Columns: ColumnType[];
+  /** Columns of the second board, rendered as column nodes inside its group. */
   board2Columns: ColumnType[];
+  /** Existing column-to-column edges between the two boards, used to build the initial edges. */
   board1Edges: ColumnEdgeType[];
+  /** Board id used as the mutation scope for creating/deleting edges. */
   boardId: string;
 };
 
+/**
+ * The `@xyflow/react` canvas for the connections overlay. Builds two
+ * `boardGroup` nodes (one per board) each containing `columnNode` children
+ * laid out horizontally, and initial `columnEdge` edges from the fetched
+ * edge list. `onConnect` persists a new edge via `useCreateColumnEdge`
+ * (skipping duplicate/reverse connections) and adds it to local state;
+ * `onEdgesDelete` removes each deleted edge via `useDeleteColumnEdge`.
+ *
+ * @param props - Both boards, their columns, board 1's edges, and the
+ * `boardId` used as the mutation scope for creating/deleting edges.
+ */
 export default function ColumnEdgeFlowContent({
   board1,
   board2,
