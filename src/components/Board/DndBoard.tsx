@@ -82,13 +82,13 @@ export default function DndBoard({
       (entityId) => (recentDropsRef.current.get(entityId) ?? 0) > now,
     );
 
-    if (!isOwnDrop) {
-      for (const columnId of affected) {
-        void queryClient.invalidateQueries({
-          queryKey: placementKeys.byColumnId(columnId),
-          exact: true,
-        });
-      }
+    // if (!isOwnDrop) {
+    for (const columnId of affected) {
+      void queryClient.invalidateQueries({
+        queryKey: placementKeys.byColumnId(columnId),
+        exact: true,
+      });
+      // }
     }
   });
 
@@ -119,7 +119,7 @@ export default function DndBoard({
 
     const entityId = String(source.id);
 
-    const from = locate(dragStart, entityId)
+    const from = locate(dragStart, entityId);
     const to = locate(items, entityId);
 
     if (!to || (from?.columnId === to.columnId && from.index === to.index)) {
