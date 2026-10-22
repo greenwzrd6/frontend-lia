@@ -77,10 +77,10 @@ export default function DndBoard({
       ),
     );
 
-    const now = Date.now();
-    const isOwnDrop = event.entityIds.some(
-      (entityId) => (recentDropsRef.current.get(entityId) ?? 0) > now,
-    );
+    // const now = Date.now();
+    // const isOwnDrop = event.entityIds.some(
+    //   (entityId) => (recentDropsRef.current.get(entityId) ?? 0) > now,
+    // );
 
     // if (!isOwnDrop) {
     for (const columnId of affected) {

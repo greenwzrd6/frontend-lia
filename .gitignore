@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Docs site (Docusaurus + generated TypeDoc API reference)
+docs-site/build
+docs-site/.docusaurus
+docs-site/.cache-loader
+docs-site/docs/api
