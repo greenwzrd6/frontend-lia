@@ -7,15 +7,13 @@ type Props = {
   placement: PlacementType | null | undefined;
   columnId: string;
   index: number;
-  disabled: boolean;
 };
 
 export default function DndPlacementCard({
   entity,
   columnId,
   index,
-  // placement,
-  disabled,
+  placement,
 }: Readonly<Props>) {
   const { ref, isDropTarget, isDragging } = useSortable({
     id: entity.id,
@@ -23,7 +21,6 @@ export default function DndPlacementCard({
     group: columnId,
     type: "card",
     accept: "card",
-    disabled,
     data: {
       type: "card",
       entityId: entity.id,
@@ -34,14 +31,13 @@ export default function DndPlacementCard({
   return (
     <article
       ref={ref}
-      className={`flex flex-row items-center justify-center bg-white rounded-2xl p-5 border border-gray-200
+      className={`flex flex-col items-center justify-center bg-white rounded-2xl p-5 border border-gray-200
         ${isDragging ? "opacity-0" : ""}
-        ${disabled ? "opacity-25 cursor-not-allowed" : "cursor-grab"}
         ${isDropTarget ? "dnd-over" : ""}`}
     >
       <h3>{entity.title}</h3>
-      {/* <small>sortKey: {placement?.sortKey}</small>
-      <br></br>
+      <small>sortKey: {placement?.sortKey}</small>
+      {/* <br></br>
       <small>entityId: {placement?.entityId}</small> */}
     </article>
   );

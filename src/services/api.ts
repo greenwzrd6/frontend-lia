@@ -1,5 +1,5 @@
-export const API_URL = import.meta.env.VITE_API_URL;
-export const TOJ_API_URL = import.meta.env.VITE_TOJ_API_URL;
+export const API_URL = import.meta.env.VITE_API_URL as string;
+export const TOJ_API_URL = import.meta.env.VITE_TOJ_API_URL as string;
 
 export async function apiRequest<T>(
     path: string,

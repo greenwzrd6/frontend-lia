@@ -7,10 +7,15 @@ export type CreateColumnRequest = {
   boardId: string;
 };
 
+export type CreateColumnResponse = {
+  id: string;
+};
+
 export type RenameColumnRequest = {
   id: string;
   newTitle: string;
 };
+
 
 export async function getColumnsByBoardId(
   boardId: string,
@@ -24,8 +29,8 @@ export async function getColumn(id: string): Promise<ColumnType> {
 
 export async function createColumn(
   request: CreateColumnRequest,
-): Promise<void> {
-  await apiRequest<void>("/api/columns/create", {
+): Promise<CreateColumnResponse> {
+  return apiRequest<CreateColumnResponse>("/api/columns/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

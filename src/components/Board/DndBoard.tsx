@@ -9,7 +9,7 @@ import { isSortable } from "@dnd-kit/react/sortable";
 import { move } from "@dnd-kit/helpers";
 
 import { useBoardHub } from "../../hooks/useBoardHub";
-import { useMovePlacement } from "../../hooks/useMovePlacement";
+import { useCreatePlacement } from "../../hooks/useCreatePlacement";
 import { usePlacements } from "../../hooks/usePlacements";
 import { placementKeys } from "../../utils/queryKeys";
 import type { ColumnType } from "../../types/column";
@@ -18,6 +18,8 @@ import type { PlacementType } from "../../types/placement";
 import DndColumn from "../Column/DndColumn";
 
 type Items = Record<string, string[]>;
+
+const RECENT_DROP_TTL_MS = 3000;
 
 type Props = {
   columns: ColumnType[];
@@ -33,7 +35,8 @@ export default function DndBoard({
   isEditMode = false,
 }: Readonly<Props>) {
   const queryClient = useQueryClient();
-  const { mutateAsync: movePlacement } = useMovePlacement();
+  const { mutateAsync: createPlacement } = useCreatePlacement();
+  const recentDropsRef = useRef<Map<string, number>>(new Map());
 
   const sortedColumns = useMemo(
     () => [...columns].sort((a, b) => a.position - b.position),
@@ -49,7 +52,7 @@ export default function DndBoard({
   const bootstrap = usePlacements(entities, boardId, columns);
 
   const [dragItems, setDragItems] = useState<Items | null>(null);
-  const dragStart = useRef<Items>({});
+  const [dragStart, setDragStart] = useState<Items>({});
 
   const readCacheItems = (): Items => {
     const items: Items = {};
@@ -58,40 +61,14 @@ export default function DndBoard({
         queryClient.getQueryData<PlacementType[]>(
           placementKeys.byColumnId(column.id),
         ) ?? [];
-      items[column.id] = placements.map((placement) => placement.entityId);
+      items[column.id] = placements
+        .filter((placement) => entitiesById.has(placement.entityId))
+        .map((placement) => placement.entityId);
     }
     return items;
   };
 
-  const [lockedCards, setLockedCards] = useState<Set<string>>(new Set());
-
   useBoardHub(boardId, (event) => {
-    const entityIds = event.entityIds;
-
-    //lock cards
-    setLockedCards((prev) => {
-      const next = new Set(prev);
-
-      for (const entityId of entityIds) {
-        next.add(entityId);
-      }
-
-      return next;
-    });
-
-    //unlock cards
-    setTimeout(() => {
-      setLockedCards((prev) => {
-        const next = new Set(prev);
-
-        for (const entityId of entityIds) {
-          next.delete(entityId);
-        }
-
-        return next;
-      });
-    }, 800);
-
     const affected = new Set(
       event.changes.flatMap((change) =>
         [change.sourceColumnId, change.targetColumnId].filter(
@@ -100,17 +77,24 @@ export default function DndBoard({
       ),
     );
 
-    for (const columnId of affected) {
-      void queryClient.invalidateQueries({
-        queryKey: placementKeys.byColumnId(columnId),
-        exact: true,
-      });
+    const now = Date.now();
+    const isOwnDrop = event.entityIds.some(
+      (entityId) => (recentDropsRef.current.get(entityId) ?? 0) > now,
+    );
+
+    if (!isOwnDrop) {
+      for (const columnId of affected) {
+        void queryClient.invalidateQueries({
+          queryKey: placementKeys.byColumnId(columnId),
+          exact: true,
+        });
+      }
     }
   });
 
   function handleDragStart() {
     const items = readCacheItems();
-    dragStart.current = items;
+    setDragStart(items);
     setDragItems(items);
   }
 
@@ -135,7 +119,7 @@ export default function DndBoard({
 
     const entityId = String(source.id);
 
-    const from = locate(dragStart.current, entityId);
+    const from = locate(dragStart, entityId)
     const to = locate(items, entityId);
 
     if (!to || (from?.columnId === to.columnId && from.index === to.index)) {
@@ -169,8 +153,14 @@ export default function DndBoard({
       order[from.columnId] = items[from.columnId];
     }
 
+    const expiresAt = Date.now() + RECENT_DROP_TTL_MS;
+    for (const [id, expiry] of recentDropsRef.current) {
+      if (expiry <= Date.now()) recentDropsRef.current.delete(id);
+    }
+    recentDropsRef.current.set(entityId, expiresAt);
+
     try {
-      await movePlacement({
+      await createPlacement({
         request: {
           entityIds: [entityId],
           boardId,
@@ -192,13 +182,15 @@ export default function DndBoard({
       onDragOver={(event) =>
         setDragItems((prev) => (prev ? move(prev, event) : prev))
       }
-      onDragEnd={handleDragEnd}
+      onDragEnd={(event) => {
+        void handleDragEnd(event);
+      }}
     >
       <div className="flex h-full min-h-0 items-start overflow-hidden justify-evenly">
         {sortedColumns.map((column, index) => {
           const liveOrder = dragItems?.[column.id];
           const orderedIds =
-            liveOrder && liveOrder !== dragStart.current[column.id]
+            liveOrder && liveOrder !== dragStart[column.id]
               ? liveOrder
               : undefined;
 
@@ -211,7 +203,6 @@ export default function DndBoard({
               enabled={bootstrap.isSuccess}
               orderedIds={orderedIds}
               isEditMode={isEditMode}
-              lockedCards={lockedCards}
               autoFocus={index === 0}
             />
           );

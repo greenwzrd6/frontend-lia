@@ -17,12 +17,14 @@ export default function ColumnHeader({
   autoFocus = false,
 }: Readonly<Props>) {
   const [columnTitle, setColumnTitle] = useState(column.title);
+  const [prevColumnTitle, setPrevColumnTitle] = useState(column.title);
   const { mutate: rename } = useRenameColumn();
   const { mutate: remove } = useDeleteColumn(column.boardId);
 
-  useEffect(() => {
+  if (prevColumnTitle !== column.title) {
+    setPrevColumnTitle(column.title);
     setColumnTitle(column.title);
-  }, [column.title]);
+  }
 
   const save = () => {
     const trimmed = columnTitle.trim();
