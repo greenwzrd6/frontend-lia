@@ -68,35 +68,7 @@ export default function DndBoard({
     return items;
   };
 
-  const [lockedCards, setLockedCards] = useState<Set<string>>(new Set());
-
   useBoardHub(boardId, (event) => {
-    const entityIds = event.entityIds;
-
-    //lock cards
-    setLockedCards((prev) => {
-      const next = new Set(prev);
-
-      for (const entityId of entityIds) {
-        next.add(entityId);
-      }
-
-      return next;
-    });
-
-    //unlock cards
-    setTimeout(() => {
-      setLockedCards((prev) => {
-        const next = new Set(prev);
-
-        for (const entityId of entityIds) {
-          next.delete(entityId);
-        }
-
-        return next;
-      });
-    }, 800);
-
     const affected = new Set(
       event.changes.flatMap((change) =>
         [change.sourceColumnId, change.targetColumnId].filter(
@@ -231,7 +203,6 @@ export default function DndBoard({
               enabled={bootstrap.isSuccess}
               orderedIds={orderedIds}
               isEditMode={isEditMode}
-              lockedCards={lockedCards}
               autoFocus={index === 0}
             />
           );
