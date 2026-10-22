@@ -82,14 +82,14 @@ export default function DndBoard({
       (entityId) => (recentDropsRef.current.get(entityId) ?? 0) > now,
     );
 
-    if (!isOwnDrop) {
+    // if (!isOwnDrop) {
       for (const columnId of affected) {
         void queryClient.invalidateQueries({
           queryKey: placementKeys.byColumnId(columnId),
           exact: true,
         });
       }
-    }
+    // }
   });
 
   function handleDragStart() {
