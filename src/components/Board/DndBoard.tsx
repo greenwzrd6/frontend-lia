@@ -12,6 +12,7 @@ import { useBoardHub } from "../../hooks/useBoardHub";
 import { useCreatePlacement } from "../../hooks/useCreatePlacement";
 import { usePlacements } from "../../hooks/usePlacements";
 import { placementKeys } from "../../utils/queryKeys";
+import { isReleasedColumn } from "../../utils/isReleasedColumn";
 import type { ColumnType } from "../../types/column";
 import type { TaskType } from "../../types/task";
 import type { PlacementType } from "../../types/placement";
@@ -215,8 +216,22 @@ export default function DndBoard({
 
           if (!entity) return null;
 
+          const hovered = dragItems
+            ? locate(dragItems, String(source.id))
+            : null;
+
+          const hoveredColumn = hovered
+            ? columns.find((column) => column.id === hovered.columnId)
+            : undefined;
+
+          const isOverReleased =
+            hoveredColumn != null && isReleasedColumn(hoveredColumn);
+
           return (
-            <article className="flex flex-row items-center justify-center bg-white rounded-2xl p-5 border border-gray-200 shadow-lg">
+            <article
+              className={`flex flex-row items-center justify-center rounded-2xl p-5 border shadow-lg
+                ${isOverReleased ? "bg-green-100 border-green-500" : "bg-white border-gray-200"}`}
+            >
               <h3>{entity.title}</h3>
             </article>
           );

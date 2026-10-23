@@ -6,6 +6,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import ColumnHeader from "./ColumnHeader";
 import DndPlacementCard from "../Placement/DndPlacementCard";
 import { usePlacementsByColumn } from "../../hooks/usePlacementsByColumn";
+import { isReleasedColumn } from "../../utils/isReleasedColumn";
 import type { ColumnType } from "../../types/column";
 import type { TaskType } from "../../types/task";
 import type { PlacementType } from "../../types/placement";
@@ -121,6 +122,7 @@ const DndColumn = memo(function DndColumn({
                   placement={placementById.get(entityId) ?? null}
                   columnId={column.id}
                   index={virtualItem.index}
+                  isReleased={isReleasedColumn(column)}
                 />
               </div>
             );
