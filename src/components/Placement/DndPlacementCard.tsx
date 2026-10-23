@@ -31,7 +31,7 @@ export default function DndPlacementCard({
   return (
     <article
       ref={ref}
-      className={`flex flex-col items-center justify-center bg-white rounded-2xl p-5 border border-gray-200
+      className={`flex flex-col items-center justify-center bg-white rounded-2xl p-5 border border-gray-200 select-none cursor-grab active:cursor-grabbing
         ${isDragging ? "opacity-0" : ""}
         ${isDropTarget ? "dnd-over" : ""}`}
     >
