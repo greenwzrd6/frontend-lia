@@ -81,7 +81,7 @@ export default function BoardHeader({
   };
 
   return (
-    <div className="flex flex-row items-center justify-between bg-[#0b98d6] text-white pl-77 pr-85">
+    <div className="flex flex-row items-center h-18 justify-between bg-[#0b98d6] text-white pl-77 pr-85">
       <a href="https://www.tojsystem.se/">
         <img src="/toj.PNG" alt="tojclock" />
       </a>
@@ -130,7 +130,7 @@ export default function BoardHeader({
 
           <HeaderButton
             buttonType="button"
-            styling={`cursor-pointer font-semibold py-2 px-4 rounded-xs transition duration-200 ${
+            styling={`cursor-pointer text-nowrap font-semibold py-2 px-4 rounded-xs transition duration-200 ${
               isEditMode ? "bg-white text-[#0b98d6]" : "border"
             }`}
             onClick={toggleEditMode}
